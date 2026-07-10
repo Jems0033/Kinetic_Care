@@ -15,9 +15,15 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("API is Running...");
 });
+
+
 const userRoutes = require("./routes/userRoutes");
 
 app.use("/api/users", userRoutes);
+
+const residentRoutes = require("./routes/residentRoutes");
+
+app.use("/api/residents", residentRoutes);
 
 const PORT = process.env.PORT || 5000;
 
