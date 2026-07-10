@@ -1,130 +1,146 @@
 import Sidebar from "../components/Sidebar";
 import "../css/Dashboard.css";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import DashboardCharts from "../components/DashboardCharts";
 
 function Dashboard() {
+  const user = JSON.parse(localStorage.getItem("user"));
 
-    const user = JSON.parse(localStorage.getItem("user"));
+  const [dashboard, setDashboard] = useState({
+    totalResidents: 0,
+    totalStaff: 0,
+    totalRooms: 0,
+    pendingPayments: 0,
+  });
 
-    return (
+  const [recentResidents, setRecentResidents] = useState([]);
 
-        <div className="dashboard">
 
-            <Sidebar />
+  useEffect(() => {
+    getDashboard();
+    getRecentResidents();
+  }, []);
 
-            <div className="dashboard-content">
+  const getDashboard = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-                <div className="dashboard-header">
+      const res = await axios.get("http://localhost:5000/api/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-                    <div>
+      console.log(res.data);
 
-                        <h1>
-                            Welcome {user?.name}
-                        </h1>
+      setDashboard(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-                        <p>
-                            Kinetic Care Dashboard
-                        </p>
+  const getRecentResidents = async () => {
 
-                    </div>
+    try {
 
-                </div>
+        const token = localStorage.getItem("token");
 
-                <div className="dashboard-cards">
+        const res = await axios.get(
+            "http://localhost:5000/api/residents/recent",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
-                    <div className="dashboard-card">
+        setRecentResidents(res.data);
 
-                        <h2>125</h2>
+    } catch (error) {
 
-                        <p>Total Residents</p>
+        console.log(error);
 
-                    </div>
+    }
 
-                    <div className="dashboard-card">
+};
 
-                        <h2>32</h2>
+  return (
+    <div className="dashboard">
+      <Sidebar />
 
-                        <p>Total Staff</p>
+      <div className="dashboard-content">
+        <div className="dashboard-header">
+          <div>
+            <h1>Welcome {user?.name}</h1>
 
-                    </div>
-
-                    <div className="dashboard-card">
-
-                        <h2>50</h2>
-
-                        <p>Available Rooms</p>
-
-                    </div>
-
-                    <div className="dashboard-card">
-
-                        <h2>15</h2>
-
-                        <p>Pending Payments</p>
-
-                    </div>
-
-                </div>
-
-                <div className="recent-section">
-
-                    <h2>Recent Residents</h2>
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Name</th>
-
-                                <th>Age</th>
-
-                                <th>Room</th>
-
-                                <th>Status</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-
-                                <td>Ramesh Patel</td>
-
-                                <td>72</td>
-
-                                <td>A-102</td>
-
-                                <td>Healthy</td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>Meena Shah</td>
-
-                                <td>68</td>
-
-                                <td>B-203</td>
-
-                                <td>Under Treatment</td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
+            <p>Kinetic Care Dashboard</p>
+          </div>
         </div>
 
-    );
+        <div className="dashboard-cards">
+          <div className="dashboard-card">
+            <h2>{dashboard.totalResidents}</h2>
+            <p>Total Residents</p>
+          </div>
 
+          <div className="dashboard-card">
+            <h2>{dashboard.totalStaff}</h2>
+
+            <p>Total Staff</p>
+          </div>
+
+          <div className="dashboard-card">
+            <h2>{dashboard.totalRooms}</h2>
+
+            <p>Available Rooms</p>
+          </div>
+
+          <div className="dashboard-card">
+            <h2>{dashboard.pendingPayments}</h2>
+
+            <p>Pending Payments</p>
+          </div>
+        </div>
+        <DashboardCharts dashboard={dashboard} />
+        <div className="recent-section">
+          <h2>Recent Residents</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Age</th>
+
+                <th>Room</th>
+
+                <th>medicalCondition</th>
+
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {recentResidents.slice(0, 5).map((resident) => (
+                <tr key={resident._id}>
+                  <td>{resident.name}</td>
+
+                  <td>{resident.age}</td>
+
+                  <td>{resident.room}</td>
+
+                  <td>{resident.medicalCondition}</td>
+
+                  <td>{resident.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Dashboard;

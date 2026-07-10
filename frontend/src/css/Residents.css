@@ -159,3 +159,134 @@ td button:last-child:hover{
     }
 
 }
+/* ================= MODAL ================= */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:1000;
+
+}
+
+.modal-box{
+
+    width:420px;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:30px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+    animation:popup .3s ease;
+
+}
+
+.modal-box h2{
+
+    color:#2E7D32;
+
+    text-align:center;
+
+}
+
+.modal-box input,
+.modal-box select{
+
+    padding:12px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    outline:none;
+
+}
+
+.modal-box input:focus,
+.modal-box select:focus{
+
+    border-color:#4CAF50;
+
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-top:10px;
+
+}
+
+.modal-buttons button{
+
+    flex:1;
+
+    margin:5px;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    background:#4CAF50;
+
+    color:white;
+
+}
+
+.cancel-btn{
+
+    background:#F44336 !important;
+
+}
+
+@keyframes popup{
+
+    from{
+
+        transform:scale(.8);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}
+.delete-btn{
+    background:#F44336;
+    color:white;
+}
+
+.delete-btn:hover{
+    background:#D32F2F;
+}
