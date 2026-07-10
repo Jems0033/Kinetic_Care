@@ -1,43 +1,65 @@
 const mongoose = require("mongoose");
 
-const residentSchema = new mongoose.Schema({
-
-    name:{
-        type:String,
-        required:true
+const residentSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
 
-    age:{
-        type:Number
+    age: {
+      type: Number,
+      required: true,
     },
 
-    gender:{
-        type:String
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      required: true,
     },
 
-    phone:{
-        type:String
+    dob: {
+      type: Date,
     },
 
-    address:{
-        type:String
+    bloodGroup: {
+      type: String,
     },
 
-    roomId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Room"
+    medicalCondition: {
+      type: String,
     },
 
-    joiningDate:{
-        type:Date,
-        default:Date.now
+    emergencyContact: {
+      type: String,
+      required: true,
     },
 
-    healthStatus:{
-        type:String
-    }
+    admissionDate: {
+      type: Date,
+      default: Date.now,
+    },
 
-});
+    status: {
+      type: String,
+      enum: ["Active", "Discharged"],
+      default: "Active",
+    },
 
+    room: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Room",
+    },
+
+    familyMember: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("Resident", residentSchema);

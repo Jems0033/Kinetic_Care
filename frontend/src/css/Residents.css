@@ -1,0 +1,161 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+.residents{
+    display:flex;
+    background:#f5f7fb;
+    min-height:100vh;
+}
+
+.resident-content{
+    flex:1;
+    margin-left:260px;
+    padding:35px;
+}
+
+/* ================= HEADER ================= */
+
+.resident-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.resident-header h1{
+    color:#2E7D32;
+    font-size:32px;
+}
+
+.resident-header button{
+    background:#4CAF50;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
+
+.resident-header button:hover{
+    background:#2E7D32;
+}
+
+/* ================= SEARCH ================= */
+
+.resident-content input{
+    width:100%;
+    padding:14px 18px;
+    margin-bottom:25px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+    outline:none;
+}
+
+.resident-content input:focus{
+    border-color:#4CAF50;
+}
+
+/* ================= TABLE ================= */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+thead{
+    background:#4CAF50;
+}
+
+thead th{
+    color:white;
+    padding:16px;
+    text-align:left;
+}
+
+tbody td{
+    padding:16px;
+    border-bottom:1px solid #eee;
+}
+
+tbody tr:hover{
+    background:#f1f8f4;
+}
+
+/* ================= BUTTONS ================= */
+
+td button{
+    border:none;
+    padding:8px 15px;
+    border-radius:6px;
+    cursor:pointer;
+    margin-right:10px;
+    font-size:14px;
+    transition:.3s;
+}
+
+td button:first-child{
+    background:#2196F3;
+    color:white;
+}
+
+td button:first-child:hover{
+    background:#1976D2;
+}
+
+td button:last-child{
+    background:#F44336;
+    color:white;
+}
+
+td button:last-child:hover{
+    background:#D32F2F;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:992px){
+
+    .resident-content{
+        margin-left:0;
+        padding:20px;
+    }
+
+    .resident-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+    table{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .resident-header h1{
+        font-size:26px;
+    }
+
+    .resident-header button{
+        width:100%;
+    }
+
+    .resident-content input{
+        font-size:14px;
+    }
+
+}
