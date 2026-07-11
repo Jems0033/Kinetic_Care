@@ -5,6 +5,11 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Residents from "./pages/Residents";
 import Staff from "./pages/Staff";
+import Room from "./pages/Room";
+import Donor from "./pages/Donor";
+import Medical from "./pages/Medical";
+import Visitor from "./pages/Visitor";
+import Event from "./pages/Event";
 
 function App() {
   return (
@@ -18,6 +23,16 @@ function App() {
       <Route path="/residents" element={<Residents />} />
 
       <Route path="/staff" element={<Staff />} />
+
+      <Route path="/rooms" element={<Room />} />
+
+      <Route path="/donors" element={<Donor />} />
+      
+      <Route path="/medical" element={<Medical />} />
+
+      <Route path="/visitors" element={<Visitor />} />
+
+      <Route path="/events" element={<Event />} />
     </Routes>
   );
 }

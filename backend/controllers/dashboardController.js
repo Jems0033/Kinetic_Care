@@ -1,7 +1,6 @@
 const Resident = require("../models/Resident");
 const Staff = require("../models/Staff");
 const Room = require("../models/Room");
-const Payment = require("../models/Payment");
 
 const getDashboard = async (req, res) => {
 
