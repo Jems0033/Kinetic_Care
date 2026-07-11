@@ -1,0 +1,229 @@
+.staff-page{
+
+    display:flex;
+
+}
+
+.staff-content{
+
+    flex:1;
+
+    margin-left:260px;
+
+    padding:35px;
+
+    background:#F5F7FA;
+
+    min-height:100vh;
+
+}
+
+.staff-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.staff-header h1{
+
+    color:#2E7D32;
+
+}
+
+.staff-header button{
+
+    background:#4CAF50;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 22px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+.staff-content input{
+
+    width:100%;
+
+    padding:12px;
+
+    margin-bottom:25px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+}
+
+table{
+
+    width:100%;
+
+    background:white;
+
+    border-collapse:collapse;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+thead{
+
+    background:#4CAF50;
+
+}
+
+th{
+
+    color:white;
+
+    padding:15px;
+
+}
+
+td{
+
+    padding:15px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+tr:hover{
+
+    background:#f5f5f5;
+
+}
+
+/* Modal */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+
+}
+
+.modal-box{
+
+    width:420px;
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+    animation:popup .3s;
+
+}
+
+.modal-box h2{
+
+    color:#2E7D32;
+
+    text-align:center;
+
+}
+
+.modal-box input,
+.modal-box select{
+
+    padding:12px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    outline:none;
+
+}
+
+.modal-box input:focus,
+.modal-box select:focus{
+
+    border-color:#4CAF50;
+
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.modal-buttons button{
+
+    flex:1;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:#4CAF50;
+
+}
+
+.cancel-btn{
+
+    background:#F44336 !important;
+
+}
+
+@keyframes popup{
+
+    from{
+
+        transform:scale(.8);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}

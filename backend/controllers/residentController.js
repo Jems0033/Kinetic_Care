@@ -105,10 +105,31 @@ const deleteResident = async (req, res) => {
   }
 };
 
+const getRecentResidents = async (req, res) => {
+
+    try {
+
+        const residents = await Resident.find()
+            .sort({ createdAt: -1 })
+            .limit(5);
+
+        res.status(200).json(residents);
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message,
+        });
+
+    }
+
+};
+
 module.exports = {
   addResident,
   getResidents,
   getResidentById,
   updateResident,
   deleteResident,
+  getRecentResidents,
 };

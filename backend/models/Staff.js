@@ -17,12 +17,20 @@ const staffSchema = new mongoose.Schema({
             "Caretaker",
             "Manager",
             "Receptionist"
-        ]
+        ],
+        required:true
     },
 
     phone:String,
 
-    shift:String,
+    shift:{
+    type:String,
+    enum:[
+        "Morning",
+        "Evening",
+        "Night"
+    ]
+},
 
     salary:Number
 
