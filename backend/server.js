@@ -29,6 +29,27 @@ const dashboardRoutes=require("./routes/dashboardRoutes");
 
 app.use("/api/dashboard",dashboardRoutes);
 
+const staffRoutes = require("./routes/staffRoutes");
+
+app.use("/api/staff", staffRoutes);
+
+const roomRoutes = require("./routes/roomRoutes");
+app.use("/api/rooms", roomRoutes);
+
+const donorRoutes = require("./routes/donorRoutes");
+app.use("/api/donors", donorRoutes);
+
+const medicalRoutes = require("./routes/medicalRoutes");
+app.use("/api/medical", medicalRoutes);
+
+const visitorRoutes = require("./routes/visitorRoutes");
+app.use("/api/visitors", visitorRoutes);
+
+const eventRoutes = require("./routes/eventRoutes");
+app.use("/api/events", eventRoutes);
+
+const familyMemberRoutes = require("./routes/familyMemberRoutes");
+app.use("/api/family", familyMemberRoutes);
 
 const PORT = process.env.PORT || 5000;
 

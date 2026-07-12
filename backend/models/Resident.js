@@ -47,7 +47,8 @@ const residentSchema = new mongoose.Schema(
     },
 
     room:{
-        type:String
+        type:String,
+        ref: "Room"
     },
 
     familyMember:{

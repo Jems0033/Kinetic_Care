@@ -5,11 +5,15 @@ const medicalSchema = new mongoose.Schema({
 
     residentId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Resident"
+        ref:"Resident",
+        required: true
+
     },
     staffId:{
     type:mongoose.Schema.Types.ObjectId,
-    ref:"Staff"
+    ref:"Staff",
+    required: true
+
 },
 
     doctor:String,

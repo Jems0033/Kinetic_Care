@@ -1,7 +1,8 @@
 const Resident = require("../models/Resident");
 const Staff = require("../models/Staff");
 const Room = require("../models/Room");
-const Payment = require("../models/Payment");
+const Donor = require("../models/Donor");
+const Event = require("../models/Event");
 
 const getDashboard = async (req, res) => {
 
@@ -13,9 +14,9 @@ const getDashboard = async (req, res) => {
 
         const totalRooms = await Room.countDocuments();
 
-        const pendingPayments = await Payment.countDocuments({
-            status: "Pending",
-        });
+        const totalDonors = await Donor.countDocuments();
+
+        const totalEvents = await Event.countDocuments();
 
         res.status(200).json({
 
@@ -25,7 +26,9 @@ const getDashboard = async (req, res) => {
 
             totalRooms,
 
-            pendingPayments,
+            totalDonors,
+
+            totalEvents
 
         });
 
@@ -33,7 +36,7 @@ const getDashboard = async (req, res) => {
 
         res.status(500).json({
 
-            message: error.message,
+            message: error.message
 
         });
 
@@ -42,5 +45,5 @@ const getDashboard = async (req, res) => {
 };
 
 module.exports = {
-    getDashboard,
+    getDashboard
 };

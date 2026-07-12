@@ -1,22 +1,49 @@
 const mongoose = require("mongoose");
 
-
 const visitorSchema = new mongoose.Schema({
 
-    visitorName:String,
-
-    residentId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Resident"
+    residentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Resident",
+        required: true
     },
 
-    date:Date,
+    visitorName: {
+        type: String,
+        required: true
+    },
 
-    entryTime:String,
+    phone: {
+        type: String,
+        required: true
+    },
 
-    exitTime:String
+    relation: {
+        type: String,
+        required: true
+    },
 
+    purpose: {
+        type: String,
+        required: true
+    },
+
+    visitDate: {
+        type: Date,
+        default: Date.now
+    },
+
+    checkIn: {
+    type: Date,
+    default: Date.now
+},
+
+checkOut: {
+    type: Date
+}
+
+}, {
+    timestamps: true
 });
-
 
 module.exports = mongoose.model("Visitor", visitorSchema);
