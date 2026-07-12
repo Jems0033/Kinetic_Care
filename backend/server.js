@@ -48,6 +48,9 @@ app.use("/api/visitors", visitorRoutes);
 const eventRoutes = require("./routes/eventRoutes");
 app.use("/api/events", eventRoutes);
 
+const familyMemberRoutes = require("./routes/familyMemberRoutes");
+app.use("/api/family", familyMemberRoutes);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

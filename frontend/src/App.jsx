@@ -10,6 +10,7 @@ import Donor from "./pages/Donor";
 import Medical from "./pages/Medical";
 import Visitor from "./pages/Visitor";
 import Event from "./pages/Event";
+import FamilyDashboard from "./pages/FamilyDashboard"
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
       <Route path="/visitors" element={<Visitor />} />
 
       <Route path="/events" element={<Event />} />
+
+      <Route path="/family/dashboard" element={<FamilyDashboard />} />
     </Routes>
   );
 }

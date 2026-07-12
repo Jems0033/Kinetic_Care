@@ -4,502 +4,342 @@ import Sidebar from "../components/Sidebar";
 import "../css/Event.css";
 
 function Event() {
+  const [events, setEvents] = useState([]);
 
-    const [events, setEvents] = useState([]);
+  const [search, setSearch] = useState("");
 
-    const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-    const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState(null);
 
-    const [editId, setEditId] = useState(null);
+  const [formData, setFormData] = useState({
+    title: "",
 
-    const [formData, setFormData] = useState({
+    description: "",
 
-        title: "",
+    date: "",
 
-        description: "",
+    time: "",
 
-        date: "",
+    location: "",
+  });
 
-        time: "",
-
-        location: ""
-
-    });
-
-    useEffect(() => {
-
-        getEvents();
-
-    }, []);
-    const getEvents = async () => {
-
+  useEffect(() => {
+    getEvents();
+  }, []);
+  const getEvents = async () => {
     try {
+      const token = localStorage.getItem("token");
 
-        const token = localStorage.getItem("token");
+      const res = await axios.get(
+        "http://localhost:5000/api/events",
 
-        const res = await axios.get(
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
-            "http://localhost:5000/api/events",
-
-            {
-
-                headers: {
-
-                    Authorization: `Bearer ${token}`
-
-                }
-
-            }
-
-        );
-
-        setEvents(res.data);
-
+      setEvents(res.data);
+    } catch (error) {
+      console.log(error);
     }
-
-    catch(error){
-
-        console.log(error);
-
-    }
-
-};
-const handleChange = (e) => {
-
+  };
+  const handleChange = (e) => {
     setFormData({
+      ...formData,
 
-        ...formData,
-
-        [e.target.name]: e.target.value
-
+      [e.target.name]: e.target.value,
     });
+  };
+  const addEvent = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-};
-const addEvent = async () => {
+      await axios.post(
+        "http://localhost:5000/api/events",
 
-    try{
+        formData,
 
-        const token = localStorage.getItem("token");
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
-        await axios.post(
+      alert("Event Added Successfully");
 
-            "http://localhost:5000/api/events",
+      closeModal();
 
-            formData,
-
-            {
-
-                headers:{
-
-                    Authorization:`Bearer ${token}`
-
-                }
-
-            }
-
-        );
-
-        alert("Event Added Successfully");
-
-        closeModal();
-
-        getEvents();
-
+      getEvents();
+    } catch (error) {
+      console.log(error);
     }
+  };
+  // ===========================
+  // Edit Event
+  // ===========================
 
-    catch(error){
-
-        console.log(error);
-
-    }
-
-};
-// ===========================
-// Edit Event
-// ===========================
-
-const editEvent = (event) => {
-
+  const editEvent = (event) => {
     setEditId(event._id);
 
     setFormData({
+      title: event.title,
 
-        title: event.title,
+      description: event.description,
 
-        description: event.description,
+      date: event.date.split("T")[0],
 
-        date: event.date.split("T")[0],
+      time: event.time,
 
-        time: event.time,
-
-        location: event.location
-
+      location: event.location,
     });
 
     setShowModal(true);
+  };
 
-};
+  // ===========================
+  // Update Event
+  // ===========================
 
-// ===========================
-// Update Event
-// ===========================
+  const updateEvent = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-const updateEvent = async () => {
+      await axios.put(
+        `http://localhost:5000/api/events/${editId}`,
+
+        formData,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      alert("Event Updated Successfully");
+
+      closeModal();
+
+      getEvents();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ===========================
+  // Delete Event
+  // ===========================
+
+  const deleteEvent = async (id) => {
+    if (!window.confirm("Delete this event?")) return;
 
     try {
+      const token = localStorage.getItem("token");
 
-        const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/events/${id}`,
 
-        await axios.put(
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
-            `http://localhost:5000/api/events/${editId}`,
+      alert("Event Deleted Successfully");
 
-            formData,
-
-            {
-
-                headers: {
-
-                    Authorization: `Bearer ${token}`
-
-                }
-
-            }
-
-        );
-
-        alert("Event Updated Successfully");
-
-        closeModal();
-
-        getEvents();
-
+      getEvents();
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    catch(error){
+  // ===========================
+  // Close Modal
+  // ===========================
 
-        console.log(error);
-
-    }
-
-};
-
-// ===========================
-// Delete Event
-// ===========================
-
-const deleteEvent = async (id) => {
-
-    if(!window.confirm("Delete this event?")) return;
-
-    try{
-
-        const token = localStorage.getItem("token");
-
-        await axios.delete(
-
-            `http://localhost:5000/api/events/${id}`,
-
-            {
-
-                headers:{
-
-                    Authorization:`Bearer ${token}`
-
-                }
-
-            }
-
-        );
-
-        alert("Event Deleted Successfully");
-
-        getEvents();
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-    }
-
-};
-
-// ===========================
-// Close Modal
-// ===========================
-
-const closeModal = () => {
-
+  const closeModal = () => {
     setEditId(null);
 
     setShowModal(false);
 
     setFormData({
+      title: "",
 
-        title:"",
+      description: "",
 
-        description:"",
+      date: "",
 
-        date:"",
+      time: "",
 
-        time:"",
-
-        location:""
-
+      location: "",
     });
+  };
 
-};
+  // ===========================
+  // Search
+  // ===========================
 
-// ===========================
-// Search
-// ===========================
-
-const filteredEvents = events.filter((event)=>
-
-    event.title.toLowerCase().includes(search.toLowerCase()) ||
-
-    event.location.toLowerCase().includes(search.toLowerCase())
-
-);
-return (
-
+  const filteredEvents = events.filter(
+    (event) =>
+      event.title.toLowerCase().includes(search.toLowerCase()) ||
+      event.location.toLowerCase().includes(search.toLowerCase()),
+  );
+  return (
     <>
+      <div className="event-page">
+        <Sidebar />
 
-        <div className="event-page">
+        <div className="event-content">
+          <div className="event-header">
+            <h1>Events</h1>
 
-            <Sidebar />
+            <button
+              onClick={() => {
+                closeModal();
 
-            <div className="event-content">
+                setShowModal(true);
+              }}
+            >
+              + Add Event
+            </button>
+          </div>
 
-                <div className="event-header">
+          <input
+            type="text"
+            placeholder="Search Event..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-                    <h1>Events</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
 
-                    <button
-                        onClick={() => {
+                <th>Description</th>
 
-                            closeModal();
+                <th>Date</th>
 
-                            setShowModal(true);
+                <th>Time</th>
 
-                        }}
-                    >
-                        + Add Event
-                    </button>
+                <th>Location</th>
 
-                </div>
+                <th>Action</th>
+              </tr>
+            </thead>
 
-                <input
-                    type="text"
-                    placeholder="Search Event..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+            <tbody>
+              {filteredEvents.map((event) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-                <table>
+                const eventDate = new Date(event.date);
+                eventDate.setHours(0, 0, 0, 0);
 
-                    <thead>
+                const isCompleted = eventDate < today;
 
-                        <tr>
+                return (
+                  <tr key={event._id}>
+                    <td>{event.title}</td>
 
-                            <th>Title</th>
+                    <td>{event.description}</td>
 
-                            <th>Description</th>
+                    <td>{new Date(event.date).toLocaleDateString()}</td>
 
-                            <th>Date</th>
+                    <td>{event.time}</td>
 
-                            <th>Time</th>
+                    <td>{event.location}</td>
 
-                            <th>Location</th>
+                    <td>
+                      {isCompleted ? (
+                        <span className="completed">Completed</span>
+                      ) : (
+                        <>
+                          <button
+                            className="edit-btn"
+                            onClick={() => editEvent(event)}
+                          >
+                            Edit
+                          </button>
 
-                            <th>Action</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {
-
-                            filteredEvents.map((event) => {
-
-                                const isCompleted =
-                                    new Date(event.date) < new Date().setHours(0,0,0,0);
-
-                                return (
-
-                                    <tr key={event._id}>
-
-                                        <td>{event.title}</td>
-
-                                        <td>{event.description}</td>
-
-                                        <td>
-
-                                            {new Date(event.date).toLocaleDateString()}
-
-                                        </td>
-
-                                        <td>{event.time}</td>
-
-                                        <td>{event.location}</td>
-
-                                        <td>
-
-                                            {
-
-                                                isCompleted ?
-
-                                                <span className="completed">
-
-                                                    Completed
-
-                                                </span>
-
-                                                :
-
-                                                <>
-
-                                                    <button
-                                                        className="edit-btn"
-                                                        onClick={() => editEvent(event)}
-                                                    >
-                                                        Edit
-                                                    </button>
-
-                                                    <button
-                                                        className="delete-btn"
-                                                        onClick={() => deleteEvent(event._id)}
-                                                    >
-                                                        Delete
-                                                    </button>
-
-                                                </>
-
-                                            }
-
-                                        </td>
-
-                                    </tr>
-
-                                );
-
-                            })
-
-                        }
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
+                          <button
+                            className="delete-btn"
+                            onClick={() => deleteEvent(event._id)}
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        {
+      {showModal && (
+        <div className="modal">
+          <div className="modal-box">
+            <h2>{editId ? "Edit Event" : "Add Event"}</h2>
 
-            showModal && (
+            <input
+              type="text"
+              name="title"
+              placeholder="Event Title"
+              value={formData.title}
+              onChange={handleChange}
+            />
 
-                <div className="modal">
+            <textarea
+              name="description"
+              placeholder="Description"
+              value={formData.description}
+              onChange={handleChange}
+            />
 
-                    <div className="modal-box">
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+            />
 
-                        <h2>
+            <input
+              type="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+            />
 
-                            {
+            <input
+              type="text"
+              name="location"
+              placeholder="Location"
+              value={formData.location}
+              onChange={handleChange}
+            />
 
-                                editId
+            <div className="modal-buttons">
+              <button onClick={editId ? updateEvent : addEvent}>
+                {editId ? "Update" : "Save"}
+              </button>
 
-                                    ? "Edit Event"
-
-                                    : "Add Event"
-
-                            }
-
-                        </h2>
-
-                        <input
-                            type="text"
-                            name="title"
-                            placeholder="Event Title"
-                            value={formData.title}
-                            onChange={handleChange}
-                        />
-
-                        <textarea
-                            name="description"
-                            placeholder="Description"
-                            value={formData.description}
-                            onChange={handleChange}
-                        />
-
-                        <input
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleChange}
-                        />
-
-                        <input
-                            type="time"
-                            name="time"
-                            value={formData.time}
-                            onChange={handleChange}
-                        />
-
-                        <input
-                            type="text"
-                            name="location"
-                            placeholder="Location"
-                            value={formData.location}
-                            onChange={handleChange}
-                        />
-
-                        <div className="modal-buttons">
-
-                            <button
-                                onClick={
-                                    editId
-                                        ? updateEvent
-                                        : addEvent
-                                }
-                            >
-
-                                {
-
-                                    editId
-                                        ? "Update"
-                                        : "Save"
-
-                                }
-
-                            </button>
-
-                            <button
-                                className="cancel-btn"
-                                onClick={closeModal}
-                            >
-                                Cancel
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            )
-
-        }
-
+              <button className="cancel-btn" onClick={closeModal}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
-
-);
-
+  );
 }
 
 export default Event;
