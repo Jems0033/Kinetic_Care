@@ -49,7 +49,10 @@ const eventRoutes = require("./routes/eventRoutes");
 app.use("/api/events", eventRoutes);
 
 const familyMemberRoutes = require("./routes/familyMemberRoutes");
-app.use("/api/family", familyMemberRoutes);
+app.use("/api/family-members", familyMemberRoutes);
+
+const familyDashboardRoutes = require("./routes/familyDashboardRoutes");
+app.use("/api/family-dashboard", familyDashboardRoutes);
 
 const PORT = process.env.PORT || 5000;
 

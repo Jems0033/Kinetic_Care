@@ -1,0 +1,103 @@
+.book-visit-container {
+    min-height: 100vh;
+    background: #f4f7fb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.book-visit-card {
+    width: 100%;
+    max-width: 700px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.book-visit-card h2 {
+    text-align: center;
+    color: #1f4e79;
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+.book-visit-card p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 14px;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    outline: none;
+    font-size: 15px;
+    transition: 0.3s;
+    background: #fafafa;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #1f4e79;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(31, 78, 121, 0.15);
+}
+
+.form-group textarea {
+    resize: none;
+}
+
+.book-visit-card button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #1f4e79;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.book-visit-card button:hover {
+    background: #163b5c;
+    transform: translateY(-2px);
+}
+
+.book-visit-card button:disabled {
+    background: #9aa8b6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 768px) {
+
+    .book-visit-card {
+        padding: 25px;
+    }
+
+    .book-visit-card h2 {
+        font-size: 24px;
+    }
+
+}

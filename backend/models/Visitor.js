@@ -30,17 +30,22 @@ const visitorSchema = new mongoose.Schema({
 
     visitDate: {
         type: Date,
-        default: Date.now
+        required: true
     },
 
     checkIn: {
-    type: Date,
-    default: Date.now
-},
+        type: Date
+    },
 
-checkOut: {
-    type: Date
-}
+    checkOut: {
+        type: Date
+    },
+
+    status: {
+        type: String,
+        enum: ["Pending", "Approved", "Rejected"],
+        default: "Pending"
+    }
 
 }, {
     timestamps: true

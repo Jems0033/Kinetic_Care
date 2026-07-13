@@ -11,6 +11,7 @@ import Medical from "./pages/Medical";
 import Visitor from "./pages/Visitor";
 import Event from "./pages/Event";
 import FamilyDashboard from "./pages/FamilyDashboard"
+import BookVisit from "./pages/BookVisit";
 
 function App() {
   return (
@@ -36,6 +37,8 @@ function App() {
       <Route path="/events" element={<Event />} />
 
       <Route path="/family/dashboard" element={<FamilyDashboard />} />
+
+      <Route path="/family/book-visit" element={<BookVisit />} />
     </Routes>
   );
 }
