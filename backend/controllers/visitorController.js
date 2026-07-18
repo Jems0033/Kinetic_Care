@@ -1,4 +1,5 @@
 const Visitor = require("../models/Visitor");
+const FamilyMember = require("../models/FamilyMember");
 
 // ===========================
 // Add Visitor
@@ -180,6 +181,59 @@ const checkOutVisitor = async (req, res) => {
 
 };
 
+const bookVisit = async (req, res) => {
+
+    try {
+
+        const userId = req.user.id;
+
+        const family = await FamilyMember.findOne({ userId });
+
+        if (!family) {
+            return res.status(404).json({
+                message: "Family Member Not Found"
+            });
+        }
+
+        const {
+            visitorName,
+            phone,
+            relation,
+            purpose,
+            visitDate
+        } = req.body;
+
+        const visitor = await Visitor.create({
+
+            residentId: family.residentId,
+
+            visitorName,
+
+            phone,
+
+            relation,
+
+            purpose,
+
+            visitDate
+
+        });
+
+        res.status(201).json({
+            message: "Visit Booked Successfully",
+            visitor
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
+
+};
+
 module.exports = {
     addVisitor,
     getVisitors,
@@ -187,4 +241,5 @@ module.exports = {
     updateVisitor,
     deleteVisitor,
     checkOutVisitor,
+    bookVisit,
 };

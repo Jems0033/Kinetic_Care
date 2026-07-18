@@ -1,25 +1,92 @@
 const Staff = require("../models/Staff");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 // Add Staff
 const addStaff = async (req, res) => {
+  try {
+
+    const {
+      name,
+      email,
+      password,
+      role,
+      phone,
+      shift,
+      salary,
+    } = req.body;
+
+    if (!name || !role || !phone || !shift || !salary) {
+      return res.status(400).json({
+        message: "Please fill all required fields",
+      });
+    }
+
+    if (role === "Doctor" && (!email || !password)) {
+      return res.status(400).json({
+        message: "Email and Password are required for Doctor",
+      });
+    }
+
+    let user = null;
+    let userId = null;
+
+    if (role === "Doctor") {
+
+      const existingUser = await User.findOne({ email });
+
+      if (existingUser) {
+        return res.status(400).json({
+          message: "Email already exists",
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        role: "doctor",
+      });
+
+      userId = user._id;
+    }
 
     try {
 
-        const staff = await Staff.create(req.body);
+      const staff = await Staff.create({
+        userId,
+        name,
+        role,
+        phone,
+        shift,
+        salary,
+      });
 
-        res.status(201).json({
-            message: "Staff Added Successfully",
-            staff,
-        });
+      return res.status(201).json({
+        message: "Staff Added Successfully",
+        staff,
+      });
 
-    } catch (error) {
+    } catch (err) {
 
-        res.status(500).json({
-            message: error.message,
-        });
+      if (user) {
+        await User.findByIdAndDelete(user._id);
+      }
+
+      return res.status(400).json({
+        message: err.message,
+      });
 
     }
 
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
 };
 
 // Get All Staff

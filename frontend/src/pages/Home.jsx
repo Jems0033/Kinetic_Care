@@ -65,6 +65,13 @@ function Home() {
               </button>
             </a>
 
+            <button
+              className="primary-btn"
+              onClick={() => navigate("/donate")}
+            >
+              Donate
+            </button>
+
           </div>
 
         </div>

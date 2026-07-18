@@ -1,0 +1,105 @@
+.book-visit-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.book-visit-card {
+  width: 100%;
+  max-width: 650px;
+  background: #fff;
+  padding: 35px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.book-visit-card h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.book-visit-card p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #4f8cff;
+  box-shadow: 0 0 5px rgba(79, 140, 255, 0.3);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.book-visit-card button {
+  width: 100%;
+  padding: 14px;
+  background: #4f8cff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.book-visit-card button:hover {
+  background: #2f73f5;
+}
+
+.book-visit-card button:disabled {
+  background: #9fbefc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .book-visit-page {
+    padding: 15px;
+  }
+
+  .book-visit-card {
+    padding: 20px;
+  }
+
+  .book-visit-card h2 {
+    font-size: 24px;
+  }
+
+  .book-visit-card p {
+    font-size: 14px;
+  }
+
+  .book-visit-card button {
+    font-size: 16px;
+  }
+}

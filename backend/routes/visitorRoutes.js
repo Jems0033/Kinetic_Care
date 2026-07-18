@@ -11,11 +11,14 @@ const {
     updateVisitor,
     deleteVisitor,
     checkOutVisitor,
+    bookVisit,
 } = require("../controllers/visitorController");
 
 router.get("/", protect, getVisitors);
 
 router.put("/checkout/:id", protect, checkOutVisitor);
+
+router.post("/book", protect, bookVisit);
 
 router.get("/:id", protect, getVisitorById);
 

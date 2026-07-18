@@ -1,6 +1,9 @@
 const Resident = require("../models/Resident");
 
 const Room=require("../models/Room");
+const bcrypt = require("bcrypt");
+const User = require("../models/User");
+const FamilyMember = require("../models/FamilyMember");
 
 const addResident=async(req,res)=>{
 
@@ -28,7 +31,63 @@ const addResident=async(req,res)=>{
 
         }
 
-        const resident=await Resident.create(req.body);
+        const resident = await Resident.create({
+    name: req.body.name,
+    age: req.body.age,
+    gender: req.body.gender,
+    room: req.body.room,
+    medicalCondition: req.body.medicalCondition,
+    status: req.body.status
+});
+
+if (
+    req.body.familyName &&
+    req.body.familyEmail &&
+    req.body.familyPhone &&
+    req.body.familyPassword &&
+    req.body.relation
+) {
+
+    const userExists = await User.findOne({
+        email: req.body.familyEmail
+    });
+
+    if (userExists) {
+        return res.status(400).json({
+            message: "Family Email Already Exists"
+        });
+    }
+
+    const hashedPassword = await bcrypt.hash(
+        req.body.familyPassword,
+        10
+    );
+
+    const user = await User.create({
+
+        name: req.body.familyName,
+
+        email: req.body.familyEmail,
+
+        phone: req.body.familyPhone,
+
+        password: hashedPassword,
+
+        role: "family"
+
+    });
+
+    await FamilyMember.create({
+
+        userId: user._id,
+
+        residentId: resident._id,
+
+        relation: req.body.relation
+
+    });
+
+}
 
         room.occupiedBeds++;
 
@@ -66,9 +125,33 @@ const addResident=async(req,res)=>{
 // ===============================
 const getResidents = async (req, res) => {
   try {
-    const residents = await Resident.find().populate("room", "roomNumber roomType");
 
-    res.status(200).json(residents);
+    const residents = await Resident.find()
+      .populate("room", "roomNumber roomType");
+
+    const data = await Promise.all(
+      residents.map(async (resident) => {
+
+        const family = await FamilyMember.findOne({
+          residentId: resident._id,
+        }).populate("userId", "name email phone");
+
+        return {
+          ...resident.toObject(),
+          family: family
+            ? {
+                name: family.userId.name,
+                email: family.userId.email,
+                phone: family.userId.phone,
+                relation: family.relation,
+              }
+            : null,
+        };
+      })
+    );
+
+    res.status(200).json(data);
+
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -165,6 +248,34 @@ const updateResident = async (req, res) => {
 
     await resident.save();
 
+    const family = await FamilyMember.findOne({
+    residentId: resident._id
+});
+
+if (family) {
+
+    family.relation = req.body.relation;
+
+    await family.save();
+
+    await User.findByIdAndUpdate(
+
+        family.userId,
+
+        {
+
+            name: req.body.familyName,
+
+            email: req.body.familyEmail,
+
+            phone: req.body.familyPhone
+
+        }
+
+    );
+
+}
+
     res.status(200).json({
       message: "Resident Updated Successfully",
       resident,
@@ -209,6 +320,21 @@ const deleteResident = async (req, res) => {
       await room.save();
     }
 
+    const family = await FamilyMember.findOne({
+    residentId: resident._id
+});
+
+if (family) {
+
+    await User.findByIdAndDelete(
+        family.userId
+    );
+
+    await FamilyMember.findByIdAndDelete(
+        family._id
+    );
+
+}
     // Delete Resident
     await Resident.findByIdAndDelete(req.params.id);
 

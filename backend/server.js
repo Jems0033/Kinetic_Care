@@ -48,8 +48,13 @@ app.use("/api/visitors", visitorRoutes);
 const eventRoutes = require("./routes/eventRoutes");
 app.use("/api/events", eventRoutes);
 
-const familyMemberRoutes = require("./routes/familyMemberRoutes");
-app.use("/api/family", familyMemberRoutes);
+const familyDashboardRoutes = require("./routes/familyDashboardRoutes");
+
+app.use("/api/family", familyDashboardRoutes);
+
+
+const familyMedicalRoutes = require("./routes/familyMedicalRoutes");
+app.use("/api/family", familyMedicalRoutes);
 
 const PORT = process.env.PORT || 5000;
 
