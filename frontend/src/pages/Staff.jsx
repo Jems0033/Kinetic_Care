@@ -36,67 +36,46 @@ function Staff() {
   };
 
   const addStaff = async () => {
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const token = localStorage.getItem("token");
 
-      // 1. Register User
-      const userRes = await axios.post(
-        "http://localhost:5000/api/users/register",
-        {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          phone: formData.phone,
-          role: "staff",
+    await axios.post(
+      "http://localhost:5000/api/staff",
+      {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        phone: formData.phone,
+        shift: formData.shift,
+        salary: formData.salary,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      }
+    );
 
-      // User ID
-      const userId = userRes.data.user._id;
+    alert("Staff Added Successfully");
 
-      // 2. Create Staff
-      await axios.post(
-        "http://localhost:5000/api/staff",
-        {
-          userId,
-          name: formData.name,
-          role: formData.role,
-          phone: formData.phone,
-          shift: formData.shift,
-          salary: formData.salary,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
+      role: "",
+      shift: "",
+      salary: "",
+    });
 
-      alert("Staff Added Successfully");
-      setFormData({
-        name: "",
-        email: "",
-        password: "",
-        phone: "",
-        role: "",
-        shift: "",
-        salary: "",
-      });
+    setShowModal(false);
+    getStaff();
 
-      setShowModal(false);
-
-      getStaff();
-    } catch (error) {
-      console.log(error);
-
-      alert(error.response?.data?.message || "Unable to Add Staff");
-    }
-  };
+  } catch (error) {
+    alert(error.response?.data?.message || "Unable to Add Staff");
+  }
+};
 
   const getStaff = async () => {
     try {

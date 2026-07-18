@@ -13,12 +13,19 @@ function Residents() {
   const [showModal, setShowModal] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    room: "",
-    medicalCondition: "",
-  });
+  name: "",
+  age: "",
+  gender: "",
+  room: "",
+  status: "",
+  medicalCondition: "",
+
+  familyName: "",
+  familyEmail: "",
+  familyPhone: "",
+  familyPassword: "",
+  relation: "",
+});
 
   const [editId, setEditId] = useState(null);
 
@@ -26,26 +33,28 @@ function Residents() {
 
   const [rooms, setRooms] = useState([]);
 
-  const getResidents = async () => {
-    try {
-      const token = localStorage.getItem("token");
+const getResidents = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        "http://localhost:5000/api/residents",
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    const response = await axios.get(
+      "http://localhost:5000/api/residents",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      }
+    );
 
-      setResidents(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    console.log(response.data);
 
+    setResidents(response.data);
+
+  } catch (error) {
+    console.log(error);
+    console.log(error.response?.data);
+  }
+};
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -101,29 +110,54 @@ function Residents() {
     setEditId(null);
 
     setFormData({
-      name: "",
-      age: "",
-      gender: "",
-      room: "",
-      status: "",
-      medicalCondition: "",
-    });
+  name: "",
+  age: "",
+  gender: "",
+  room: "",
+  status: "",
+  medicalCondition: "",
+
+  familyName: "",
+  familyEmail: "",
+  familyPhone: "",
+  familyPassword: "",
+  relation: "",
+});
   };
 
-  const editResident = (resident) => {
-    setFormData({
-      name: resident.name,
-      age: resident.age,
-      gender: resident.gender,
-      room: resident.room,
-      medicalCondition: resident.medicalCondition,
-      status: resident.status,
-    });
+const editResident = (resident) => {
 
-    setEditId(resident._id);
+  setFormData({
 
-    setShowModal(true);
-  };
+    name: resident.name,
+
+    age: resident.age,
+
+    gender: resident.gender,
+
+    room: resident.room?._id,
+
+    medicalCondition: resident.medicalCondition,
+
+    status: resident.status,
+
+    familyName: resident.family?.name || "",
+
+    familyEmail: resident.family?.email || "",
+
+    familyPhone: resident.family?.phone || "",
+
+    familyPassword: "",
+
+    relation: resident.family?.relation || ""
+
+  });
+
+  setEditId(resident._id);
+
+  setShowModal(true);
+
+};
 
   const updateResident = async () => {
     try {
@@ -239,6 +273,12 @@ function Residents() {
 
               <th>MedicalCondition</th>
 
+              <th>Family</th>
+
+<th>Relation</th>
+
+<th>Phone</th>
+
               <th>Action</th>
             </tr>
           </thead>
@@ -257,6 +297,12 @@ function Residents() {
                 <td>{resident.status}</td>
 
                 <td>{resident.medicalCondition}</td>
+
+                <td>{resident.family?.name || "-"}</td>
+
+<td>{resident.family?.relation || "-"}</td>
+
+<td>{resident.family?.phone || "-"}</td>
 
                 <td>
                   <button onClick={() => editResident(resident)}>Edit</button>
@@ -333,6 +379,50 @@ function Residents() {
               value={formData.medicalCondition}
               onChange={handleChange}
             />
+
+            <hr />
+
+<h3>Family Details</h3>
+
+<input
+  type="text"
+  name="familyName"
+  placeholder="Family Member Name"
+  value={formData.familyName}
+  onChange={handleChange}
+/>
+
+<input
+  type="email"
+  name="familyEmail"
+  placeholder="Family Email"
+  value={formData.familyEmail}
+  onChange={handleChange}
+/>
+
+<input
+  type="text"
+  name="familyPhone"
+  placeholder="Family Phone"
+  value={formData.familyPhone}
+  onChange={handleChange}
+/>
+
+<input
+  type="password"
+  name="familyPassword"
+  placeholder="Password"
+  value={formData.familyPassword}
+  onChange={handleChange}
+/>
+
+<input
+  type="text"
+  name="relation"
+  placeholder="Relation"
+  value={formData.relation}
+  onChange={handleChange}
+/>
 
             <div className="modal-buttons">
               <button onClick={editId ? updateResident : addResident}>

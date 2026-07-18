@@ -1,0 +1,41 @@
+.medical-history{
+    padding:30px;
+}
+
+.medical-history h1{
+    margin-bottom:25px;
+    color:#1e3a8a;
+}
+
+.medical-history table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.medical-history th{
+    background:#1e3a8a;
+    color:#fff;
+    padding:14px;
+}
+
+.medical-history td{
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+.medical-history tr:hover{
+    background:#f8f9fa;
+}
+
+.no-record{
+    padding:40px;
+    text-align:center;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+}

@@ -51,10 +51,6 @@ const residentSchema = new mongoose.Schema(
         ref: "Room"
     },
 
-    familyMember:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
-    }
 
 },
 {
