@@ -1,0 +1,267 @@
+.patient-details{
+    padding:30px;
+    background:#f5f7fb;
+    min-height:100vh;
+}
+
+.patient-details h1{
+    color:#2c3e50;
+    margin-bottom:25px;
+}
+
+.patient-card{
+    background:#fff;
+    border-radius:12px;
+    padding:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.info span{
+    display:block;
+    color:#777;
+    margin-bottom:5px;
+}
+
+.info p{
+    font-size:18px;
+    font-weight:600;
+    color:#2c3e50;
+}
+
+.history-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:35px 0 20px;
+}
+
+.add-btn{
+    background:#0d6efd;
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.add-btn:hover{
+    background:#0b5ed7;
+}
+
+.record-card{
+    background:#fff;
+    padding:18px;
+    margin-bottom:18px;
+    border-left:5px solid #0d6efd;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.record-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.record-top h3{
+    margin:0;
+    color:#0d6efd;
+}
+
+.record-top span{
+    background:#eef4ff;
+    color:#0d6efd;
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:14px;
+}
+
+.record-body p{
+    margin:8px 0;
+    color:#444;
+}
+
+.no-record{
+    background:#fff;
+    padding:40px;
+    text-align:center;
+    border-radius:10px;
+    color:#777;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+/* ========================= */
+/* Doctor Modal */
+/* ========================= */
+
+.doctor-modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+
+.doctor-modal{
+    width:500px;
+    max-width:90%;
+    background:#fff;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 15px 35px rgba(0,0,0,.25);
+    animation:doctorPopup .25s ease;
+}
+
+@keyframes doctorPopup{
+    from{
+        opacity:0;
+        transform:scale(.9);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.doctor-modal h2{
+    margin:0 0 25px;
+    text-align:center;
+    color:#2E7D32;
+}
+
+.doctor-form-group{
+    display:block;
+    margin-bottom:18px;
+}
+
+.doctor-form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#444;
+}
+
+.doctor-form-group input,
+.doctor-form-group textarea{
+    width:100%;
+    padding:12px 15px;
+    border:1px solid #dcdcdc;
+    border-radius:8px;
+    font-size:15px;
+    outline:none;
+    box-sizing:border-box;
+    transition:.3s;
+}
+
+.doctor-form-group input:focus,
+.doctor-form-group textarea:focus{
+    border-color:#2E7D32;
+    box-shadow:0 0 6px rgba(46,125,50,.25);
+}
+
+.doctor-form-group textarea{
+    resize:none;
+    min-height:100px;
+}
+
+.doctor-modal-buttons{
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+    margin-top:25px;
+}
+
+.doctor-cancel-btn,
+.doctor-save-btn{
+    border:none;
+    padding:10px 22px;
+    border-radius:8px;
+    font-size:15px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.doctor-cancel-btn{
+    background:#6c757d;
+    color:#fff;
+}
+
+.doctor-cancel-btn:hover{
+    background:#5a6268;
+}
+
+.doctor-save-btn{
+    background:#2E7D32;
+    color:#fff;
+}
+
+.doctor-save-btn:hover{
+    background:#256428;
+}
+
+@media(max-width:768px){
+
+    .patient-card{
+        grid-template-columns:1fr;
+    }
+
+    .history-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+    .doctor-modal{
+        width:95%;
+        padding:20px;
+    }
+
+    .doctor-modal-buttons{
+        flex-direction:column;
+    }
+
+    .doctor-cancel-btn,
+    .doctor-save-btn{
+        width:100%;
+    }
+}
+.back-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 18px;
+    background:#2E7D32;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+    margin-bottom:20px;
+    box-shadow:0 4px 12px rgba(46,125,50,.25);
+}
+
+.back-btn:hover{
+    background:#256428;
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(46,125,50,.35);
+}
+
+.back-btn:active{
+    transform:scale(.97);
+}
+
+.patient-title{
+    margin-bottom:25px;
+    color:#2c3e50;
+    font-size:32px;
+    font-weight:700;
+} 
