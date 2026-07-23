@@ -12,6 +12,13 @@ import Visitor from "./pages/Visitor";
 import Event from "./pages/Event";
 import FamilyDashboard from "./pages/FamilyDashboard"
 import BookVisit from "./pages/BookVisit";
+import MedicalHistory from "./pages/MedicalHistory";
+import FamilyDonate from "./pages/FamilyDonate";
+import PublicDonate from "./pages/PublicDonate";
+import DoctorDashboard from "./pages/DoctorDashboard";
+import DoctorPatients from "./pages/DoctorPatients";
+import PatientDetails from "./pages/PatientDetails";
+
 
 function App() {
   return (
@@ -39,6 +46,19 @@ function App() {
       <Route path="/family/dashboard" element={<FamilyDashboard />} />
 
       <Route path="/family/book-visit" element={<BookVisit />} />
+
+      <Route path="/family/medical-history" element={<MedicalHistory />} />
+
+      <Route path="/family/donate" element={<FamilyDonate />} />
+
+      <Route path="/donate" element={<PublicDonate />} />
+
+      <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+
+      <Route path="/doctor/patients" element={<DoctorPatients />} />
+
+      <Route path="/doctor/patient/:id" element={<PatientDetails />} />
+
     </Routes>
   );
 }
