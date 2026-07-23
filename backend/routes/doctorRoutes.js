@@ -9,6 +9,7 @@ const {
    getDoctorPatients,
     getDoctorPatient,
     addMedicalRecord,
+    getDoctorProfile,
 } = require("../controllers/doctorController");
 
 router.get("/dashboard", protect, getDoctorDashboard);
@@ -17,6 +18,11 @@ router.get(
   "/patients",
   protect,
   getDoctorPatients
+);
+router.get(
+    "/profile",
+    protect,
+    getDoctorProfile
 );
 
 router.get("/patient/:id", protect, getDoctorPatient);

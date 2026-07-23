@@ -17,6 +17,8 @@ function DoctorDashboard() {
     getDashboard();
   }, []);
 
+  
+
   const getDashboard = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -27,7 +29,7 @@ function DoctorDashboard() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setDashboard(res.data);
@@ -45,11 +47,24 @@ function DoctorDashboard() {
         </div>
 
         <button
-    className="patient-btn"
-    onClick={() => navigate("/doctor/patients")}
->
-    View My Patients
-</button>
+          className="patient-btn"
+          onClick={() => navigate("/doctor/patients")}
+        >
+          View My Patients
+        </button>
+        <div className="doctor-profile">
+          <div
+            className="doctor-profile-info"
+          >
+            <div className="doctor-avatar">👨‍⚕️</div>
+
+            <div>
+              <button  onClick={() => navigate("/doctor/profile")}>Dr. Rahul Patel</button>
+            </div>
+          </div>
+
+          
+        </div>
       </div>
 
       <div className="doctor-cards">
@@ -83,25 +98,20 @@ function DoctorDashboard() {
                 <div className="record-top">
                   <h3>{record.residentId?.name}</h3>
 
-                  <span>
-                    {new Date(record.date).toLocaleDateString()}
-                  </span>
+                  <span>{new Date(record.date).toLocaleDateString()}</span>
                 </div>
 
                 <div className="record-body">
                   <p>
-                    <strong>Age :</strong>{" "}
-                    {record.residentId?.age}
+                    <strong>Age :</strong> {record.residentId?.age}
                   </p>
 
                   <p>
-                    <strong>Problem :</strong>{" "}
-                    {record.problem}
+                    <strong>Problem :</strong> {record.problem}
                   </p>
 
                   <p>
-                    <strong>Medicine :</strong>{" "}
-                    {record.medicine}
+                    <strong>Medicine :</strong> {record.medicine}
                   </p>
                 </div>
               </div>

@@ -18,6 +18,7 @@ import PublicDonate from "./pages/PublicDonate";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import DoctorPatients from "./pages/DoctorPatients";
 import PatientDetails from "./pages/PatientDetails";
+import DoctorProfile from "./pages/DoctorProfile"
 
 function App() {
   return (
@@ -57,6 +58,11 @@ function App() {
       <Route path="/doctor/patients" element={<DoctorPatients />} />
 
       <Route path="/doctor/patient/:id" element={<PatientDetails />} />
+
+      <Route
+    path="/doctor/profile"
+    element={<DoctorProfile />}
+/>
 
     </Routes>
   );
