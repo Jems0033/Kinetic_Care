@@ -1,91 +1,91 @@
+const Room = require("../models/Room");
 const Staff = require("../models/Staff");
 const User = require("../models/User");
+const Resident = require("../models/Resident");
+const MedicineLog = require("../models/MedicineLog");
+const Vital = require("../models/Vital");
 const bcrypt = require("bcrypt");
 // Add Staff
 const addStaff = async (req, res) => {
-  try {
+  let createdUser = null;
 
+  try {
     const {
       name,
       email,
       password,
-      role,
       phone,
+      role,
       shift,
       salary,
+      address,
     } = req.body;
 
-    if (!name || !role || !phone || !shift || !salary) {
+    if (!name || !email || !password || !role || !shift) {
       return res.status(400).json({
-        message: "Please fill all required fields",
+        message: "Name, email, password, role and shift are required",
       });
     }
 
-    if (role === "Doctor" && (!email || !password)) {
+    const validRoles = [
+      "Doctor",
+      "Nurse",
+      "Caretaker",
+      "Manager",
+      "Receptionist",
+    ];
+
+    if (!validRoles.includes(role)) {
       return res.status(400).json({
-        message: "Email and Password are required for Doctor",
+        message: "Invalid staff role",
       });
     }
 
-    let user = null;
-    let userId = null;
-
-    if (role === "Doctor") {
-
-      const existingUser = await User.findOne({ email });
-
-      if (existingUser) {
-        return res.status(400).json({
-          message: "Email already exists",
-        });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      user = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-        role: "doctor",
-      });
-
-      userId = user._id;
-    }
-
-    try {
-
-      const staff = await Staff.create({
-        userId,
-        name,
-        role,
-        phone,
-        shift,
-        salary,
-      });
-
-      return res.status(201).json({
-        message: "Staff Added Successfully",
-        staff,
-      });
-
-    } catch (err) {
-
-      if (user) {
-        await User.findByIdAndDelete(user._id);
-      }
-
-      return res.status(400).json({
-        message: err.message,
-      });
-
-    }
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: error.message,
+    const existingUser = await User.findOne({
+      email: email.toLowerCase(),
     });
 
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already registered",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const loginRole = role === "Doctor" ? "doctor" : "staff";
+
+    createdUser = await User.create({
+      name,
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      phone,
+      role: loginRole,
+    });
+
+    const staff = await Staff.create({
+      name,
+      email: email.toLowerCase(),
+      phone,
+      role,
+      shift,
+      salary,
+      address,
+      userId: createdUser._id,
+    });
+
+    return res.status(201).json({
+      message: "Staff and login account created successfully",
+      staff,
+    });
+  } catch (error) {
+    if (createdUser) {
+      await User.findByIdAndDelete(createdUser._id);
+    }
+
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
@@ -217,6 +217,176 @@ const getDoctors = async (req, res) => {
 
 };
 
+const getStaffDashboard = async (req, res) => {
+  try {
+
+    const staff = await Staff.findOne({
+      userId: req.user.id,
+    });
+
+    if (!staff) {
+      return res.status(404).json({
+        message: "Staff not found",
+      });
+    }
+
+    const totalResidents = await Resident.countDocuments();
+
+    res.json({
+      name: staff.name,
+      role: staff.role,
+      shift: staff.shift,
+      totalResidents,
+      assignedResidents: totalResidents
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+const getStaffResidents = async (req, res) => {
+  try {
+
+    const residents = await Resident.find()
+      .populate("room", "roomNumber")
+      .sort({ createdAt: -1 });
+
+    const data = residents.map((resident) => ({
+      _id: resident._id,
+      name: resident.name,
+      age: resident.age,
+      gender: resident.gender,
+      room: resident.room ? resident.room.roomNumber : "N/A",
+      medicalCondition: resident.medicalCondition,
+    }));
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
+};
+
+const getStaffResidentById = async (req, res) => {
+  try {
+    const resident = await Resident.findById(req.params.id)
+      .populate("room", "roomNumber roomType");
+
+    if (!resident) {
+      return res.status(404).json({
+        message: "Resident not found",
+      });
+    }
+
+    return res.status(200).json({
+      resident,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const updateVitals = async (req, res) => {
+  try {
+    const {
+      temperature,
+      bloodPressure,
+      pulse,
+      sugarLevel,
+      weight,
+      notes,
+    } = req.body;
+
+    const vital = await Vital.create({
+      resident: req.params.id,
+      staff: req.user.id,
+      temperature,
+      bloodPressure,
+      pulse,
+      sugarLevel,
+      weight,
+      notes,
+    });
+
+    res.status(201).json({
+      message: "Vitals Updated Successfully",
+      vital,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+const giveMedicine = async (req, res) => {
+  try {
+    const {
+      medicineName,
+      dosage,
+      time,
+      status,
+      notes,
+    } = req.body;
+
+    const medicine = await MedicineLog.create({
+      resident: req.params.id,
+      staff: req.user.id,
+      medicineName,
+      dosage,
+      time,
+      status,
+      notes,
+    });
+
+    res.status(201).json({
+      message: "Medicine record saved successfully.",
+      medicine,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
+const getResidentHistory = async (req, res) => {
+  try {
+    const vitals = await Vital.find({
+      resident: req.params.id,
+    })
+      .populate("staff", "name")
+      .sort({ createdAt: -1 });
+
+    const medicines = await MedicineLog.find({
+      resident: req.params.id,
+    })
+      .populate("staff", "name")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      vitals,
+      medicines,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 module.exports = {
     addStaff,
     getStaff,
@@ -224,4 +394,10 @@ module.exports = {
     updateStaff,
     deleteStaff,
     getDoctors,
+    getStaffDashboard,
+    getStaffResidents,
+    getStaffResidentById,
+    updateVitals,
+    giveMedicine,
+    getResidentHistory,
 };

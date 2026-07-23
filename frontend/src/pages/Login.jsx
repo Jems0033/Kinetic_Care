@@ -49,7 +49,11 @@ function Login() {
       } 
       else if (res.data.user.role === "doctor") {
     navigate("/doctor/dashboard");
+
 }
+else if (res.data.user.role === "staff") {
+    navigate("/staff-dashboard");
+  }
 else {
         setError("Unauthorized User");
       }
