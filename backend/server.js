@@ -56,6 +56,10 @@ app.use("/api/family", familyDashboardRoutes);
 const familyMedicalRoutes = require("./routes/familyMedicalRoutes");
 app.use("/api/family", familyMedicalRoutes);
 
+const doctorRoutes = require("./routes/doctorRoutes");
+
+app.use("/api/doctor", doctorRoutes);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

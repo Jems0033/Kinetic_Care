@@ -47,8 +47,8 @@ function Login() {
       } else if (res.data.user.role === "family") {
         navigate("/family-dashboard");
       } 
-      else if (user.role === "doctor") {
-    navigate("/doctor-dashboard");
+      else if (res.data.user.role === "doctor") {
+    navigate("/doctor/dashboard");
 }
 else {
         setError("Unauthorized User");
