@@ -7,12 +7,13 @@ function DoctorPatients() {
 
   const [patients, setPatients] = useState([]);
   const [search, setSearch] = useState("");
+  const [openMenu, setOpenMenu] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getPatients();
   }, []);
-
-  const navigate = useNavigate();
 
   const getPatients = async () => {
     try {
@@ -31,10 +32,13 @@ function DoctorPatients() {
       setPatients(res.data);
 
     } catch (error) {
-
       console.log(error);
-
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   const filteredPatients = patients.filter((patient) =>
@@ -44,38 +48,73 @@ function DoctorPatients() {
   return (
     <div className="doctor-patients">
 
-        <div className="doctor-topbar">
+      {/* Top Bar */}
 
-  <div>
-    <h1>Doctor Dashboard</h1>
-    <p>Welcome Back</p>
-  </div>
+      <div className="doctor-topbar">
 
-  <div className="doctor-profile">
-    <div className="doctor-avatar">
-      👨‍⚕️
-    </div>
+        <div>
+          <h1>Doctor Dashboard</h1>
+          <p>Welcome Back</p>
+        </div>
 
-    <div>
-      <h3>Dr. Rahul Patel</h3>
-      <span>Doctor</span>
-    </div>
-  </div>
+        <div className="doctor-profile">
 
-</div>
+          <div
+            className="doctor-profile-info"
+            onClick={() => setOpenMenu(!openMenu)}
+          >
+
+            <div className="doctor-avatar">
+              👨‍⚕️
+            </div>
+
+            <div>
+              <h3>Dr. Rahul Patel</h3>
+              <span>Doctor ▼</span>
+            </div>
+
+          </div>
+
+          {openMenu && (
+
+            <div className="profile-dropdown">
+
+              <button
+                onClick={() => navigate("/doctor/profile")}
+              >
+                👤 My Profile
+              </button>
+
+              <button
+                onClick={logout}
+              >
+                🚪 Logout
+              </button>
+
+            </div>
+
+          )}
+
+        </div>
+
+      </div>
+
+      {/* Patients Header */}
 
       <div className="patients-header">
 
-  <h2>My Patients</h2>
+        <h2>My Patients</h2>
 
-  <input
-    type="text"
-    placeholder="Search Patient..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
+        <input
+          type="text"
+          placeholder="Search Patient..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
 
-</div>
+      </div>
+
+      {/* Table */}
 
       <div className="table-container">
 
@@ -111,23 +150,21 @@ function DoctorPatients() {
                 <tr key={patient._id}>
 
                   <td>{patient.name}</td>
-
                   <td>{patient.age}</td>
-
                   <td>{patient.gender}</td>
-
                   <td>{patient.room}</td>
-
                   <td>{patient.latestProblem}</td>
 
                   <td>
 
                     <button
-  className="view-btn"
-  onClick={() => navigate(`/doctor/patient/${patient._id}`)}
->
-  View
-</button>
+                      className="view-btn"
+                      onClick={() =>
+                        navigate(`/doctor/patient/${patient._id}`)
+                      }
+                    >
+                      View
+                    </button>
 
                   </td>
 

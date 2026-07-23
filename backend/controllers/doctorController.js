@@ -195,10 +195,40 @@ const addMedicalRecord = async (req, res) => {
 
   }
 };
+const getDoctorProfile = async (req, res) => {
+
+    try {
+
+        const staff = await Staff.findOne({
+            userId: req.user.id
+        }).populate("userId");
+
+        if (!staff) {
+            return res.status(404).json({
+                message: "Doctor not found"
+            });
+        }
+
+        res.json({
+            name: staff.name,
+            email: staff.userId.email,
+            phone: staff.phone,
+            role: staff.role,
+            shift: staff.shift
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+
+};
 
 module.exports = {
   getDoctorDashboard,
   getDoctorPatients,
   getDoctorPatient,
   addMedicalRecord,
+  getDoctorProfile,
 };
