@@ -19,21 +19,21 @@ const residentSchema = new mongoose.Schema(
         required:true
     },
 
-    dob:{
-        type:Date
-    },
+    // dob:{
+    //     type:Date
+    // },
 
-    bloodGroup:{
-        type:String
-    },
+    // bloodGroup:{
+    //     type:String
+    // },
 
     medicalCondition:{
         type:String
     },
 
-    emergencyContact:{
-        type:String
-    },
+    // emergencyContact:{
+    //     type:String
+    // },
 
     admissionDate:{
         type:Date,

@@ -16,7 +16,7 @@ const getDashboard = async (req, res) => {
 
         const totalDonors = await Donor.countDocuments();
 
-        const totalEvents = await Event.countDocuments();
+        const totalEvents = await Event.countDocuments();  
 
         res.status(200).json({
 
