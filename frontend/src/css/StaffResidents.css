@@ -1,0 +1,334 @@
+.staff-residents-page {
+  min-height: 100vh;
+  padding: 30px;
+  background:
+    radial-gradient(circle at top right, #dff7eb 0, transparent 28%),
+    #f4f8f6;
+  font-family: "Poppins", sans-serif;
+}
+
+.residents-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 22px;
+  align-items: center;
+  padding: 26px 30px;
+  margin-bottom: 24px;
+  color: white;
+  background: linear-gradient(135deg, #087f5b, #20a36f);
+  border-radius: 22px;
+  box-shadow: 0 15px 35px rgba(8, 127, 91, 0.22);
+}
+
+.residents-topbar h1 {
+  margin: 0;
+  font-size: 31px;
+}
+
+.residents-topbar p {
+  margin: 7px 0 0;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.residents-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  color: #087f5b;
+  font-weight: 700;
+  background: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.residents-back-btn:hover {
+  transform: translateX(-4px);
+}
+
+.resident-total-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 190px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+}
+
+.resident-total-box svg {
+  font-size: 28px;
+}
+
+.resident-total-box span,
+.resident-total-box strong {
+  display: block;
+}
+
+.resident-total-box span {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.resident-total-box strong {
+  margin-top: 2px;
+  font-size: 23px;
+}
+
+.resident-search-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 22px;
+  margin-bottom: 25px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(25, 55, 45, 0.07);
+}
+
+.resident-search-section p {
+  margin: 0;
+  color: #64746d;
+}
+
+.resident-search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(570px, 100%);
+  padding: 13px 16px;
+  background: #f1f8f4;
+  border: 1px solid #d7e9df;
+  border-radius: 12px;
+}
+
+.resident-search-box svg {
+  color: #16875f;
+}
+
+.resident-search-box input {
+  width: 100%;
+  color: #26352f;
+  font-size: 15px;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.resident-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+  gap: 23px;
+}
+
+.resident-profile-card {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e2eee8;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(28, 67, 52, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.resident-profile-card::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  content: "";
+  background: linear-gradient(90deg, #087f5b, #5cc995);
+}
+
+.resident-profile-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 38px rgba(28, 67, 52, 0.15);
+}
+
+.resident-card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #edf2ef;
+}
+
+.resident-avatar {
+  display: grid;
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  color: white;
+  font-size: 25px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #087f5b, #55c68f);
+  border-radius: 50%;
+  place-items: center;
+  box-shadow: 0 7px 16px rgba(8, 127, 91, 0.23);
+}
+
+.resident-basic-info h3 {
+  margin: 0 0 7px;
+  color: #22352d;
+  font-size: 19px;
+}
+
+.resident-gender-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  color: #087f5b;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e5f7ee;
+  border-radius: 20px;
+}
+
+.resident-card-body {
+  display: grid;
+  gap: 16px;
+  padding: 21px 0;
+}
+
+.resident-info-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.resident-info-icon {
+  display: grid;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  color: #087f5b;
+  background: #edf8f2;
+  border-radius: 11px;
+  place-items: center;
+}
+
+.resident-info-row span,
+.resident-info-row strong {
+  display: block;
+}
+
+.resident-info-row span {
+  margin-bottom: 3px;
+  color: #829088;
+  font-size: 12px;
+}
+
+.resident-info-row strong {
+  color: #34463e;
+  font-size: 14px;
+}
+
+.resident-view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 12px 16px;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #087f5b, #20a36f);
+  border: none;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.resident-view-btn:hover {
+  box-shadow: 0 8px 18px rgba(8, 127, 91, 0.24);
+  transform: translateY(-2px);
+}
+
+.resident-status-box,
+.resident-error-box,
+.resident-empty-box {
+  padding: 55px 25px;
+  text-align: center;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(28, 67, 52, 0.07);
+}
+
+.resident-empty-box svg {
+  color: #9ab6aa;
+  font-size: 50px;
+}
+
+.resident-empty-box h3 {
+  margin-bottom: 7px;
+  color: #31453c;
+}
+
+.resident-empty-box p {
+  color: #7f9088;
+}
+
+.resident-error-box {
+  color: #b02a37;
+}
+
+.resident-error-box button {
+  padding: 10px 18px;
+  color: white;
+  font-weight: 600;
+  background: #b02a37;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.resident-loader {
+  width: 45px;
+  height: 45px;
+  margin: 0 auto 15px;
+  border: 5px solid #dcece4;
+  border-top-color: #087f5b;
+  border-radius: 50%;
+  animation: residentSpin 0.8s linear infinite;
+}
+
+@keyframes residentSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .staff-residents-page {
+    padding: 16px;
+  }
+
+  .residents-topbar {
+    grid-template-columns: 1fr;
+    padding: 22px;
+    text-align: center;
+  }
+
+  .residents-back-btn {
+    justify-self: start;
+  }
+
+  .resident-total-box {
+    justify-content: center;
+  }
+
+  .resident-search-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resident-search-section p {
+    text-align: center;
+  }
+}

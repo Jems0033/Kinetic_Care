@@ -1,0 +1,96 @@
+.medicine-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.medicine-card {
+  width: 100%;
+  max-width: 700px;
+  background: white;
+  padding: 35px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+}
+
+.medicine-card h1 {
+  text-align: center;
+  color: #0f9d58;
+}
+
+.medicine-card p {
+  text-align: center;
+  color: gray;
+  margin-bottom: 30px;
+}
+
+.medicine-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.medicine-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.medicine-group input,
+.medicine-group textarea,
+.medicine-group select {
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.medicine-group input:focus,
+.medicine-group textarea:focus,
+.medicine-group select:focus {
+  outline: none;
+  border-color: #0f9d58;
+}
+
+.medicine-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.cancel-medicine-btn,
+.save-medicine-btn {
+  border: none;
+  padding: 13px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.cancel-medicine-btn {
+  background: #ddd;
+}
+
+.save-medicine-btn {
+  background: #0f9d58;
+  color: white;
+}
+
+.save-medicine-btn:hover {
+  background: #0c874b;
+}
+
+@media (max-width:768px) {
+
+  .medicine-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .cancel-medicine-btn,
+  .save-medicine-btn {
+    width: 100%;
+  }
+}

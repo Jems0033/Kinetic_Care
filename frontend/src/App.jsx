@@ -19,7 +19,12 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import DoctorPatients from "./pages/DoctorPatients";
 import PatientDetails from "./pages/PatientDetails";
 import DoctorProfile from "./pages/DoctorProfile"
-
+import StaffDashboard from "./pages/StaffDashboard";
+import StaffResidents from "./pages/StaffResidents";
+import StaffResidentDetails from "./pages/StaffResidentDetails";
+import UpdateVitals  from "./pages/UpdateVitals";
+import GiveMedicine from "./pages/GiveMedicine";
+import ResidentHistory from "./pages/ResidentHistory";
 function App() {
   return (
     <Routes>
@@ -30,6 +35,25 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       <Route path="/residents" element={<Residents />} />
+
+      <Route
+    path="/staff/resident/:id"
+    element={<StaffResidentDetails />}
+  />
+  <Route
+  path="/staff/resident/:id/vitals"
+  element={<UpdateVitals />}
+/>
+
+<Route
+  path="/staff/resident/:id/medicine"
+  element={<GiveMedicine />}
+/>
+
+<Route
+  path="/staff/resident/:id/history"
+  element={<ResidentHistory />}
+/>
 
       <Route path="/staff" element={<Staff />} />
 
@@ -63,6 +87,8 @@ function App() {
     path="/doctor/profile"
     element={<DoctorProfile />}
 />
+<Route path="/staff-dashboard" element={<StaffDashboard />} />
+<Route path="/staff/residents" element={<StaffResidents />} />
 
     </Routes>
   );
