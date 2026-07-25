@@ -1,30 +1,38 @@
 import { Routes, Route } from "react-router-dom";
 
+import Dashboard from "./pages/admin/Dashboard";
+import Residents from "./pages/admin/Residents";
+import Staff from "./pages/admin/Staff";
+import Room from "./pages/admin/Room";
+import Donor from "./pages/admin/Donor";
+import Medical from "./pages/admin/Medical";
+import Visitor from "./pages/admin/Visitor";
+import Event from "./pages/admin/Event";
+
+import DoctorDashboard from "./pages/doctor/DoctorDashboard";
+import DoctorPatients from "./pages/doctor/DoctorPatients";
+import PatientDetails from "./pages/doctor/PatientDetails";
+import DoctorProfile from "./pages/doctor/DoctorProfile";
+
+import MedicalHistory from "./pages/family/MedicalHistory";
+import FamilyDonate from "./pages/family/FamilyDonate";
+import FamilyDashboard from "./pages/family/FamilyDashboard";
+import BookVisit from "./pages/family/BookVisit";
+
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Residents from "./pages/Residents";
-import Staff from "./pages/Staff";
-import Room from "./pages/Room";
-import Donor from "./pages/Donor";
-import Medical from "./pages/Medical";
-import Visitor from "./pages/Visitor";
-import Event from "./pages/Event";
-import FamilyDashboard from "./pages/FamilyDashboard";
-import BookVisit from "./pages/BookVisit";
-import MedicalHistory from "./pages/MedicalHistory";
-import FamilyDonate from "./pages/FamilyDonate";
 import PublicDonate from "./pages/PublicDonate";
-import DoctorDashboard from "./pages/DoctorDashboard";
-import DoctorPatients from "./pages/DoctorPatients";
-import PatientDetails from "./pages/PatientDetails";
-import DoctorProfile from "./pages/DoctorProfile"
-import StaffDashboard from "./pages/StaffDashboard";
-import StaffResidents from "./pages/StaffResidents";
-import StaffResidentDetails from "./pages/StaffResidentDetails";
-import UpdateVitals  from "./pages/UpdateVitals";
-import GiveMedicine from "./pages/GiveMedicine";
-import ResidentHistory from "./pages/ResidentHistory";
+
+import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+
+import StaffDashboard from "./pages/staff/StaffDashboard";
+import StaffResidents from "./pages/staff/StaffResidents";
+import StaffResidentDetails from "./pages/staff/StaffResidentDetails";
+import UpdateVitals  from "./pages/staff/UpdateVitals";
+import GiveMedicine from "./pages/staff/GiveMedicine";
+import ResidentHistory from "./pages/staff/ResidentHistory";
+
+
 function App() {
   return (
     <Routes>
@@ -89,6 +97,10 @@ function App() {
 />
 <Route path="/staff-dashboard" element={<StaffDashboard />} />
 <Route path="/staff/residents" element={<StaffResidents />} />
+<Route
+  path="/forgot-password"
+  element={<ForgotPassword />}
+/>
 
     </Routes>
   );

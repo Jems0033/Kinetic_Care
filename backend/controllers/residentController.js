@@ -356,8 +356,9 @@ const getRecentResidents = async (req, res) => {
     try {
 
         const residents = await Resident.find()
+            .populate("room")
             .sort({ createdAt: -1 })
-            .limit(5);
+            .limit(6);
 
         res.status(200).json(residents);
 
