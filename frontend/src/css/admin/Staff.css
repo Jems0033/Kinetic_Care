@@ -821,3 +821,17 @@
     }
 
 }
+.staff-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gender-badge {
+  background: #e8f1ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}

@@ -43,6 +43,7 @@ const getLeastAssignedStaff = async (role, shift, residentField) => {
     };
     
 const addResident = async (req, res) => {
+  let resident;
 
   try {
 
@@ -99,7 +100,25 @@ const addResident = async (req, res) => {
       });
     }
 
-    const resident = await Resident.create({
+    if (
+  req.body.familyName &&
+  req.body.familyEmail &&
+  req.body.familyPhone &&
+  req.body.familyPassword &&
+  req.body.relation
+) {
+  const userExists = await User.findOne({
+    email: req.body.familyEmail,
+  });
+
+  if (userExists) {
+    return res.status(400).json({
+      message: "Family Email Already Exists",
+    });
+  }
+}
+
+    resident = await Resident.create({
       name: req.body.name,
       age: req.body.age,
       gender: req.body.gender,
@@ -122,15 +141,6 @@ const addResident = async (req, res) => {
       req.body.relation
     ) {
 
-      const userExists = await User.findOne({
-        email: req.body.familyEmail
-      });
-
-      if (userExists) {
-        return res.status(400).json({
-          message: "Family Email Already Exists"
-        });
-      }
 
       const hashedPassword = await bcrypt.hash(
         req.body.familyPassword,
@@ -185,13 +195,15 @@ const addResident = async (req, res) => {
 
   catch (error) {
 
-    res.status(500).json({
-
-      message: error.message
-
-    });
-
+  if (resident?._id) {
+    await Resident.findByIdAndDelete(resident._id);
   }
+
+  res.status(500).json({
+    message: error.message,
+  });
+
+}
 
 };
 // ===============================

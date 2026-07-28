@@ -14,15 +14,16 @@ const addStaff = async (req, res) => {
       email,
       password,
       phone,
+      gender,
       role,
       shift,
       salary,
       address,
     } = req.body;
 
-    if (!name || !email || !password || !role || !shift) {
+    if (!name || !email || !password || !role || !shift || !gender) {
       return res.status(400).json({
-        message: "Name, email, password, role and shift are required",
+        message: "Name, email, password, role, shift and gender are required",
       });
     }
 
@@ -63,6 +64,7 @@ const addStaff = async (req, res) => {
       name,
       email: email.toLowerCase(),
       phone,
+      gender,
       role,
       shift,
       salary,
