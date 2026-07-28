@@ -14,8 +14,6 @@ const {
     getStaffDashboard,
     getStaffResidents,
     getStaffResidentById,
-    updateVitals,
-    giveMedicine,
     getResidentHistory,
 } = require("../controllers/staffController");
 
@@ -27,12 +25,6 @@ router.get("/residents", protect, getStaffResidents);
 
 router.get("/resident/:id", protect, getStaffResidentById);
 
-router.post("/resident/:id/vitals",protect,updateVitals);
-router.post(
-  "/resident/:id/medicine",
-  protect,
-  giveMedicine
-);
 router.get(
     "/resident/:id/history",
     protect,

@@ -19,21 +19,9 @@ const residentSchema = new mongoose.Schema(
         required:true
     },
 
-    // dob:{
-    //     type:Date
-    // },
-
-    // bloodGroup:{
-    //     type:String
-    // },
-
     medicalCondition:{
         type:String
     },
-
-    // emergencyContact:{
-    //     type:String
-    // },
 
     admissionDate:{
         type:Date,
@@ -51,6 +39,25 @@ const residentSchema = new mongoose.Schema(
         ref: "Room"
     },
 
+    morningDoctor: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Staff",
+},
+
+morningCaretaker: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Staff",
+},
+
+nightDoctor: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Staff",
+},
+
+nightCaretaker: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Staff",
+},
 
 },
 {

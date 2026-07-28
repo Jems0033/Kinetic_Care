@@ -12,10 +12,7 @@ const staffSchema = new mongoose.Schema({
         type:String,
         enum:[
             "Doctor",
-            "Nurse",
             "Caretaker",
-            "Manager",
-            "Receptionist"
         ],
         required:true
     },
@@ -26,7 +23,6 @@ const staffSchema = new mongoose.Schema({
     type:String,
     enum:[
         "Morning",
-        "Evening",
         "Night"
     ]
 },

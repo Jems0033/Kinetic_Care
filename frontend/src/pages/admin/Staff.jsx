@@ -456,21 +456,10 @@ function Staff() {
                     Doctor
                   </option>
 
-                  <option value="Nurse">
-                    Nurse
-                  </option>
-
                   <option value="Caretaker">
                     Caretaker
                   </option>
 
-                  <option value="Manager">
-                    Manager
-                  </option>
-
-                  <option value="Receptionist">
-                    Receptionist
-                  </option>
                 </select>
               </div>
 
@@ -502,10 +491,6 @@ function Staff() {
 
                   <option value="Morning">
                     Morning
-                  </option>
-
-                  <option value="Evening">
-                    Evening
                   </option>
 
                   <option value="Night">

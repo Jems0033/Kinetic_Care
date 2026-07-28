@@ -3,7 +3,6 @@ const Staff = require("../models/Staff");
 const User = require("../models/User");
 const Resident = require("../models/Resident");
 const MedicineLog = require("../models/MedicineLog");
-const Vital = require("../models/Vital");
 const bcrypt = require("bcrypt");
 // Add Staff
 const addStaff = async (req, res) => {
@@ -29,10 +28,7 @@ const addStaff = async (req, res) => {
 
     const validRoles = [
       "Doctor",
-      "Nurse",
       "Caretaker",
-      "Manager",
-      "Receptionist",
     ];
 
     if (!validRoles.includes(role)) {
@@ -92,128 +88,128 @@ const addStaff = async (req, res) => {
 // Get All Staff
 const getStaff = async (req, res) => {
 
-    try {
+  try {
 
-        const staff = await Staff.find();
+    const staff = await Staff.find();
 
-        res.status(200).json(staff);
+    res.status(200).json(staff);
 
-    } catch (error) {
+  } catch (error) {
 
-        res.status(500).json({
-            message: error.message,
-        });
+    res.status(500).json({
+      message: error.message,
+    });
 
-    }
+  }
 
 };
 
 // Get Staff By Id
 const getStaffById = async (req, res) => {
 
-    try {
+  try {
 
-        const staff = await Staff.findById(req.params.id);
+    const staff = await Staff.findById(req.params.id);
 
-        if (!staff) {
+    if (!staff) {
 
-            return res.status(404).json({
-                message: "Staff Not Found",
-            });
-
-        }
-
-        res.status(200).json(staff);
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: error.message,
-        });
+      return res.status(404).json({
+        message: "Staff Not Found",
+      });
 
     }
+
+    res.status(200).json(staff);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
 
 };
 
 // Update Staff
 const updateStaff = async (req, res) => {
 
-    try {
+  try {
 
-        const staff = await Staff.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+    const staff = await Staff.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-        res.status(200).json({
-            message: "Staff Updated Successfully",
-            staff,
-        });
+    res.status(200).json({
+      message: "Staff Updated Successfully",
+      staff,
+    });
 
-    } catch (error) {
+  } catch (error) {
 
-        res.status(500).json({
-            message: error.message,
-        });
+    res.status(500).json({
+      message: error.message,
+    });
 
-    }
+  }
 
 };
 
 // Delete Staff
 const deleteStaff = async (req, res) => {
 
-    try {
+  try {
 
-        const staff = await Staff.findById(req.params.id);
+    const staff = await Staff.findById(req.params.id);
 
-        if (!staff) {
-            return res.status(404).json({
-                message: "Staff Not Found"
-            });
-        }
-
-        // Delete User
-        await User.findByIdAndDelete(staff.userId);
-
-        // Delete Staff
-        await Staff.findByIdAndDelete(req.params.id);
-
-        res.status(200).json({
-            message: "Staff Deleted Successfully"
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: error.message
-        });
-
+    if (!staff) {
+      return res.status(404).json({
+        message: "Staff Not Found"
+      });
     }
+
+    // Delete User
+    await User.findByIdAndDelete(staff.userId);
+
+    // Delete Staff
+    await Staff.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Staff Deleted Successfully"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
 
 };
 
-    // ==========================
+// ==========================
 // Get All Doctors
 // ==========================
 const getDoctors = async (req, res) => {
 
-    try {
+  try {
 
-        const doctors = await Staff.find({
-            role: "Doctor"
-        });
+    const doctors = await Staff.find({
+      role: "Doctor"
+    });
 
-        res.status(200).json(doctors);
+    res.status(200).json(doctors);
 
-    } catch (error) {
+  } catch (error) {
 
-        res.status(500).json({
-            message: error.message
-        });
+    res.status(500).json({
+      message: error.message
+    });
 
-    }
+  }
 
 };
 
@@ -296,72 +292,6 @@ const getStaffResidentById = async (req, res) => {
   }
 };
 
-const updateVitals = async (req, res) => {
-  try {
-    const {
-      temperature,
-      bloodPressure,
-      pulse,
-      sugarLevel,
-      weight,
-      notes,
-    } = req.body;
-
-    const vital = await Vital.create({
-      resident: req.params.id,
-      staff: req.user.id,
-      temperature,
-      bloodPressure,
-      pulse,
-      sugarLevel,
-      weight,
-      notes,
-    });
-
-    res.status(201).json({
-      message: "Vitals Updated Successfully",
-      vital,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-
-const giveMedicine = async (req, res) => {
-  try {
-    const {
-      medicineName,
-      dosage,
-      time,
-      status,
-      notes,
-    } = req.body;
-
-    const medicine = await MedicineLog.create({
-      resident: req.params.id,
-      staff: req.user.id,
-      medicineName,
-      dosage,
-      time,
-      status,
-      notes,
-    });
-
-    res.status(201).json({
-      message: "Medicine record saved successfully.",
-      medicine,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-
 
 const getResidentHistory = async (req, res) => {
   try {
@@ -388,16 +318,14 @@ const getResidentHistory = async (req, res) => {
   }
 };
 module.exports = {
-    addStaff,
-    getStaff,
-    getStaffById,
-    updateStaff,
-    deleteStaff,
-    getDoctors,
-    getStaffDashboard,
-    getStaffResidents,
-    getStaffResidentById,
-    updateVitals,
-    giveMedicine,
-    getResidentHistory,
+  addStaff,
+  getStaff,
+  getStaffById,
+  updateStaff,
+  deleteStaff,
+  getDoctors,
+  getStaffDashboard,
+  getStaffResidents,
+  getStaffResidentById,
+  getResidentHistory,
 };

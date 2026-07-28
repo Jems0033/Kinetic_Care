@@ -374,6 +374,30 @@ useEffect(() => {
 
         </div>
 
+        <div className="resident-care-team-box">
+          <div className="care-team-title">
+            <span>Assigned Care Team</span>
+          </div>
+          <div className="care-team-grid">
+            <div className="care-member">
+              <span className="member-label">Morning Doctor</span>
+              <strong>{resident.morningDoctor?.name || "Not Assigned"}</strong>
+            </div>
+            <div className="care-member">
+              <span className="member-label">Morning Caretaker</span>
+              <strong>{resident.morningCaretaker?.name || "Not Assigned"}</strong>
+            </div>
+            <div className="care-member">
+              <span className="member-label">Night Doctor</span>
+              <strong>{resident.nightDoctor?.name || "Not Assigned"}</strong>
+            </div>
+            <div className="care-member">
+              <span className="member-label">Night Caretaker</span>
+              <strong>{resident.nightCaretaker?.name || "Not Assigned"}</strong>
+            </div>
+          </div>
+        </div>
+
         <div className="resident-family-box">
 
           <div className="family-box-title">

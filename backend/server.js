@@ -60,6 +60,10 @@ const doctorRoutes = require("./routes/doctorRoutes");
 
 app.use("/api/doctor", doctorRoutes);
 
+const caretakerRoutes = require("./routes/caretakerRoutes");
+
+app.use("/api/caretaker", caretakerRoutes);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

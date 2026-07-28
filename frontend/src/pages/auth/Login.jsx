@@ -52,7 +52,7 @@ function Login() {
       } else if (res.data.user.role === "doctor") {
         navigate("/doctor/dashboard");
       } else if (res.data.user.role === "staff") {
-        navigate("/staff-dashboard");
+        navigate("/caretaker/dashboard");
       } else {
         setError("Unauthorized User");
       }
