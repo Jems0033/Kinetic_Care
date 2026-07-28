@@ -27,32 +27,67 @@ function PatientDetails() {
   const [problem, setProblem] = useState("");
   const [medicine, setMedicine] = useState("");
 
+  const [alertBox, setAlertBox] = useState({
+  show: false,
+  message: "",
+  type: "",
+});
+
+const getPatient = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      `http://localhost:5000/api/doctor/patient/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setResident(res.data.resident);
+    setRecords(res.data.records);
+  } catch (error) {
+    console.log(error);
+  }
+};
+const showAlert = (message, type = "success") => {
+  setAlertBox({
+    show: true,
+    message,
+    type,
+  });
+
+  setTimeout(() => {
+    setAlertBox({
+      show: false,
+      message: "",
+      type: "",
+    });
+  }, 3000);
+};
+const validateRecord = () => {
+  if (!problem.trim())
+    return "Problem / Diagnosis is required.";
+
+  if (!medicine.trim())
+    return "Medicine / Prescription is required.";
+
+  return null;
+};
   useEffect(() => {
     getPatient();
   }, []);
 
-  const getPatient = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.get(
-        `http://localhost:5000/api/doctor/patient/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setResident(res.data.resident);
-      setRecords(res.data.records);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const saveRecord = async () => {
     try {
+      const validationError = validateRecord();
+
+if (validationError) {
+  return showAlert(validationError, "error");
+}
       const token = localStorage.getItem("token");
 
       await axios.post(
@@ -69,7 +104,7 @@ function PatientDetails() {
         }
       );
 
-      alert("Medical Record Added Successfully");
+      showAlert("Medical Record Added Successfully", "success");
 
       setProblem("");
       setMedicine("");
@@ -77,8 +112,10 @@ function PatientDetails() {
 
       getPatient();
     } catch (error) {
-      console.log(error);
-      alert("Failed to Add Record");
+      showAlert(
+  error.response?.data?.message || "Failed to Add Record",
+  "error"
+);
     }
   };
 
@@ -91,6 +128,36 @@ function PatientDetails() {
   return (
     <>
       <div className="patient-details">
+      {alertBox.show && (
+  <div className={`order-banner ${alertBox.type} show`}>
+    <div className="order-banner-icon">
+      {alertBox.type === "success" ? "✔" : "✖"}
+    </div>
+
+    <div>
+      <div className="order-banner-title">
+        {alertBox.type === "success" ? "Success" : "Error"}
+      </div>
+
+      <div className="order-banner-detail">
+        {alertBox.message}
+      </div>
+    </div>
+
+    <button
+      className="order-banner-close"
+      onClick={() =>
+        setAlertBox({
+          show: false,
+          message: "",
+          type: "",
+        })
+      }
+    >
+      ×
+    </button>
+  </div>
+)}
 
         {/* TOP */}
 

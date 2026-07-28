@@ -59,15 +59,17 @@ const addResident = async (req, res) => {
 
     }
 
-    if (room.occupiedBeds >= room.capacity) {
+    let totalCapacity = room.capacity;
 
-      return res.status(400).json({
+if (room.roomType === "Double") {
+  totalCapacity = room.capacity * 2;
+}
 
-        message: "Room Full"
-
-      });
-
-    }
+if (room.occupiedBeds >= totalCapacity) {
+  return res.status(400).json({
+    message: "Room Full"
+  });
+}
 
     const morningDoctor = await getLeastAssignedStaff(
       "Doctor",
@@ -175,11 +177,9 @@ const addResident = async (req, res) => {
 
     room.occupiedBeds++;
 
-    if (room.occupiedBeds === room.capacity) {
-
-      room.status = "Occupied";
-
-    }
+    if (room.occupiedBeds === totalCapacity) {
+  room.status = "Occupied";
+}
 
     await room.save();
 
@@ -302,9 +302,15 @@ const updateResident = async (req, res) => {
           oldRoom.occupiedBeds = 0;
         }
 
-        if (oldRoom.occupiedBeds < oldRoom.capacity) {
-          oldRoom.status = "Available";
-        }
+        let oldCapacity = oldRoom.capacity;
+
+if (oldRoom.roomType === "Double") {
+  oldCapacity = oldRoom.capacity * 2;
+}
+
+if (oldRoom.occupiedBeds < oldCapacity) {
+  oldRoom.status = "Available";
+}
 
         await oldRoom.save();
       }
@@ -318,17 +324,23 @@ const updateResident = async (req, res) => {
         });
       }
 
-      if (newRoom.occupiedBeds >= newRoom.capacity) {
-        return res.status(400).json({
-          message: "Room Full",
-        });
-      }
+      let newCapacity = newRoom.capacity;
 
-      newRoom.occupiedBeds++;
+if (newRoom.roomType === "Double") {
+  newCapacity = newRoom.capacity * 2;
+}
 
-      if (newRoom.occupiedBeds === newRoom.capacity) {
-        newRoom.status = "Occupied";
-      }
+if (newRoom.occupiedBeds >= newCapacity) {
+  return res.status(400).json({
+    message: "Room Full",
+  });
+}
+
+newRoom.occupiedBeds++;
+
+if (newRoom.occupiedBeds === newCapacity) {
+  newRoom.status = "Occupied";
+}
 
       await newRoom.save();
     }

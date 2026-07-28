@@ -24,6 +24,104 @@ function Staff() {
 
   const [search, setSearch] = useState("");
 
+  const [alertBox, setAlertBox] = useState({
+  show: false,
+  message: "",
+  type: "",
+});
+
+const showAlert = (message, type = "success") => {
+  setAlertBox({
+    show: true,
+    message,
+    type,
+  });
+
+  setTimeout(() => {
+    setAlertBox({
+      show: false,
+      message: "",
+      type: "",
+    });
+  }, 3000);
+};
+
+  const getStaff = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get("http://localhost:5000/api/staff", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setStaff(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const validateStaff = () => {
+  if (!formData.name.trim())
+    return "Staff name is required.";
+
+  if (!editId && !formData.email.trim())
+    return "Email is required.";
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!editId && !emailRegex.test(formData.email))
+    return "Please enter a valid email address.";
+
+  if (!editId && !formData.password.trim())
+    return "Password is required.";
+
+  if (!editId && formData.password.length < 6)
+    return "Password must be at least 6 characters.";
+
+  if (!formData.phone.trim())
+    return "Phone number is required.";
+
+  if (!/^9[0-9]{9}$/.test(formData.phone))
+    return "Phone number must contain exactly 10 digits and start with 9.";
+
+  if (!formData.gender && !editId)
+    return "Please select gender.";
+
+  if (!formData.role)
+    return "Please select staff role.";
+
+  if (!formData.shift)
+    return "Please select shift.";
+
+  if (!formData.salary)
+    return "Salary is required.";
+
+  if (Number(formData.salary) <= 0)
+    return "Please enter a valid salary.";
+
+  return null;
+};
+
+const getErrorMessage = (error) => {
+  const msg = error.response?.data?.message || "";
+
+  switch (msg) {
+    case "Email Already Exists":
+      return "This email is already registered.";
+
+    case "Staff Not Found":
+      return "Staff member not found.";
+
+    case "Unable to Delete Staff":
+      return "Unable to delete staff.";
+
+    default:
+      return "Something went wrong. Please try again.";
+  }
+};
+
   useEffect(() => {
     getStaff();
   }, []);
@@ -34,7 +132,7 @@ function Staff() {
     if (location.state?.openModal === "addStaff") {
       setShowModal(true);
     }
-  }, [location.state]);
+  }, [location.state?.openModal]);
 
   const handleChange = (e) => {
     setFormData({
@@ -46,6 +144,11 @@ function Staff() {
 
   const addStaff = async () => {
     try {
+      const validationError = validateStaff();
+
+if (validationError) {
+  return showAlert(validationError, "error");
+}
       const token = localStorage.getItem("token");
 
       await axios.post(
@@ -67,7 +170,7 @@ function Staff() {
         },
       );
 
-      alert("Staff Added Successfully");
+      showAlert("Staff Added Successfully", "success");
 
       setFormData({
         name: "",
@@ -83,25 +186,13 @@ function Staff() {
       setShowModal(false);
       getStaff();
     } catch (error) {
-      alert(error.response?.data?.message || "Unable to Add Staff");
+      showAlert(
+  error.response?.data?.message || "Unable to Add Staff",
+  "error"
+);
     }
   };
 
-  const getStaff = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.get("http://localhost:5000/api/staff", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setStaff(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const editStaff = (member) => {
     setFormData({
@@ -122,6 +213,11 @@ function Staff() {
 
   const updateStaff = async () => {
     try {
+      const validationError = validateStaff();
+
+if (validationError) {
+  return showAlert(validationError, "error");
+}
       const token = localStorage.getItem("token");
 
       await axios.put(
@@ -142,7 +238,7 @@ function Staff() {
         },
       );
 
-      alert("Staff Updated Successfully");
+      showAlert("Staff Updated Successfully", "success");
 
       getStaff();
 
@@ -170,13 +266,13 @@ function Staff() {
         },
       });
 
-      alert("Staff Deleted Successfully");
+      showAlert("Staff Deleted Successfully", "success");
 
       getStaff();
     } catch (error) {
       console.log(error);
 
-      alert("Unable to Delete Staff");
+      showAlert("Unable to Delete Staff", "error");
     }
   };
 
@@ -207,6 +303,36 @@ function Staff() {
   return (
     <>
       <div className="staff-page">
+      {alertBox.show && (
+  <div className={`order-banner ${alertBox.type} show`}>
+    <div className="order-banner-icon">
+      {alertBox.type === "success" ? "✔" : "✖"}
+    </div>
+
+    <div>
+      <div className="order-banner-title">
+        {alertBox.type === "success" ? "Success" : "Error"}
+      </div>
+
+      <div className="order-banner-detail">
+        {alertBox.message}
+      </div>
+    </div>
+
+    <button
+      className="order-banner-close"
+      onClick={() =>
+        setAlertBox({
+          show: false,
+          message: "",
+          type: "",
+        })
+      }
+    >
+      ×
+    </button>
+  </div>
+)}
         <Sidebar />
 
         <div className="staff-content">
@@ -260,18 +386,16 @@ function Staff() {
                   </div>
 
                   <div className="staff-info">
-  <div className="staff-name-row">
-    <h3>{member.name}</h3>
+                    <div className="staff-name-row">
+                      <h3>{member.name}</h3>
 
-    <span className="gender-badge">
-      {member.gender === "Male"
-        ? "♂ Male"
-        : "♀ Female"}
-    </span>
-  </div>
+                      <span className="gender-badge">
+                        {member.gender === "Male" ? "♂ Male" : "♀ Female"}
+                      </span>
+                    </div>
 
-  <p className="staff-position">{member.role}</p>
-</div>
+                    <p className="staff-position">{member.role}</p>
+                  </div>
 
                   <div className="staff-details-grid">
                     <div className="staff-detail-box">
