@@ -15,25 +15,28 @@ const getDoctorDashboard = async (req, res) => {
       });
     }
 
+    const assignedPatientsCount = await Resident.countDocuments({
+      $or: [
+        { morningDoctor: staff._id },
+        { nightDoctor: staff._id }
+      ]
+    });
+
     const records = await MedicalRecord.find({
       staffId: staff._id,
     })
       .populate("residentId", "name age")
       .sort({ date: -1 });
 
-    const patientIds = [
-      ...new Set(records.map((r) => r.residentId._id.toString())),
-    ];
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const todayRecords = records.filter(
-      (r) => new Date(r.date) >= today
+      (r) => r.residentId && new Date(r.date) >= today
     );
 
     res.json({
-      totalPatients: patientIds.length,
+      totalPatients: assignedPatientsCount,
       totalRecords: records.length,
       todayRecords: todayRecords.length,
       latestRecords: records.slice(0, 5),
@@ -58,38 +61,28 @@ const getDoctorPatients = async (req, res) => {
       });
     }
 
-    const records = await MedicalRecord.find({
-      staffId: staff._id,
-    })
-      .populate("residentId")
-      .sort({ date: -1 });
+    const residents = await Resident.find({
+      $or: [
+        { morningDoctor: staff._id },
+        { nightDoctor: staff._id }
+      ]
+    }).populate("room");
 
     const patients = [];
-    const added = new Set();
 
-    for (const record of records) {
+    for (const resident of residents) {
+      const latestRecord = await MedicalRecord.findOne({
+        residentId: resident._id
+      }).sort({ date: -1 });
 
-      const resident = record.residentId;
-
-      if (!resident) continue;
-
-      if (!added.has(resident._id.toString())) {
-
-        added.add(resident._id.toString());
-
-        const room = await Room.findById(resident.room);
-
-        patients.push({
-          _id: resident._id,
-          name: resident.name,
-          age: resident.age,
-          gender: resident.gender,
-          room: room ? room.roomNumber : "-",
-          latestProblem: record.problem,
-        });
-
-      }
-
+      patients.push({
+        _id: resident._id,
+        name: resident.name,
+        age: resident.age,
+        gender: resident.gender,
+        room: resident.room ? resident.room.roomNumber : "-",
+        latestProblem: latestRecord ? latestRecord.problem : "No medical problem",
+      });
     }
 
     res.json(patients);

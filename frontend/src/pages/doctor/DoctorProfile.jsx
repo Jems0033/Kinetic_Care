@@ -3,22 +3,27 @@ import axios from "axios";
 import "../../css/doctor/DoctorProfile.css";
 import { useNavigate } from "react-router-dom";
 
-function DoctorProfile() {
+import {
+  FaUserMd,
+  FaEnvelope,
+  FaPhoneAlt,
+  FaBriefcaseMedical,
+  FaClock,
+  FaArrowLeft,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
+function DoctorProfile() {
   const [doctor, setDoctor] = useState({});
-  const navigate = useNavigate(); 
-  const logout = () => {
-  localStorage.removeItem("token");
-  navigate("/login");
-};
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     getProfile();
   }, []);
 
   const getProfile = async () => {
-
     try {
-
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
@@ -31,63 +36,201 @@ function DoctorProfile() {
       );
 
       setDoctor(res.data);
-
     } catch (error) {
-
       console.log(error);
-
     }
+  };
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
   };
 
   return (
     <div className="doctor-profile-page">
 
+      {/* TOP BAR */}
 
-      <h1>Doctor Profile</h1>
+      <div className="profile-topbar">
 
-      <div className="profile-card">
+        <button
+          className="back-btn"
+          onClick={() => navigate("/doctor/dashboard")}
+        >
+          <FaArrowLeft />
+          Dashboard
+        </button>
 
-        <div className="profile-avatar">
-          👨‍⚕️
+        <button
+          className="profile-logout-btn"
+          onClick={logout}
+        >
+          <FaSignOutAlt />
+          Logout
+        </button>
+
+      </div>
+
+
+      {/* HEADER */}
+
+      <div className="profile-heading">
+
+        <p>Doctor Portal</p>
+
+        <h1>My Profile</h1>
+
+        <span>
+          View your personal and professional information
+        </span>
+
+      </div>
+
+
+      {/* MAIN PROFILE */}
+
+      <div className="doctor-profile-container">
+
+        {/* PROFILE SUMMARY */}
+
+        <div className="doctor-profile-summary">
+
+          <div className="profile-avatar-large">
+            <FaUserMd />
+          </div>
+
+          <h2>
+            Dr. {doctor.name || "Doctor"}
+          </h2>
+
+          <span className="doctor-role">
+            {doctor.role || "Doctor"}
+          </span>
+
+          <p>
+            Kinetic Care Medical Team
+          </p>
+
+          <div className="profile-status">
+            <span></span>
+            Active
+          </div>
+
         </div>
 
-        <div className="profile-info">
 
-          <div className="profile-item">
-            <label>Name</label>
-            <p>{doctor.name}</p>
+        {/* DETAILS */}
+
+        <div className="doctor-profile-details">
+
+          <div className="details-header">
+
+            <div>
+              <p>Personal Information</p>
+
+              <h2>Profile Details</h2>
+            </div>
+
+            <span className="verified-badge">
+              Verified Profile
+            </span>
+
           </div>
 
-          <div className="profile-item">
-            <label>Email</label>
-            <p>{doctor.email}</p>
-          </div>
 
-          <div className="profile-item">
-            <label>Phone</label>
-            <p>{doctor.phone}</p>
-          </div>
+          <div className="profile-details-grid">
 
-          <div className="profile-item">
-            <label>Role</label>
-            <p>{doctor.role}</p>
-          </div>
+            <div className="profile-detail-card">
 
-          <div className="profile-item">
-            <label>Shift</label>
-            <p>{doctor.shift}</p>
+              <div className="detail-icon">
+                <FaUserMd />
+              </div>
+
+              <div>
+                <span>Full Name</span>
+
+                <strong>
+                  Dr. {doctor.name || "Not Available"}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div className="profile-detail-card">
+
+              <div className="detail-icon email-icon">
+                <FaEnvelope />
+              </div>
+
+              <div>
+                <span>Email Address</span>
+
+                <strong>
+                  {doctor.email || "Not Available"}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div className="profile-detail-card">
+
+              <div className="detail-icon phone-icon">
+                <FaPhoneAlt />
+              </div>
+
+              <div>
+                <span>Phone Number</span>
+
+                <strong>
+                  {doctor.phone || "Not Available"}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div className="profile-detail-card">
+
+              <div className="detail-icon role-icon">
+                <FaBriefcaseMedical />
+              </div>
+
+              <div>
+                <span>Role</span>
+
+                <strong>
+                  {doctor.role || "Doctor"}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div className="profile-detail-card full-detail-card">
+
+              <div className="detail-icon shift-icon">
+                <FaClock />
+              </div>
+
+              <div>
+                <span>Assigned Shift</span>
+
+                <strong>
+                  {doctor.shift || "Not Assigned"}
+                </strong>
+              </div>
+
+            </div>
+
           </div>
 
         </div>
 
       </div>
-      <button
-  className="logout-btn"
-  onClick={logout}
->
-  🚪 Logout
-</button>
 
     </div>
   );

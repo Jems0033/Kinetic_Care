@@ -3,6 +3,16 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../css/family/BookVisit.css";
 
+import {
+  FaArrowLeft,
+  FaUserFriends,
+  FaPhoneAlt,
+  FaHeart,
+  FaCalendarAlt,
+  FaCommentDots,
+  FaCheckCircle,
+} from "react-icons/fa";
+
 const BookVisit = () => {
   const navigate = useNavigate();
 
@@ -53,7 +63,10 @@ const BookVisit = () => {
 
       navigate("/family-dashboard");
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
+      alert(
+        error.response?.data?.message ||
+        "Something went wrong"
+      );
     } finally {
       setLoading(false);
     }
@@ -61,75 +74,236 @@ const BookVisit = () => {
 
   return (
     <div className="book-visit-page">
-      <div className="book-visit-card">
-        <h2>Book a Visit</h2>
-        <p>
-          Fill in the details below to schedule your visit with your family
-          member.
-        </p>
 
-        <form onSubmit={handleSubmit}>
+      <div className="book-visit-container">
 
-          <div className="form-group">
-            <label>Visitor Name</label>
-            <input
-              type="text"
-              name="visitorName"
-              value={formData.visitorName}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        {/* LEFT INFO */}
 
-          <div className="form-group">
-            <label>Phone</label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <div className="visit-info-panel">
 
-          <div className="form-group">
-            <label>Relation</label>
-            <input
-              type="text"
-              name="relation"
-              value={formData.relation}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Purpose</label>
-            <textarea
-              name="purpose"
-              rows="4"
-              value={formData.purpose}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Visit Date</label>
-            <input
-              type="date"
-              name="visitDate"
-              value={formData.visitDate}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button type="submit" disabled={loading}>
-            {loading ? "Booking..." : "Book Visit"}
+          <button
+            className="visit-back-btn"
+            onClick={() => navigate("/family-dashboard")}
+          >
+            <FaArrowLeft />
+            Dashboard
           </button>
 
-        </form>
+          <div className="visit-info-content">
+
+            <div className="visit-main-icon">
+              <FaUserFriends />
+            </div>
+
+            <p className="visit-label">
+              Family Visit
+            </p>
+
+            <h1>
+              Spend meaningful time with your loved one.
+            </h1>
+
+            <p className="visit-description">
+              Schedule your visit in advance and help us
+              provide a comfortable experience for residents
+              and their families.
+            </p>
+
+            <div className="visit-guidelines">
+
+              <div>
+                <FaCheckCircle />
+
+                <span>
+                  Enter accurate visitor information
+                </span>
+              </div>
+
+              <div>
+                <FaCheckCircle />
+
+                <span>
+                  Select your preferred visit date
+                </span>
+              </div>
+
+              <div>
+                <FaCheckCircle />
+
+                <span>
+                  Mention the purpose of your visit
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* FORM */}
+
+        <div className="visit-form-panel">
+
+          <div className="visit-form-header">
+
+            <p>Visit Scheduling</p>
+
+            <h2>Book a Visit</h2>
+
+            <span>
+              Fill in the details below to schedule your visit.
+            </span>
+
+          </div>
+
+
+          <form onSubmit={handleSubmit}>
+
+            <div className="visit-form-grid">
+
+              <div className="visit-form-group">
+
+                <label>Visitor Name</label>
+
+                <div className="visit-input-box">
+
+                  <FaUserFriends />
+
+                  <input
+                    type="text"
+                    name="visitorName"
+                    placeholder="Enter visitor name"
+                    value={formData.visitorName}
+                    onChange={handleChange}
+                    required
+                  />
+
+                </div>
+
+              </div>
+
+
+              <div className="visit-form-group">
+
+                <label>Phone Number</label>
+
+                <div className="visit-input-box">
+
+                  <FaPhoneAlt />
+
+                  <input
+                    type="text"
+                    name="phone"
+                    placeholder="Enter phone number"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+
+                </div>
+
+              </div>
+
+
+              <div className="visit-form-group">
+
+                <label>Relation</label>
+
+                <div className="visit-input-box">
+
+                  <FaHeart />
+
+                  <input
+                    type="text"
+                    name="relation"
+                    placeholder="Example: Son, Daughter"
+                    value={formData.relation}
+                    onChange={handleChange}
+                    required
+                  />
+
+                </div>
+
+              </div>
+
+
+              <div className="visit-form-group">
+
+                <label>Visit Date</label>
+
+                <div className="visit-input-box">
+
+                  <FaCalendarAlt />
+
+                  <input
+                    type="date"
+                    name="visitDate"
+                    value={formData.visitDate}
+                    onChange={handleChange}
+                    required
+                  />
+
+                </div>
+
+              </div>
+
+
+              <div className="visit-form-group full-width">
+
+                <label>Purpose of Visit</label>
+
+                <div className="visit-textarea-box">
+
+                  <FaCommentDots />
+
+                  <textarea
+                    name="purpose"
+                    rows="5"
+                    placeholder="Tell us the purpose of your visit..."
+                    value={formData.purpose}
+                    onChange={handleChange}
+                    required
+                  />
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div className="visit-form-actions">
+
+              <button
+                type="button"
+                className="visit-cancel-btn"
+                onClick={() =>
+                  navigate("/family-dashboard")
+                }
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="visit-submit-btn"
+                disabled={loading}
+              >
+                {loading
+                  ? "Booking Visit..."
+                  : "Book Visit"}
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
       </div>
+
     </div>
   );
 };

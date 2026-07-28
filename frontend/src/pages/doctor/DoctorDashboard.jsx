@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+import {
+  FaNotesMedical,
+  FaArrowRight,
+  FaUserMd,
+  FaSearch,
+  FaBed,
+} from "react-icons/fa";
+
 import "../../css/doctor/DoctorDashboard.css";
 
 function DoctorDashboard() {
   const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [dashboard, setDashboard] = useState({
     totalPatients: 0,
@@ -13,11 +24,13 @@ function DoctorDashboard() {
     latestRecords: [],
   });
 
+  const [patients, setPatients] = useState([]);
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     getDashboard();
+    getPatients();
   }, []);
-
-  
 
   const getDashboard = async () => {
     try {
@@ -29,7 +42,7 @@ function DoctorDashboard() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       setDashboard(res.data);
@@ -38,87 +51,165 @@ function DoctorDashboard() {
     }
   };
 
+  const getPatients = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "http://localhost:5000/api/doctor/patients",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setPatients(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const filteredPatients = patients.filter((patient) =>
+    patient.name
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
   return (
     <div className="doctor-dashboard">
-      <div className="doctor-header">
-        <div>
-          <h1>Doctor Dashboard</h1>
-          <p>Welcome Back 👨‍⚕️</p>
+
+      {/* HEADER */}
+
+      <header className="doctor-header">
+
+        <div className="doctor-welcome">
+
+          <p className="doctor-label">
+            Doctor Portal
+          </p>
+
+          <h1>
+            Welcome Back, Dr. {user?.name || "Doctor"}
+          </h1>
+
+          <span>
+            Manage your patients and medical records from one place.
+          </span>
+
         </div>
 
-        <button
-          className="patient-btn"
-          onClick={() => navigate("/doctor/patients")}
-        >
-          View My Patients
-        </button>
-        <div className="doctor-profile">
-          <div
-            className="doctor-profile-info"
+
+        <div className="doctor-header-actions">
+
+          <button
+            className="doctor-profile-btn"
+            onClick={() => navigate("/doctor/profile")}
           >
-            <div className="doctor-avatar">👨‍⚕️</div>
+            <div className="doctor-avatar">
+              <FaUserMd />
+            </div>
 
             <div>
-              <button  onClick={() => navigate("/doctor/profile")}>Dr. Rahul Patel</button>
+              <span>Doctor Profile</span>
+
+              <strong>
+                Dr. {user?.name || "Doctor"}
+              </strong>
             </div>
+          </button>
+
+        </div>
+
+      </header>
+
+
+
+      {/* PATIENTS LIST */}
+
+      <section className="recent-section" style={{ background: "transparent", border: "none", boxShadow: "none", padding: 0 }}>
+
+        {/* SEARCH / SUMMARY TOOLBAR */}
+        <section className="patients-toolbar" style={{ margin: "0 0 20px 0" }}>
+          <div className="patient-count-box">
+            <span>Total Assigned</span>
+            <strong>{patients.length}</strong>
+            <small>Patients</small>
           </div>
-
-          
-        </div>
-      </div>
-
-      <div className="doctor-cards">
-        <div className="doctor-card">
-          <h2>{dashboard.totalPatients}</h2>
-          <span>Total Patients</span>
-        </div>
-
-        <div className="doctor-card">
-          <h2>{dashboard.totalRecords}</h2>
-          <span>Medical Records</span>
-        </div>
-
-        <div className="doctor-card">
-          <h2>{dashboard.todayRecords}</h2>
-          <span>Today's Records</span>
-        </div>
-      </div>
-
-      <div className="recent-section">
-        <h2>Recent Medical Records</h2>
-
-        {dashboard.latestRecords.length === 0 ? (
-          <div className="empty-record">
-            <p>No Medical Records Available</p>
+          <div className="patient-search">
+            <FaSearch />
+            <input
+              type="text"
+              placeholder="Search patient by name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
-        ) : (
-          <div className="record-list">
-            {dashboard.latestRecords.map((record) => (
-              <div className="record-card" key={record._id}>
-                <div className="record-top">
-                  <h3>{record.residentId?.name}</h3>
+        </section>
 
-                  <span>{new Date(record.date).toLocaleDateString()}</span>
-                </div>
-
-                <div className="record-body">
-                  <p>
-                    <strong>Age :</strong> {record.residentId?.age}
-                  </p>
-
-                  <p>
-                    <strong>Problem :</strong> {record.problem}
-                  </p>
-
-                  <p>
-                    <strong>Medicine :</strong> {record.medicine}
-                  </p>
-                </div>
+        {/* PATIENT GRID */}
+        <section className="patient-grid">
+          {filteredPatients.length === 0 ? (
+            <div className="patients-empty">
+              <div className="patients-empty-icon">
+                <FaUserMd />
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              <h3>No Patients Found</h3>
+              <p>Assigned patients will appear here.</p>
+            </div>
+          ) : (
+            filteredPatients.map((patient) => (
+              <article className="patient-card" key={patient._id}>
+                <div className="patient-card-header">
+                  <div className="patient-profile">
+                    <div className="patient-avatar">
+                      {patient.gender?.toLowerCase() === "male" ? "👴" : "👵"}
+                    </div>
+                    <div>
+                      <span>Patient</span>
+                      <h3>{patient.name}</h3>
+                      <p>{patient.age} years • {patient.gender}</p>
+                    </div>
+                  </div>
+                  <span className="patient-status">Active</span>
+                </div>
+
+                <div className="patient-card-details">
+                  <div className="patient-detail">
+                    <div className="patient-detail-icon room-icon">
+                      <FaBed />
+                    </div>
+                    <div>
+                      <span>Room</span>
+                      <strong>{patient.room || "Not Assigned"}</strong>
+                    </div>
+                  </div>
+
+                  <div className="patient-detail">
+                    <div className="patient-detail-icon problem-icon">
+                      <FaNotesMedical />
+                    </div>
+                    <div>
+                      <span>Latest Problem</span>
+                      <strong>{patient.latestProblem || "No medical problem"}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  className="view-patient-btn"
+                  onClick={() => navigate(`/doctor/patient/${patient._id}`)}
+                >
+                  View Patient Details
+                  <FaArrowRight />
+                </button>
+              </article>
+            ))
+          )}
+        </section>
+
+      </section>
+
     </div>
   );
 }

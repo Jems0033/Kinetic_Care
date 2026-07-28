@@ -1,19 +1,31 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+import {
+  FaArrowLeft,
+  FaUser,
+  FaVenusMars,
+  FaBed,
+  FaNotesMedical,
+  FaCalendarAlt,
+  FaPlus,
+  FaPills,
+} from "react-icons/fa";
+
 import "../../css/doctor/PatientDetails.css";
-import { useNavigate } from "react-router-dom";
 
 function PatientDetails() {
-
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [resident, setResident] = useState({});
   const [records, setRecords] = useState([]);
+
   const [showForm, setShowForm] = useState(false);
+
   const [problem, setProblem] = useState("");
-const [medicine, setMedicine] = useState("");
+  const [medicine, setMedicine] = useState("");
 
   useEffect(() => {
     getPatient();
@@ -21,7 +33,6 @@ const [medicine, setMedicine] = useState("");
 
   const getPatient = async () => {
     try {
-
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
@@ -35,201 +46,438 @@ const [medicine, setMedicine] = useState("");
 
       setResident(res.data.resident);
       setRecords(res.data.records);
-
     } catch (error) {
       console.log(error);
     }
   };
 
   const saveRecord = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-  try {
-
-    const token = localStorage.getItem("token");
-
-    await axios.post(
-      "http://localhost:5000/api/doctor/medical",
-      {
-        residentId: id,
-        problem,
-        medicine,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.post(
+        "http://localhost:5000/api/doctor/medical",
+        {
+          residentId: id,
+          problem,
+          medicine,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    alert("Medical Record Added Successfully");
+      alert("Medical Record Added Successfully");
 
+      setProblem("");
+      setMedicine("");
+      setShowForm(false);
+
+      getPatient();
+    } catch (error) {
+      console.log(error);
+      alert("Failed to Add Record");
+    }
+  };
+
+  const closeModal = () => {
     setProblem("");
     setMedicine("");
     setShowForm(false);
-
-    getPatient();
-
-  } catch (error) {
-    console.log(error);
-    alert("Failed to Add Record");
-  }
-
-};
-
-const closeModal = () => {
-    setProblem("");
-    setMedicine("");
-    setShowForm(false);
-};
+  };
 
   return (
     <>
-    <div className="patient-details">
-        <button
-  className="back-btn"
-  onClick={() => navigate("/doctor/patients")}
->
-  ← Back to Patients
-</button>
+      <div className="patient-details">
 
-<h1 className="patient-title">
-  Patient Details
-</h1>
+        {/* TOP */}
 
-      <div className="patient-card">
+        <div className="patient-page-top">
 
-        <div className="info">
-          <span>Name</span>
-          <p>{resident.name}</p>
-        </div>
+          <button
+            className="back-btn"
+            onClick={() => navigate("/doctor/patients")}
+          >
+            <FaArrowLeft />
+            Back to Patients
+          </button>
 
-        <div className="info">
-          <span>Age</span>
-          <p>{resident.age}</p>
-        </div>
+          <div className="patient-page-heading">
+            <p>Patient Overview</p>
 
-        <div className="info">
-          <span>Gender</span>
-          <p>{resident.gender}</p>
-        </div>
+            <h1>Patient Details</h1>
 
-        <div className="info">
-          <span>Room</span>
-          <p>{resident.room}</p>
+            <span>
+              View patient profile and complete medical history
+            </span>
+          </div>
+
         </div>
 
 
-        <div className="info">
-          <span>Medical Condition</span>
-          <p>{resident.medicalCondition}</p>
-        </div>
+        {/* PATIENT PROFILE */}
 
-      </div>
+        <section className="patient-profile-card">
 
-      <div className="history-header">
-        <h2>Medical History</h2>
+          <div className="patient-profile-main">
 
-        <button
-  className="add-btn"
-  onClick={() => setShowForm(true)}
->
-  + Add Medical Record
-</button>
-      </div>
-
-      {records.length === 0 ? (
-
-        <div className="no-record">
-          No Medical Records Found
-        </div>
-
-      ) : (
-
-        records.map((record) => (
-
-          <div className="record-card" key={record._id}>
-
-            <div className="record-top">
-
-              <h3>
-                {new Date(record.date).toLocaleDateString()}
-              </h3>
-
-              <span>{record.doctor}</span>
-
+            <div className="patient-large-avatar">
+              {resident.gender?.toLowerCase() === "male"
+                ? "👴"
+                : "👵"}
             </div>
 
-            <div className="record-body">
+            <div>
+
+              <span className="patient-label">
+                Resident
+              </span>
+
+              <h2>{resident.name || "Patient"}</h2>
 
               <p>
-                <strong>Problem:</strong> {record.problem}
-              </p>
-
-              <p>
-                <strong>Medicine:</strong> {record.medicine}
+                Kinetic Care Resident
               </p>
 
             </div>
 
           </div>
 
-        ))
+
+          <div className="patient-profile-grid">
+
+            <div className="patient-info-box">
+
+              <div className="patient-info-icon">
+                <FaUser />
+              </div>
+
+              <div>
+                <span>Age</span>
+
+                <strong>
+                  {resident.age || "N/A"} Years
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div className="patient-info-box">
+
+              <div className="patient-info-icon gender-icon">
+                <FaVenusMars />
+              </div>
+
+              <div>
+                <span>Gender</span>
+
+                <strong>
+                  {resident.gender || "N/A"}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div className="patient-info-box">
+
+              <div className="patient-info-icon room-icon">
+                <FaBed />
+              </div>
+
+              <div>
+                <span>Room</span>
+
+                <strong>
+                  {resident.room || "Not Assigned"}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div className="patient-info-box condition-box">
+
+              <div className="patient-info-icon condition-icon">
+                <FaNotesMedical />
+              </div>
+
+              <div>
+                <span>Medical Condition</span>
+
+                <strong>
+                  {resident.medicalCondition ||
+                    "No condition recorded"}
+                </strong>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* HISTORY HEADER */}
+
+        <div className="history-header">
+
+          <div>
+
+            <p className="history-label">
+              Health Records
+            </p>
+
+            <h2>Medical History</h2>
+
+            <span>
+              {records.length} medical record
+              {records.length !== 1 ? "s" : ""}
+            </span>
+
+          </div>
+
+          <button
+            className="add-btn"
+            onClick={() => setShowForm(true)}
+          >
+            <FaPlus />
+            Add Medical Record
+          </button>
+
+        </div>
+
+
+        {/* HISTORY */}
+
+        {records.length === 0 ? (
+
+          <div className="no-record">
+
+            <div className="no-record-icon">
+              <FaNotesMedical />
+            </div>
+
+            <h3>No Medical Records Found</h3>
+
+            <p>
+              Medical records added for this patient will appear here.
+            </p>
+
+            <button onClick={() => setShowForm(true)}>
+              <FaPlus />
+              Add First Record
+            </button>
+
+          </div>
+
+        ) : (
+
+          <div className="medical-history-list">
+
+            {records.map((record, index) => (
+
+              <div
+                className="history-record"
+                key={record._id}
+              >
+
+                <div className="timeline-section">
+
+                  <div className="timeline-icon">
+                    <FaNotesMedical />
+                  </div>
+
+                  {index !== records.length - 1 && (
+                    <div className="timeline-line"></div>
+                  )}
+
+                </div>
+
+
+                <div className="history-record-card">
+
+                  <div className="record-header">
+
+                    <div>
+
+                      <span>Medical Record</span>
+
+                      <h3>
+                        {record.problem ||
+                          "General Checkup"}
+                      </h3>
+
+                    </div>
+
+                    <div className="record-date">
+
+                      <FaCalendarAlt />
+
+                      {new Date(
+                        record.date
+                      ).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="record-content">
+
+                    <div className="record-info">
+
+                      <span>Diagnosis / Problem</span>
+
+                      <strong>
+                        {record.problem ||
+                          "Not specified"}
+                      </strong>
+
+                    </div>
+
+
+                    <div className="record-info medicine-record">
+
+                      <div className="medicine-title">
+
+                        <FaPills />
+
+                        <span>Medicine</span>
+
+                      </div>
+
+                      <strong>
+                        {record.medicine ||
+                          "No medicine prescribed"}
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+
+                  {record.doctor && (
+                    <div className="record-doctor">
+                      Recorded by Dr. {record.doctor}
+                    </div>
+                  )}
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        )}
+
+      </div>
+
+
+      {/* ADD RECORD MODAL */}
+
+      {showForm && (
+
+        <div className="doctor-modal-overlay">
+
+          <div className="doctor-modal">
+
+            <button
+              className="doctor-modal-close"
+              onClick={closeModal}
+            >
+              ×
+            </button>
+
+
+            <div className="doctor-modal-header">
+
+              <div className="doctor-modal-icon">
+                <FaNotesMedical />
+              </div>
+
+              <div>
+
+                <p>Medical Record</p>
+
+                <h2>Add Medical Record</h2>
+
+                <span>
+                  Add diagnosis and medicine for{" "}
+                  {resident.name || "this patient"}.
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div className="doctor-form-group">
+
+              <label>Problem / Diagnosis</label>
+
+              <input
+                type="text"
+                placeholder="Example: High Blood Pressure"
+                value={problem}
+                onChange={(e) =>
+                  setProblem(e.target.value)
+                }
+              />
+
+            </div>
+
+
+            <div className="doctor-form-group">
+
+              <label>Medicine / Prescription</label>
+
+              <textarea
+                rows="4"
+                placeholder="Enter medicine name, dosage and instructions..."
+                value={medicine}
+                onChange={(e) =>
+                  setMedicine(e.target.value)
+                }
+              />
+
+            </div>
+
+
+            <div className="doctor-modal-buttons">
+
+              <button
+                className="doctor-cancel-btn"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="doctor-save-btn"
+                onClick={saveRecord}
+              >
+                Save Medical Record
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
 
       )}
 
-      
-
-    </div>
-{showForm && (
-  <div className="doctor-modal-overlay">
-
-    <div className="doctor-modal">
-
-      <h2>Add Medical Record</h2>
-
-      <div className="doctor-form-group">
-        <label>Problem</label>
-        <input
-  type="text"
-  placeholder="Enter Problem"
-  value={problem}
-  onChange={(e) => setProblem(e.target.value)}
-/>
-      </div>
-
-      <div className="doctor-form-group">
-        <label>Medicine</label>
-        <textarea
-  rows="4"
-  placeholder="Enter Medicine"
-  value={medicine}
-  onChange={(e) => setMedicine(e.target.value)}
-></textarea>
-      </div>
-
-      <div className="doctor-modal-buttons">
-
-        <button
-    className="doctor-cancel-btn"
-    onClick={closeModal}
->
-    Cancel
-</button>
-
-        <button
-  className="doctor-save-btn"
-  onClick={saveRecord}
->
-  Save Record
-</button>
-
-      </div>
-
-    </div>
-
-  </div>
-)}
-</>
+    </>
   );
 }
 

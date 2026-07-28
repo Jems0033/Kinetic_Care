@@ -10,7 +10,6 @@ import Visitor from "./pages/admin/Visitor";
 import Event from "./pages/admin/Event";
 
 import DoctorDashboard from "./pages/doctor/DoctorDashboard";
-import DoctorPatients from "./pages/doctor/DoctorPatients";
 import PatientDetails from "./pages/doctor/PatientDetails";
 import DoctorProfile from "./pages/doctor/DoctorProfile";
 
@@ -25,12 +24,8 @@ import PublicDonate from "./pages/PublicDonate";
 import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
-import StaffDashboard from "./pages/staff/StaffDashboard";
-import StaffResidents from "./pages/staff/StaffResidents";
-import StaffResidentDetails from "./pages/staff/StaffResidentDetails";
-import UpdateVitals  from "./pages/staff/UpdateVitals";
-import GiveMedicine from "./pages/staff/GiveMedicine";
-import ResidentHistory from "./pages/staff/ResidentHistory";
+import CaretakerDashboard from "./pages/caretaker/CaretakerDashboard";
+import ResidentCare from "./pages/caretaker/ResidentCare";
 
 
 function App() {
@@ -43,25 +38,6 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       <Route path="/residents" element={<Residents />} />
-
-      <Route
-    path="/staff/resident/:id"
-    element={<StaffResidentDetails />}
-  />
-  <Route
-  path="/staff/resident/:id/vitals"
-  element={<UpdateVitals />}
-/>
-
-<Route
-  path="/staff/resident/:id/medicine"
-  element={<GiveMedicine />}
-/>
-
-<Route
-  path="/staff/resident/:id/history"
-  element={<ResidentHistory />}
-/>
 
       <Route path="/staff" element={<Staff />} />
 
@@ -87,20 +63,28 @@ function App() {
 
       <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
 
-      <Route path="/doctor/patients" element={<DoctorPatients />} />
-
       <Route path="/doctor/patient/:id" element={<PatientDetails />} />
 
       <Route
-    path="/doctor/profile"
-    element={<DoctorProfile />}
+        path="/doctor/profile"
+        element={<DoctorProfile />}
+      />
+
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
+      />
+
+      <Route
+  path="/caretaker/dashboard"
+  element={<CaretakerDashboard />}
 />
-<Route path="/staff-dashboard" element={<StaffDashboard />} />
-<Route path="/staff/residents" element={<StaffResidents />} />
+
 <Route
-  path="/forgot-password"
-  element={<ForgotPassword />}
+  path="/caretaker/resident/:id"
+  element={<ResidentCare />}
 />
+
 
     </Routes>
   );

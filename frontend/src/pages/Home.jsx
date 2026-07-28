@@ -2,243 +2,553 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Home.css";
 
-function Home() {
+import {
+  FaArrowRight,
+  FaUserFriends,
+  FaNotesMedical,
+  FaUserMd,
+  FaBed,
+  FaWalking,
+  FaHeart,
+  FaShieldAlt,
+  FaClock,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaCheckCircle,
+} from "react-icons/fa";
 
+function Home() {
   const navigate = useNavigate();
 
   return (
     <div className="home">
 
-      {/* ================= NAVBAR ================= */}
+      {/* NAVBAR */}
 
-      <nav className="navbar">
+      <nav className="home-navbar">
 
-        <div className="logo">
-          Kinetic<span>Care</span>
+        <div className="home-logo">
+
+          <img
+            src="/logo.png"
+            alt="Kinetic Care"
+          />
+
+          <h2>
+            Kinetic<span>Care</span>
+          </h2>
+
         </div>
 
-        <ul className="nav-links">
+        <ul className="home-nav-links">
           <li><a href="#home">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#services">Services</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
 
-        <button
-          className="login-btn"
-          onClick={() => navigate("/login")}
-        >
-          Login
-        </button>
+        <div className="nav-actions">
+
+          <button
+            className="nav-donate-btn"
+            onClick={() => navigate("/donate")}
+          >
+            <FaHeart />
+            Donate
+          </button>
+
+          <button
+            className="nav-login-btn"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
+
+        </div>
 
       </nav>
 
-      {/* ================= HERO ================= */}
 
-      <section className="hero" id="home">
+      {/* HERO */}
 
-        <div className="hero-left">
+      <section className="home-hero" id="home">
+
+        <div className="hero-content">
+
+          <div className="hero-badge">
+            <FaHeart />
+            Compassionate Elderly Care
+          </div>
 
           <h1>
-            Smart Old Age Home
-            <br />
-            Management System
+            A better place to
+            <span> care, connect and live.</span>
           </h1>
 
           <p>
-            Caring for senior citizens with technology,
-            compassion and modern healthcare management.
+            Kinetic Care combines compassionate elderly care
+            with modern technology to manage health, rooms,
+            visits, staff and family communication from one
+            trusted platform.
           </p>
 
-          <div className="hero-btns">
+          <div className="hero-actions">
 
             <button
-              className="primary-btn"
+              className="hero-primary-btn"
               onClick={() => navigate("/login")}
             >
-              Login
+              Login to Portal
+              <FaArrowRight />
             </button>
 
-            <a href="#about">
-              <button className="secondary-btn">
-                Learn More
-              </button>
+            <a href="#about" className="hero-secondary-btn">
+              Explore Kinetic Care
             </a>
 
-            <button
-              className="primary-btn"
-              onClick={() => navigate("/donate")}
-            >
-              Donate
-            </button>
+          </div>
+
+
+          <div className="hero-trust">
+
+            <div>
+              <FaCheckCircle />
+              Safe Environment
+            </div>
+
+            <div>
+              <FaCheckCircle />
+              Medical Support
+            </div>
+
+            <div>
+              <FaCheckCircle />
+              Family Connection
+            </div>
 
           </div>
 
         </div>
 
-        <div className="hero-right">
+
+        <div className="hero-visual">
+
+          <div className="hero-image-wrapper">
+
+            <img
+              src="https://images.unsplash.com/photo-1513159446162-54eb8bdaa79b?w=1000"
+              alt="Senior care"
+            />
+
+            <div className="hero-floating-card care-card">
+
+              <div>
+                <FaClock />
+              </div>
+
+              <span>
+                <strong>24/7 Care</strong>
+                Professional support
+              </span>
+
+            </div>
+
+
+            <div className="hero-floating-card medical-floating">
+
+              <div>
+                <FaNotesMedical />
+              </div>
+
+              <span>
+                <strong>Health First</strong>
+                Medical monitoring
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* STATS */}
+
+      <section className="home-stats">
+
+        <div>
+          <strong>24/7</strong>
+          <span>Resident Care</span>
+        </div>
+
+        <div>
+          <strong>100%</strong>
+          <span>Care Focused</span>
+        </div>
+
+        <div>
+          <strong>Easy</strong>
+          <span>Family Access</span>
+        </div>
+
+        <div>
+          <strong>Smart</strong>
+          <span>Health Records</span>
+        </div>
+
+      </section>
+
+
+      {/* ABOUT */}
+
+      <section className="home-about" id="about">
+
+        <div className="about-image">
 
           <img
-            src="https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=900"
-            alt="Old Age Home"
+            src="https://images.unsplash.com/photo-1576765608622-067973a79f53?w=1000"
+            alt="Elderly care"
           />
 
-        </div>
+          <div className="about-experience-card">
 
-      </section>
+            <FaHeart />
 
-      {/* ================= ABOUT ================= */}
+            <div>
+              <strong>Care with dignity</strong>
+              <span>Because every life matters</span>
+            </div>
 
-      <section className="about" id="about">
-
-        <h2>About Kinetic Care</h2>
-
-        <p>
-          Kinetic Care is a smart old age home management
-          system developed to simplify resident management,
-          medical records, staff management, room allocation
-          and family communication.
-        </p>
-
-        <div className="about-boxes">
-
-          <div className="about-card">
-            <h3>👴 Residents</h3>
-            <p>
-              Manage resident profiles and personal details.
-            </p>
-          </div>
-
-          <div className="about-card">
-            <h3>💊 Healthcare</h3>
-            <p>
-              Store medical history and medicines.
-            </p>
-          </div>
-
-          <div className="about-card">
-            <h3>👨‍⚕️ Staff</h3>
-            <p>
-              Manage doctors, nurses and caretakers.
-            </p>
           </div>
 
         </div>
 
+
+        <div className="about-content">
+
+          <p className="home-section-label">
+            About Kinetic Care
+          </p>
+
+          <h2>
+            Technology that supports
+            human-centered care.
+          </h2>
+
+          <p>
+            Kinetic Care is a smart old age home management
+            system designed to simplify daily operations while
+            keeping residents' comfort, health and family
+            connection at the center.
+          </p>
+
+
+          <div className="about-feature-list">
+
+            <div>
+              <FaCheckCircle />
+
+              <span>
+                Resident profiles and room management
+              </span>
+            </div>
+
+            <div>
+              <FaCheckCircle />
+
+              <span>
+                Medical records and doctor access
+              </span>
+            </div>
+
+            <div>
+              <FaCheckCircle />
+
+              <span>
+                Family visits and health updates
+              </span>
+            </div>
+
+            <div>
+              <FaCheckCircle />
+
+              <span>
+                Donation and visitor management
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
       </section>
 
-      {/* ================= SERVICES ================= */}
 
-      <section className="services" id="services">
+      {/* SERVICES */}
 
-        <h2>Our Services</h2>
+      <section
+        className="home-services"
+        id="services"
+      >
 
-        <div className="service-grid">
+        <div className="section-heading-center">
 
-          <div className="service-card">
+          <p className="home-section-label">
+            What We Manage
+          </p>
+
+          <h2>Smart Care Services</h2>
+
+          <span>
+            Everything needed for efficient and compassionate
+            elderly care.
+          </span>
+
+        </div>
+
+
+        <div className="home-service-grid">
+
+          <div className="home-service-card">
+
+            <div className="service-icon resident-service">
+              <FaUserFriends />
+            </div>
+
             <h3>Resident Management</h3>
+
             <p>
-              Complete resident profile with room allocation.
+              Maintain resident profiles, room details,
+              status and family information.
             </p>
+
           </div>
 
-          <div className="service-card">
+
+          <div className="home-service-card">
+
+            <div className="service-icon medical-service">
+              <FaNotesMedical />
+            </div>
+
             <h3>Medical Records</h3>
+
             <p>
-              Store diseases, medicines and doctor reports.
+              Track health conditions, medicines and doctor
+              treatment records.
             </p>
+
           </div>
 
-          <div className="service-card">
+
+          <div className="home-service-card">
+
+            <div className="service-icon staff-service">
+              <FaUserMd />
+            </div>
+
             <h3>Staff Management</h3>
+
             <p>
-              Manage doctors, nurses and employees.
+              Manage doctors, nurses, caretakers and daily
+              staff responsibilities.
             </p>
+
           </div>
 
-          <div className="service-card">
+
+          <div className="home-service-card">
+
+            <div className="service-icon room-service">
+              <FaBed />
+            </div>
+
             <h3>Room Management</h3>
+
             <p>
-              Track available and occupied rooms.
+              Track room capacity, occupancy and availability
+              in real time.
             </p>
+
           </div>
 
-          <div className="service-card">
+
+          <div className="home-service-card">
+
+            <div className="service-icon visitor-service">
+              <FaWalking />
+            </div>
+
             <h3>Visitor Management</h3>
+
             <p>
-              Keep visitor records securely.
+              Record family visits, check-in and checkout
+              information securely.
             </p>
+
           </div>
 
-          <div className="service-card">
-            <h3>Payment Records</h3>
+
+          <div className="home-service-card">
+
+            <div className="service-icon donation-service">
+              <FaHeart />
+            </div>
+
+            <h3>Donations</h3>
+
             <p>
-              Maintain payment and fee details.
+              Support residents through monetary or essential
+              item donations.
             </p>
+
           </div>
 
         </div>
 
       </section>
-            {/* ================= WHY CHOOSE US ================= */}
 
-      <section className="why-us">
 
-        <h2>Why Choose Kinetic Care?</h2>
+      {/* WHY US */}
 
-        <div className="why-grid">
+      <section className="home-why-us">
 
-          <div className="why-card">
-            <h3>24/7 Care</h3>
+        <div className="section-heading-center">
+
+          <p className="home-section-label">
+            Why Kinetic Care
+          </p>
+
+          <h2>
+            Care you can trust
+          </h2>
+
+        </div>
+
+
+        <div className="home-why-grid">
+
+          <div className="home-why-card">
+
+            <FaClock />
+
+            <h3>24/7 Support</h3>
+
             <p>
-              Professional doctors, nurses and caretakers are
-              available round the clock.
+              Dedicated care and assistance for residents
+              throughout the day.
             </p>
+
           </div>
 
-          <div className="why-card">
+
+          <div className="home-why-card">
+
+            <FaShieldAlt />
+
             <h3>Safe Environment</h3>
+
             <p>
-              Secure rooms with emergency support and CCTV
-              monitoring.
+              Organized rooms, controlled visitor records and
+              resident monitoring.
             </p>
+
           </div>
 
-          <div className="why-card">
-            <h3>Medical Support</h3>
+
+          <div className="home-why-card">
+
+            <FaNotesMedical />
+
+            <h3>Health Monitoring</h3>
+
             <p>
-              Daily health monitoring, medicines and doctor
-              visits.
+              Doctors and medical records remain connected for
+              better resident care.
             </p>
+
           </div>
 
-          <div className="why-card">
+
+          <div className="home-why-card">
+
+            <FaUserFriends />
+
             <h3>Family Connection</h3>
+
             <p>
-              Family members can check resident details and
-              stay connected anytime.
+              Families can stay updated and connected with
+              their loved ones.
             </p>
+
           </div>
 
         </div>
 
       </section>
 
-      {/* ================= CONTACT ================= */}
 
-      <section className="contact" id="contact">
+      {/* DONATION CTA */}
 
-        <h2>Contact Us</h2>
+      <section className="home-donation-cta">
 
-        <div className="contact-container">
+        <div>
 
-          <div className="contact-box">
+          <p>Support Our Residents</p>
 
-            <h3>Address</h3>
+          <h2>
+            Your kindness can make someone's day brighter.
+          </h2>
 
-            <p>
+          <span>
+            Help us provide food, healthcare, comfort and
+            happiness to elderly residents.
+          </span>
+
+        </div>
+
+        <button onClick={() => navigate("/donate")}>
+          <FaHeart />
+          Donate Now
+        </button>
+
+      </section>
+
+
+      {/* CONTACT */}
+
+      <section
+        className="home-contact"
+        id="contact"
+      >
+
+        <div className="section-heading-center">
+
+          <p className="home-section-label">
+            Contact Us
+          </p>
+
+          <h2>We're Here to Help</h2>
+
+        </div>
+
+
+        <div className="home-contact-grid">
+
+          <div className="home-contact-card">
+
+            <div className="contact-icon">
+              <FaMapMarkerAlt />
+            </div>
+
+            <span>Address</span>
+
+            <strong>
               Kinetic Care Old Age Home
-            </p>
+            </strong>
 
             <p>
               Ahmedabad, Gujarat
@@ -246,22 +556,40 @@ function Home() {
 
           </div>
 
-          <div className="contact-box">
 
-            <h3>Email</h3>
+          <div className="home-contact-card">
+
+            <div className="contact-icon">
+              <FaEnvelope />
+            </div>
+
+            <span>Email</span>
+
+            <strong>
+              kineticcare@gmail.com
+            </strong>
 
             <p>
-              kineticcare@gmail.com
+              Send us your questions anytime
             </p>
 
           </div>
 
-          <div className="contact-box">
 
-            <h3>Phone</h3>
+          <div className="home-contact-card">
+
+            <div className="contact-icon">
+              <FaPhoneAlt />
+            </div>
+
+            <span>Phone</span>
+
+            <strong>
+              +91 9876543210
+            </strong>
 
             <p>
-              +91 9876543210
+              Contact our support team
             </p>
 
           </div>
@@ -270,19 +598,47 @@ function Home() {
 
       </section>
 
-      {/* ================= FOOTER ================= */}
 
-      <footer className="footer">
+      {/* FOOTER */}
 
-        <h2>Kinetic Care</h2>
+      <footer className="home-footer">
 
-        <p>
-          Smart Old Age Home Management System
-        </p>
+        <div className="footer-top">
 
-        <p>
-          © 2026 All Rights Reserved
-        </p>
+          <div className="footer-brand">
+
+            <img
+              src="/logo.png"
+              alt="Kinetic Care"
+            />
+
+            <div>
+              <h2>
+                Kinetic<span>Care</span>
+              </h2>
+
+              <p>
+                Smart Old Age Home Management System
+              </p>
+            </div>
+
+          </div>
+
+
+          <div className="footer-links">
+
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+
+          </div>
+
+        </div>
+
+        <div className="footer-bottom">
+          © 2026 Kinetic Care. All Rights Reserved.
+        </div>
 
       </footer>
 
