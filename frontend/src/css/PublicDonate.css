@@ -1,108 +1,492 @@
-.public-donate-container {
-    min-height: 100vh;
-    background: #f5f7fb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
+* {
+  box-sizing: border-box;
 }
 
-.public-donate-card {
-    width: 100%;
-    max-width: 550px;
-    background: #fff;
-    padding: 35px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+.public-donate-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(31, 157, 116, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(210, 83, 102, 0.08),
+      transparent 30%
+    ),
+    #f5f7f6;
+
+  font-family: "Segoe UI", sans-serif;
 }
 
-.public-donate-card h1 {
-    text-align: center;
-    color: #1e3a8a;
-    margin-bottom: 10px;
+
+/* MAIN WRAPPER */
+
+.public-donate-wrapper {
+  display: grid;
+
+  grid-template-columns:
+    390px minmax(0, 1fr);
+
+  width: min(1120px, 100%);
+
+  overflow: hidden;
+
+  border: 1px solid #e2eae7;
+  border-radius: 30px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 30px 80px rgba(39, 69, 59, 0.14);
 }
 
-.public-donate-card p {
-    text-align: center;
-    color: #666;
-    margin-bottom: 25px;
-    line-height: 1.6;
+
+/* =========================
+   LEFT SIDE
+========================= */
+
+.public-donate-info {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 680px;
+
+  padding: 32px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #147b5e,
+      #279f7a
+    );
+
+  color: #ffffff;
 }
 
-.public-donate-card form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+
+/* BRAND */
+
+.public-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
 }
 
-.public-donate-card input,
-.public-donate-card select,
-.public-donate-card textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
-    outline: none;
-    transition: 0.3s;
-    box-sizing: border-box;
+.public-brand img {
+  width: 48px;
+  height: 48px;
+
+  padding: 4px;
+
+  border-radius: 13px;
+
+  background: rgba(255,255,255,.95);
+
+  object-fit: contain;
 }
 
-.public-donate-card input:focus,
-.public-donate-card select:focus,
-.public-donate-card textarea:focus {
-    border-color: #1e3a8a;
+.public-brand h2 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 19px;
 }
 
-.public-donate-card textarea {
-    resize: none;
-    height: 100px;
+.public-brand h2 span {
+  color: #bff3de;
 }
 
-.public-donate-card button {
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    background: #1e3a8a;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
+
+/* CONTENT */
+
+.public-donate-content {
+  margin-top: 68px;
 }
 
-.public-donate-card button:hover {
-    background: #163172;
+.public-donate-icon {
+  display: grid;
+
+  width: 72px;
+  height: 72px;
+
+  place-items: center;
+
+  margin-bottom: 24px;
+
+  border-radius: 21px;
+
+  background: rgba(255,255,255,.14);
+
+  font-size: 30px;
 }
 
-@media (max-width: 768px) {
+.public-donate-label {
+  margin: 0 0 8px;
 
-    .public-donate-card {
-        padding: 25px;
-    }
+  font-size: 10px;
+  font-weight: 800;
 
-    .public-donate-card h1 {
-        font-size: 26px;
-    }
+  letter-spacing: 1.5px;
+
+  text-transform: uppercase;
+
+  opacity: .82;
+}
+
+.public-donate-content h1 {
+  margin: 0;
+
+  font-size: 32px;
+  line-height: 1.28;
+}
+
+.public-donate-description {
+  margin: 18px 0 0;
+
+  font-size: 12px;
+  line-height: 1.75;
+
+  opacity: .82;
+}
+
+
+/* BENEFITS */
+
+.public-benefits {
+  display: grid;
+
+  gap: 13px;
+
+  margin-top: 34px;
+}
+
+.public-benefits div {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  font-size: 10px;
+}
+
+.public-benefits svg {
+  color: #ffd4d9;
+}
+
+
+/* TRUST */
+
+.public-trust-box {
+  margin-top: auto;
+
+  padding: 14px;
+
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 14px;
+
+  background: rgba(255,255,255,.08);
+}
+
+.public-trust-box strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-size: 10px;
+}
+
+.public-trust-box span {
+  display: block;
+
+  font-size: 9px;
+
+  opacity: .72;
+}
+
+
+/* =========================
+   FORM SIDE
+========================= */
+
+.public-donate-form-section {
+  padding: 45px;
+}
+
+.public-form-header {
+  margin-bottom: 28px;
+}
+
+.public-form-header p {
+  margin: 0 0 5px;
+
+  color: #1d936e;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.2px;
+
+  text-transform: uppercase;
+}
+
+.public-form-header h2 {
+  margin: 0;
+
+  color: #1f2e34;
+
+  font-size: 29px;
+}
+
+.public-form-header span {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #899599;
+
+  font-size: 11px;
+}
+
+
+/* FORM GRID */
+
+.public-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+.public-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.public-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.public-form-group label {
+  color: #4d5b60;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* INPUTS */
+
+.public-input-box,
+.public-textarea-box {
+  display: flex;
+
+  gap: 10px;
+
+  border: 1px solid #dce8e4;
+  border-radius: 12px;
+
+  background: #f9fcfb;
+
+  color: #84948e;
+
+  transition: .2s;
+}
+
+.public-input-box {
+  align-items: center;
+
+  padding: 0 13px;
+}
+
+.public-textarea-box {
+  align-items: flex-start;
+
+  padding: 13px;
+}
+
+.public-input-box:focus-within,
+.public-textarea-box:focus-within {
+  border-color: #1f9d74;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(31,157,116,.1);
+}
+
+.public-input-box svg,
+.public-textarea-box svg {
+  flex-shrink: 0;
+
+  font-size: 13px;
+}
+
+.public-textarea-box svg {
+  margin-top: 4px;
+}
+
+.public-input-box input {
+  width: 100%;
+
+  padding: 13px 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #2d3b40;
+
+  font-size: 11px;
+}
+
+.public-textarea-box textarea {
+  width: 100%;
+
+  min-height: 105px;
+
+  padding: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #2d3b40;
+
+  font-family: inherit;
+  font-size: 11px;
+
+  resize: vertical;
+}
+
+
+/* SELECT */
+
+.public-form-group select {
+  width: 100%;
+
+  padding: 13px 14px;
+
+  border: 1px solid #dce8e4;
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #f9fcfb;
+
+  color: #38464b;
+
+  font-size: 11px;
+}
+
+.public-form-group select:focus {
+  border-color: #1f9d74;
+
+  background: white;
+
+  box-shadow:
+    0 0 0 3px rgba(31,157,116,.1);
+}
+
+
+/* DONATE BUTTON */
+
+.public-donate-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  width: 100%;
+
+  margin-top: 25px;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1c936e,
+      #32b188
+    );
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 9px 22px rgba(28,147,110,.22);
+
+  transition: .2s;
+}
+
+.public-donate-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 13px 27px rgba(28,147,110,.3);
+}
+
+.public-donate-btn:disabled {
+  cursor: not-allowed;
+
+  opacity: .65;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+
+  .public-donate-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .public-donate-info {
+    display: none;
+  }
 
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
 
-    .public-donate-container {
-        padding: 20px 10px;
-    }
+  .public-donate-page {
+    padding: 15px;
+  }
 
-    .public-donate-card {
-        padding: 20px;
-    }
+  .public-donate-form-section {
+    padding: 30px 20px;
+  }
 
-    .public-donate-card h1 {
-        font-size: 22px;
-    }
+  .public-form-grid {
+    grid-template-columns: 1fr;
+  }
 
-    .public-donate-card p {
-        font-size: 14px;
-    }
+  .public-form-group.full-width {
+    grid-column: auto;
+  }
 
 }

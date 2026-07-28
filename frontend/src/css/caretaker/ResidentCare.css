@@ -1,0 +1,399 @@
+* {
+  box-sizing: border-box;
+}
+
+.resident-care-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f4f7f9;
+  font-family: Arial, sans-serif;
+  color: #263238;
+}
+
+/* ================= HEADER ================= */
+
+.care-page-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.care-page-header h1 {
+  margin: 4px 0 0;
+  font-size: 29px;
+}
+
+.care-page-header p {
+  margin: 0;
+  color: #7a8791;
+  font-size: 14px;
+}
+
+.back-btn {
+  border: none;
+  background: white;
+  padding: 11px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+}
+
+.care-shift {
+  margin-left: auto;
+  background: #e0f4f1;
+  color: #146c73;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ================= SUMMARY ================= */
+
+.resident-summary-card {
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.resident-profile {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #edf1f3;
+}
+
+.resident-big-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+  background: #e5f6f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+
+.resident-profile h2 {
+  margin: 0 0 7px;
+}
+
+.resident-profile p {
+  margin: 0;
+  color: #81909a;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding-top: 22px;
+}
+
+.summary-item span {
+  display: block;
+  color: #89959e;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.summary-item strong {
+  font-size: 15px;
+}
+
+/* ================= PROGRESS ================= */
+
+.care-progress-card {
+  background: white;
+  border-radius: 18px;
+  padding: 22px 25px;
+  margin-top: 22px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+.progress-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progress-heading h3 {
+  margin: 0 0 5px;
+}
+
+.progress-heading p {
+  margin: 0;
+  font-size: 13px;
+  color: #87949d;
+}
+
+.progress-heading strong {
+  color: #146c73;
+  font-size: 21px;
+}
+
+.progress-bar {
+  height: 9px;
+  background: #e7eded;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 17px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #146c73, #24a694);
+  border-radius: 20px;
+  transition: width 0.3s ease;
+}
+
+/* ================= TASKS ================= */
+
+.care-section {
+  margin-top: 28px;
+}
+
+.care-section-heading h2 {
+  margin: 0;
+}
+
+.care-section-heading p {
+  margin: 6px 0 0;
+  color: #83919b;
+}
+
+.care-task-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.care-task-card {
+  position: relative;
+  background: white;
+  border: 2px solid transparent;
+  padding: 22px;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  min-height: 125px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: 0.2s;
+}
+
+.care-task-card:hover {
+  transform: translateY(-3px);
+}
+
+.care-task-completed {
+  border-color: #26a68f;
+  background: #f3fbf9;
+}
+
+.task-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #edf7f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23px;
+}
+
+.task-content h3 {
+  margin: 2px 0 7px;
+}
+
+.task-content p {
+  margin: 0;
+  color: #87949c;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.care-task-card input {
+  display: none;
+}
+
+.custom-check {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #cad4d7;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+.care-task-completed .custom-check {
+  background: #169582;
+  border-color: #169582;
+}
+
+/* ================= NOTES ================= */
+
+.care-notes-card {
+  margin-top: 28px;
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+.care-notes-card h2 {
+  margin: 0;
+}
+
+.care-notes-card p {
+  color: #87949c;
+  margin: 6px 0 17px;
+  font-size: 14px;
+}
+
+.care-notes-card textarea {
+  width: 100%;
+  height: 130px;
+  resize: vertical;
+  border: 1px solid #dce4e6;
+  outline: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.care-notes-card textarea:focus {
+  border-color: #1b9485;
+}
+
+.notes-count {
+  text-align: right;
+  font-size: 12px;
+  color: #8c989f;
+  margin-top: 6px;
+}
+
+/* ================= MESSAGE ================= */
+
+.care-message {
+  margin-top: 20px;
+  background: #e9f8f4;
+  color: #146c73;
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 14px;
+}
+
+/* ================= ACTIONS ================= */
+
+.care-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+  padding-bottom: 30px;
+}
+
+.cancel-care-btn,
+.save-care-btn {
+  border: none;
+  padding: 13px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cancel-care-btn {
+  background: white;
+  color: #51616a;
+  border: 1px solid #d8e0e2;
+}
+
+.save-care-btn {
+  background: #146c73;
+  color: white;
+}
+
+.save-care-btn:hover {
+  background: #0f595e;
+}
+
+.save-care-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================= LOADING ================= */
+
+.resident-care-loading,
+.resident-care-error {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.resident-care-error button {
+  margin-top: 15px;
+  border: none;
+  background: #146c73;
+  color: white;
+  padding: 11px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1000px) {
+  .summary-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .care-task-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .resident-care-page {
+    padding: 18px;
+  }
+
+  .care-page-header {
+    flex-wrap: wrap;
+  }
+
+  .care-shift {
+    margin-left: 0;
+  }
+
+  .summary-details,
+  .care-task-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .care-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel-care-btn,
+  .save-care-btn {
+    width: 100%;
+  }
+}

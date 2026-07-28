@@ -1,105 +1,426 @@
-.book-visit-page {
-  min-height: 100vh;
-  background: #f4f7fb;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 30px;
-}
-
-.book-visit-card {
-  width: 100%;
-  max-width: 650px;
-  background: #fff;
-  padding: 35px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-.book-visit-card h2 {
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 10px;
-}
-
-.book-visit-card p {
-  text-align: center;
-  color: #666;
-  margin-bottom: 30px;
-}
-
-.form-group {
-  margin-bottom: 18px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #333;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  font-size: 15px;
-  outline: none;
-  transition: 0.3s;
+* {
   box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: #4f8cff;
-  box-shadow: 0 0 5px rgba(79, 140, 255, 0.3);
+.book-visit-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 28px;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(31, 157, 116, 0.1),
+      transparent 30%
+    ),
+    #f4f7f6;
+
+  font-family: "Segoe UI", sans-serif;
 }
 
-.form-group textarea {
+
+/* MAIN */
+
+.book-visit-container {
+  display: grid;
+
+  grid-template-columns:
+    360px minmax(0, 1fr);
+
+  width: min(1050px, 100%);
+
+  overflow: hidden;
+
+  border: 1px solid #dce9e4;
+  border-radius: 28px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 28px 70px rgba(26, 70, 56, 0.14);
+}
+
+
+/* LEFT PANEL */
+
+.visit-info-panel {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 32px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #147b5e,
+      #28a980
+    );
+
+  color: white;
+}
+
+.visit-back-btn {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  gap: 7px;
+
+  padding: 8px 11px;
+
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 10px;
+
+  background: rgba(255,255,255,.1);
+
+  color: white;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.visit-back-btn:hover {
+  background: rgba(255,255,255,.18);
+}
+
+.visit-info-content {
+  margin-top: 65px;
+}
+
+.visit-main-icon {
+  display: grid;
+
+  width: 70px;
+  height: 70px;
+
+  place-items: center;
+
+  margin-bottom: 25px;
+
+  border-radius: 21px;
+
+  background: rgba(255,255,255,.15);
+
+  font-size: 28px;
+}
+
+.visit-label {
+  margin: 0 0 8px;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+
+  opacity: .8;
+}
+
+.visit-info-content h1 {
+  margin: 0;
+
+  font-size: 31px;
+  line-height: 1.25;
+}
+
+.visit-description {
+  margin: 18px 0 0;
+
+  font-size: 12px;
+  line-height: 1.7;
+
+  opacity: .8;
+}
+
+.visit-guidelines {
+  display: grid;
+
+  gap: 12px;
+
+  margin-top: 35px;
+}
+
+.visit-guidelines div {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  font-size: 10px;
+
+  opacity: .9;
+}
+
+
+/* RIGHT FORM */
+
+.visit-form-panel {
+  padding: 42px;
+}
+
+.visit-form-header {
+  margin-bottom: 28px;
+}
+
+.visit-form-header p {
+  margin: 0 0 5px;
+
+  color: #1c916d;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.visit-form-header h2 {
+  margin: 0;
+
+  color: #1e2d34;
+
+  font-size: 28px;
+}
+
+.visit-form-header span {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #899599;
+
+  font-size: 11px;
+}
+
+
+/* FORM GRID */
+
+.visit-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+.visit-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.visit-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.visit-form-group label {
+  color: #4b5b60;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* INPUT */
+
+.visit-input-box,
+.visit-textarea-box {
+  display: flex;
+
+  gap: 10px;
+
+  border: 1px solid #dce8e4;
+  border-radius: 12px;
+
+  background: #f9fcfb;
+
+  color: #879790;
+
+  transition: .2s;
+}
+
+.visit-input-box {
+  align-items: center;
+
+  padding: 0 13px;
+}
+
+.visit-textarea-box {
+  align-items: flex-start;
+
+  padding: 13px;
+}
+
+.visit-input-box:focus-within,
+.visit-textarea-box:focus-within {
+  border-color: #1e9872;
+
+  background: white;
+
+  box-shadow:
+    0 0 0 3px rgba(30,152,114,.1);
+}
+
+.visit-input-box svg,
+.visit-textarea-box svg {
+  flex-shrink: 0;
+
+  font-size: 13px;
+}
+
+.visit-textarea-box svg {
+  margin-top: 3px;
+}
+
+.visit-input-box input {
+  width: 100%;
+
+  padding: 13px 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #2c3a40;
+
+  font-size: 11px;
+}
+
+.visit-textarea-box textarea {
+  width: 100%;
+
+  min-height: 115px;
+
+  padding: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #2c3a40;
+
+  font-family: inherit;
+  font-size: 11px;
+
   resize: vertical;
 }
 
-.book-visit-card button {
-  width: 100%;
-  padding: 14px;
-  background: #4f8cff;
-  color: white;
+.visit-input-box input::placeholder,
+.visit-textarea-box textarea::placeholder {
+  color: #9fa9a5;
+}
+
+
+/* ACTIONS */
+
+.visit-form-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 11px;
+
+  margin-top: 28px;
+  padding-top: 21px;
+
+  border-top: 1px solid #e9efed;
+}
+
+.visit-form-actions button {
+  min-width: 125px;
+
+  padding: 11px 17px;
+
   border: none;
-  border-radius: 8px;
-  font-size: 17px;
+  border-radius: 11px;
+
+  font-size: 10px;
+  font-weight: 700;
+
   cursor: pointer;
-  transition: 0.3s;
 }
 
-.book-visit-card button:hover {
-  background: #2f73f5;
+.visit-cancel-btn {
+  background: #edf2f0;
+
+  color: #65736e;
 }
 
-.book-visit-card button:disabled {
-  background: #9fbefc;
+.visit-submit-btn {
+  background:
+    linear-gradient(
+      135deg,
+      #1b936e,
+      #32b188
+    );
+
+  color: white;
+
+  box-shadow:
+    0 8px 20px rgba(27,147,110,.2);
+}
+
+.visit-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.visit-submit-btn:disabled {
+  opacity: .65;
+
   cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+
+  .book-visit-container {
+    grid-template-columns: 1fr;
+  }
+
+  .visit-info-panel {
+    display: none;
+  }
+
+}
+
+@media (max-width: 600px) {
+
   .book-visit-page {
     padding: 15px;
   }
 
-  .book-visit-card {
-    padding: 20px;
+  .visit-form-panel {
+    padding: 28px 20px;
   }
 
-  .book-visit-card h2 {
-    font-size: 24px;
+  .visit-form-grid {
+    grid-template-columns: 1fr;
   }
 
-  .book-visit-card p {
-    font-size: 14px;
+  .visit-form-group.full-width {
+    grid-column: auto;
   }
 
-  .book-visit-card button {
-    font-size: 16px;
+  .visit-form-actions {
+    flex-direction: column-reverse;
   }
+
+  .visit-form-actions button {
+    width: 100%;
+  }
+
 }

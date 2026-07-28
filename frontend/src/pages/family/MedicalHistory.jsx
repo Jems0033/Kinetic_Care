@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "../../css/family/MedicalHistory.css";
+import { useNavigate } from "react-router-dom";
+
+import {
+  FaArrowLeft,
+  FaNotesMedical,
+  FaUserMd,
+  FaPills,
+  FaCalendarAlt,
+} from "react-icons/fa";
 
 function MedicalHistory() {
-
   const [records, setRecords] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getMedicalHistory();
@@ -12,7 +22,6 @@ function MedicalHistory() {
 
   const getMedicalHistory = async () => {
     try {
-
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
@@ -25,67 +34,200 @@ function MedicalHistory() {
       );
 
       setRecords(res.data);
-
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div className="medical-history">
+    <div className="medical-history-page">
 
-      <h1>Medical History</h1>
+      {/* TOP */}
+
+      <div className="history-topbar">
+
+        <button
+          className="history-back-btn"
+          onClick={() => navigate("/family-dashboard")}
+        >
+          <FaArrowLeft />
+          Dashboard
+        </button>
+
+      </div>
+
+
+      {/* HEADING */}
+
+      <div className="medical-history-heading">
+
+        <p>Health Records</p>
+
+        <h1>Medical History</h1>
+
+        <span>
+          View complete medical records and treatment history
+          of your loved one.
+        </span>
+
+      </div>
+
+
+      {/* SUMMARY */}
+
+      <div className="history-summary">
+
+        <div className="summary-icon">
+          <FaNotesMedical />
+        </div>
+
+        <div>
+          <span>Total Medical Records</span>
+
+          <strong>{records.length}</strong>
+        </div>
+
+      </div>
+
+
+      {/* RECORDS */}
 
       {records.length === 0 ? (
 
-        <div className="no-record">
-          No Medical Records Found
+        <div className="medical-history-empty">
+
+          <div className="history-empty-icon">
+            <FaNotesMedical />
+          </div>
+
+          <h3>No Medical Records Found</h3>
+
+          <p>
+            Medical records will appear here once they are added.
+          </p>
+
         </div>
 
       ) : (
 
-        <table>
+        <div className="medical-history-list">
 
-          <thead>
+          {records.map((record, index) => (
 
-            <tr>
-              <th>Date</th>
-              <th>Doctor</th>
-              <th>Problem</th>
-              <th>Medicine</th>
-            </tr>
+            <div
+              className="medical-history-item"
+              key={record._id}
+            >
 
-          </thead>
+              {/* TIMELINE */}
 
-          <tbody>
+              <div className="history-timeline">
 
-            {records.map((record) => (
+                <div className="timeline-dot">
+                  <FaNotesMedical />
+                </div>
 
-              <tr key={record._id}>
+                {index !== records.length - 1 && (
+                  <div className="timeline-line"></div>
+                )}
 
-                <td>
-                  {new Date(record.date).toLocaleDateString()}
-                </td>
+              </div>
 
-                <td>
-                  {record.staffId?.name}
-                </td>
 
-                <td>
-                  {record.problem}
-                </td>
+              {/* CARD */}
 
-                <td>
-                  {record.medicine}
-                </td>
+              <div className="history-record-card">
 
-              </tr>
+                <div className="history-card-header">
 
-            ))}
+                  <div>
 
-          </tbody>
+                    <span>Medical Record</span>
 
-        </table>
+                    <h3>
+                      {record.problem || "General Checkup"}
+                    </h3>
+
+                  </div>
+
+
+                  <div className="history-date">
+
+                    <FaCalendarAlt />
+
+                    {new Date(record.date)
+                      .toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+
+                  </div>
+
+                </div>
+
+
+                <div className="history-details-grid">
+
+                  <div className="history-detail">
+
+                    <div className="history-detail-icon doctor-history-icon">
+                      <FaUserMd />
+                    </div>
+
+                    <div>
+                      <span>Doctor</span>
+
+                      <strong>
+                        Dr. {record.staffId?.name || "Not Available"}
+                      </strong>
+                    </div>
+
+                  </div>
+
+
+                  <div className="history-detail">
+
+                    <div className="history-detail-icon problem-history-icon">
+                      <FaNotesMedical />
+                    </div>
+
+                    <div>
+                      <span>Problem</span>
+
+                      <strong>
+                        {record.problem || "Not specified"}
+                      </strong>
+                    </div>
+
+                  </div>
+
+
+                  <div className="history-detail medicine-history-detail">
+
+                    <div className="history-detail-icon medicine-history-icon">
+                      <FaPills />
+                    </div>
+
+                    <div>
+                      <span>Medicine</span>
+
+                      <strong>
+                        {record.medicine || "Not prescribed"}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
 
       )}
 
