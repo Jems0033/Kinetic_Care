@@ -53,9 +53,18 @@ function CaretakerDashboard() {
           </p>
         </div>
 
-        <div className="shift-badge">
-          {data.caretaker?.shift} Shift
-        </div>
+        <div className="header-actions">
+  <div className="shift-badge">
+    {data.caretaker?.shift} Shift
+  </div>
+
+  <button
+    className="profile-btn"
+    onClick={() => navigate("/caretaker/profile")}
+  >
+    👤 Profile
+  </button>
+</div>
       </div>
 
       <div className="caretaker-stats">

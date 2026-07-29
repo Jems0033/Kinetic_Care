@@ -43,6 +43,7 @@ const getLeastAssignedStaff = async (role, shift, residentField) => {
     };
     
 const addResident = async (req, res) => {
+  let resident;
 
   try {
 
@@ -58,15 +59,17 @@ const addResident = async (req, res) => {
 
     }
 
-    if (room.occupiedBeds >= room.capacity) {
+    let totalCapacity = room.capacity;
 
-      return res.status(400).json({
+if (room.roomType === "Double") {
+  totalCapacity = room.capacity * 2;
+}
 
-        message: "Room Full"
-
-      });
-
-    }
+if (room.occupiedBeds >= totalCapacity) {
+  return res.status(400).json({
+    message: "Room Full"
+  });
+}
 
     const morningDoctor = await getLeastAssignedStaff(
       "Doctor",
@@ -99,7 +102,25 @@ const addResident = async (req, res) => {
       });
     }
 
-    const resident = await Resident.create({
+    if (
+  req.body.familyName &&
+  req.body.familyEmail &&
+  req.body.familyPhone &&
+  req.body.familyPassword &&
+  req.body.relation
+) {
+  const userExists = await User.findOne({
+    email: req.body.familyEmail,
+  });
+
+  if (userExists) {
+    return res.status(400).json({
+      message: "Family Email Already Exists",
+    });
+  }
+}
+
+    resident = await Resident.create({
       name: req.body.name,
       age: req.body.age,
       gender: req.body.gender,
@@ -122,15 +143,6 @@ const addResident = async (req, res) => {
       req.body.relation
     ) {
 
-      const userExists = await User.findOne({
-        email: req.body.familyEmail
-      });
-
-      if (userExists) {
-        return res.status(400).json({
-          message: "Family Email Already Exists"
-        });
-      }
 
       const hashedPassword = await bcrypt.hash(
         req.body.familyPassword,
@@ -165,11 +177,9 @@ const addResident = async (req, res) => {
 
     room.occupiedBeds++;
 
-    if (room.occupiedBeds === room.capacity) {
-
-      room.status = "Occupied";
-
-    }
+    if (room.occupiedBeds === totalCapacity) {
+  room.status = "Occupied";
+}
 
     await room.save();
 
@@ -185,13 +195,15 @@ const addResident = async (req, res) => {
 
   catch (error) {
 
-    res.status(500).json({
-
-      message: error.message
-
-    });
-
+  if (resident?._id) {
+    await Resident.findByIdAndDelete(resident._id);
   }
+
+  res.status(500).json({
+    message: error.message,
+  });
+
+}
 
 };
 // ===============================
@@ -290,9 +302,15 @@ const updateResident = async (req, res) => {
           oldRoom.occupiedBeds = 0;
         }
 
-        if (oldRoom.occupiedBeds < oldRoom.capacity) {
-          oldRoom.status = "Available";
-        }
+        let oldCapacity = oldRoom.capacity;
+
+if (oldRoom.roomType === "Double") {
+  oldCapacity = oldRoom.capacity * 2;
+}
+
+if (oldRoom.occupiedBeds < oldCapacity) {
+  oldRoom.status = "Available";
+}
 
         await oldRoom.save();
       }
@@ -306,17 +324,23 @@ const updateResident = async (req, res) => {
         });
       }
 
-      if (newRoom.occupiedBeds >= newRoom.capacity) {
-        return res.status(400).json({
-          message: "Room Full",
-        });
-      }
+      let newCapacity = newRoom.capacity;
 
-      newRoom.occupiedBeds++;
+if (newRoom.roomType === "Double") {
+  newCapacity = newRoom.capacity * 2;
+}
 
-      if (newRoom.occupiedBeds === newRoom.capacity) {
-        newRoom.status = "Occupied";
-      }
+if (newRoom.occupiedBeds >= newCapacity) {
+  return res.status(400).json({
+    message: "Room Full",
+  });
+}
+
+newRoom.occupiedBeds++;
+
+if (newRoom.occupiedBeds === newCapacity) {
+  newRoom.status = "Occupied";
+}
 
       await newRoom.save();
     }

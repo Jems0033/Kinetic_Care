@@ -23,6 +23,43 @@ function Room() {
     status: "Available",
   });
 
+  const [alertBox, setAlertBox] = useState({
+  show: false,
+  message: "",
+  type: "",
+});
+
+const showAlert = (message, type = "success") => {
+  setAlertBox({
+    show: true,
+    message,
+    type,
+  });
+
+  setTimeout(() => {
+    setAlertBox({
+      show: false,
+      message: "",
+      type: "",
+    });
+  }, 3000);
+};  
+const validateRoom = () => {
+  if (!formData.roomNumber.trim())
+    return "Room Number is required.";
+
+  if (!formData.roomType)
+    return "Please select Room Type.";
+
+  if (!formData.capacity)
+    return "Number of Beds is required.";
+
+  if (Number(formData.capacity) <= 0)
+    return "Number of Beds must be greater than 0.";
+
+  return null;
+};
+
   useEffect(() => {
     getRooms();
   }, []);
@@ -77,6 +114,11 @@ useEffect(() => {
 
   const addRoom = async () => {
     try {
+      const validationError = validateRoom();
+
+if (validationError) {
+  return showAlert(validationError, "error");
+}
       const token = localStorage.getItem("token");
 
       await axios.post(
@@ -91,7 +133,7 @@ useEffect(() => {
         },
       );
 
-      alert("Room Added Successfully");
+      showAlert("Room Added Successfully", "success");
 
       closeModal();
 
@@ -99,7 +141,10 @@ useEffect(() => {
     } catch (error) {
       console.log(error);
 
-      alert("Unable to Add Room");
+      showAlert(
+  error.response?.data?.message || "Unable to Add Room",
+  "error"
+);
     }
   };
 
@@ -129,6 +174,11 @@ useEffect(() => {
 
   const updateRoom = async () => {
     try {
+      const validationError = validateRoom();
+
+if (validationError) {
+  return showAlert(validationError, "error");
+}
       const token = localStorage.getItem("token");
 
       await axios.put(
@@ -143,13 +193,17 @@ useEffect(() => {
         },
       );
 
-      alert("Room Updated Successfully");
+      showAlert("Room Updated Successfully", "success");
 
       closeModal();
 
       getRooms();
     } catch (error) {
       console.log(error);
+      showAlert(
+  error.response?.data?.message || "Unable to Update Room",
+  "error"
+);
     }
   };
 
@@ -173,11 +227,15 @@ useEffect(() => {
         },
       );
 
-      alert("Room Deleted Successfully");
+      showAlert("Room Deleted Successfully", "success");
 
       getRooms();
     } catch (error) {
       console.log(error);
+      showAlert(
+  error.response?.data?.message || "Unable to Delete Room",
+  "error"
+);  
     }
   };
 
@@ -214,6 +272,38 @@ useEffect(() => {
   return (
     <>
       <div className="room-page">
+        {alertBox.show && (
+  <div className={`order-banner ${alertBox.type} show`}>
+    <div className="order-banner-icon">
+      {alertBox.type === "success" ? "✔" : "✖"}
+    </div>
+
+    <div>
+      <div className="order-banner-title">
+        {alertBox.type === "success"
+          ? "Success"
+          : "Error"}
+      </div>
+
+      <div className="order-banner-detail">
+        {alertBox.message}
+      </div>
+    </div>
+
+    <button
+      className="order-banner-close"
+      onClick={() =>
+        setAlertBox({
+          show: false,
+          message: "",
+          type: "",
+        })
+      }
+    >
+      ×
+    </button>
+  </div>
+)}
         <Sidebar />
 
         <div className="room-content">
@@ -275,7 +365,11 @@ useEffect(() => {
     filteredRooms.map((room) => {
 
       const occupied = Number(room.occupiedBeds || 0);
-      const capacity = Number(room.capacity || 0);
+
+const capacity =
+  room.roomType === "Double"
+    ? Number(room.capacity) * 2
+    : Number(room.capacity);
 
       const percentage =
         capacity > 0
@@ -318,8 +412,11 @@ useEffect(() => {
             </div>
 
             <div>
-              <span>Capacity</span>
-              <strong>{room.capacity} Beds</strong>
+              <span>Number of Beds</span>
+              <strong>
+  {room.capacity} {room.roomType} Bed
+  {room.capacity > 1 ? "s" : ""}
+</strong>
             </div>
 
           </div>
@@ -345,8 +442,8 @@ useEffect(() => {
 
             <small>
               {capacity - occupied > 0
-                ? `${capacity - occupied} bed(s) available`
-                : "Room is full"}
+  ? `${capacity - occupied} resident slot(s) available`
+  : "Room is full"}
             </small>
 
           </div>
@@ -448,9 +545,6 @@ useEffect(() => {
                 Double
               </option>
 
-              <option value="Deluxe">
-                Deluxe
-              </option>
 
             </select>
 
@@ -464,7 +558,7 @@ useEffect(() => {
               type="number"
               name="capacity"
               min="1"
-              placeholder="Enter bed capacity"
+              placeholder="Enter number of beds"
               value={formData.capacity}
               onChange={handleChange}
             />

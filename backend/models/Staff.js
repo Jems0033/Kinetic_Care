@@ -18,6 +18,11 @@ const staffSchema = new mongoose.Schema({
     },
 
     phone:String,
+    gender: {
+  type: String,
+  enum: ["Male", "Female"],
+  required: true,
+},
 
     shift:{
     type:String,

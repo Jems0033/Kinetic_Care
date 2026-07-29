@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "../css/PublicDonate.css";
+import { useNavigate } from "react-router-dom";
 
 import {
   FaHandHoldingHeart,
@@ -10,6 +11,7 @@ import {
   FaRupeeSign,
   FaMapMarkerAlt,
   FaHeart,
+  FaTimes,
 } from "react-icons/fa";
 
 function PublicDonate() {
@@ -23,6 +25,7 @@ function PublicDonate() {
   });
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -138,6 +141,13 @@ function PublicDonate() {
         {/* RIGHT SIDE */}
 
         <section className="public-donate-form-section">
+
+          <button
+  className="close-donate-btn"
+  onClick={() => navigate("/")}
+>
+  <FaTimes />
+</button>
 
           <div className="public-form-header">
 
