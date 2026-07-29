@@ -53,6 +53,15 @@ function Residents() {
 
   const [rooms, setRooms] = useState([]);
 
+  const [showSecondResident, setShowSecondResident] = useState(false);
+
+  const [secondResident, setSecondResident] = useState({
+    name: "",
+    age: "",
+    gender: "",
+    medicalCondition: "",
+  });
+
   const showAlert = (message, type = "success") => {
     setAlertBox({
       show: true,
@@ -83,7 +92,7 @@ function Residents() {
         return "Unable to delete the resident.";
 
       case "Discharged residents cannot be updated.":
-  return "Discharged residents cannot be updated.";
+        return "Discharged residents cannot be updated.";
 
       default:
         return "Something went wrong. Please try again.";
@@ -91,42 +100,29 @@ function Residents() {
   };
 
   const validateResident = () => {
-    if (!formData.name.trim()) return "Resident name is required.";
+  if (showSecondResident) {
+    if (!secondResident.name.trim()) return "Second resident name is required.";
 
-    if (!formData.age) return "Resident age is required.";
+    if (!secondResident.age) return "Second resident age is required.";
 
-    if (Number(formData.age) <= 0) return "Please enter a valid age.";
+    if (Number(secondResident.age) <= 0) return "Please enter a valid age.";
 
-    if (!formData.gender) return "Please select the resident's gender.";
+    if (!secondResident.gender) return "Please select second resident gender.";
 
-    if (!formData.medicalCondition.trim())
-      return "Medical condition is required.";
+    if (!secondResident.medicalCondition.trim())
+      return "Second resident medical condition is required.";
 
-    if (!formData.familyName.trim()) return "Family member name is required.";
+    const selectedRoom = rooms.find((room) => room._id === formData.room);
 
-    if (!formData.relation.trim()) return "Relation is required.";
+    if (!selectedRoom) {
+      return "Please select a room.";
+    }
 
-    if (!formData.familyEmail.trim()) return "Family email is required.";
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(formData.familyEmail))
-      return "Please enter a valid email address.";
-
-    if (!formData.familyPhone.trim()) return "Family phone number is required.";
-
-    if (!/^9[0-9]{9}$/.test(formData.familyPhone))
-      return "Phone number must contain exactly 10 digits and start with 9.";
-
-
-    if (!editId && !formData.familyPassword.trim())
-      return "Family password is required.";
-
-    if (!editId && formData.familyPassword.length < 6)
-      return "Password must be at least 6 characters.";
-
-    return null;
-  };
+    if (selectedRoom.roomType !== "Double") {
+      return "Family residents can only stay in Double Bed rooms.";
+    }
+  }
+};
   const getResidents = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -153,6 +149,13 @@ function Residents() {
     });
   };
 
+  const handleSecondResidentChange = (e) => {
+    setSecondResident({
+      ...secondResident,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const addResident = async () => {
     try {
       const validationError = validateResident();
@@ -163,17 +166,26 @@ function Residents() {
       console.log("Save Clicked");
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        "http://localhost:5000/api/residents",
+      const payload = showSecondResident
+  ? {
+      isFamily: true,
+      resident1: formData,
+      resident2: secondResident,
+    }
+  : {
+      isFamily: false,
+      ...formData,
+    };
 
-        formData,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+await axios.post(
+  "http://localhost:5000/api/residents",
+  payload,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       showAlert("Resident Added Successfully", "success");
 
@@ -193,6 +205,14 @@ function Residents() {
         familyPhone: "",
         familyPassword: "",
         relation: "",
+      });
+      setShowSecondResident(false);
+
+      setSecondResident({
+        name: "",
+        age: "",
+        gender: "",
+        medicalCondition: "",
       });
     } catch (error) {
       console.log(error.response?.data);
@@ -218,6 +238,14 @@ function Residents() {
       familyPhone: "",
       familyPassword: "",
       relation: "",
+    });
+    setShowSecondResident(false);
+
+    setSecondResident({
+      name: "",
+      age: "",
+      gender: "",
+      medicalCondition: "",
     });
   };
 
@@ -409,7 +437,11 @@ function Residents() {
 
                   <span
                     className={`resident-status ${
-                      resident.status === "Active" ? "active" : "discharged"
+                      resident.status === "Active"
+                        ? "active"
+                        : resident.status === "Temporary Leave"
+                          ? "temporary"
+                          : "discharged"
                     }`}
                   >
                     {resident.status}
@@ -500,12 +532,12 @@ function Residents() {
 
                 <div className="resident-card-actions">
                   <button
-  className="resident-edit-btn"
-  disabled={resident.status === "Discharged"}
-  onClick={() => editResident(resident)}
->
-  Edit
-</button>
+                    className="resident-edit-btn"
+                    disabled={resident.status === "Discharged"}
+                    onClick={() => editResident(resident)}
+                  >
+                    Edit
+                  </button>
 
                   <button
                     className="resident-delete-btn"
@@ -605,11 +637,15 @@ function Residents() {
                   >
                     <option value="">Select Room</option>
 
-                    {rooms.map((room) => (
-                      <option key={room._id} value={room._id}>
-                        Room {room.roomNumber}
-                      </option>
-                    ))}
+                    {rooms
+                      .filter((room) =>
+                        showSecondResident ? room.roomType === "Double" : true,
+                      )
+                      .map((room) => (
+                        <option key={room._id} value={room._id}>
+                          Room {room.roomNumber} ({room.roomType})
+                        </option>
+                      ))}
                   </select>
                 </div>
 
@@ -623,6 +659,7 @@ function Residents() {
                       onChange={handleChange}
                     >
                       <option value="Active">Active</option>
+                      <option value="Temporary Leave">Temporary Leave</option>
                       <option value="Discharged">Discharged</option>
                     </select>
                   </div>
@@ -639,8 +676,83 @@ function Residents() {
                     onChange={handleChange}
                   />
                 </div>
+                
               </div>
+              {!showSecondResident && (
+  <div className="resident-add-second-wrapper">
+    <button
+      type="button"
+      className="resident-add-second-btn"
+      onClick={() => setShowSecondResident(true)}
+    >
+      <span className="add-icon">+</span>
+      Add Another Resident
+    </button>
+  </div>
+)}
+                {showSecondResident && (
+                  <div className="resident-form-section">
+                    <div className="form-section-title">
+                      <span>02</span>
+
+                      <div>
+                        <h3>Second Resident</h3>
+                        <p>Enter second resident details</p>
+                      </div>
+                    </div>
+
+                    <div className="resident-modal-form">
+                      <div className="resident-form-group">
+                        <label>Name</label>
+
+                        <input
+                          type="text"
+                          name="name"
+                          value={secondResident.name}
+                          onChange={handleSecondResidentChange}
+                        />
+                      </div>
+
+                      <div className="resident-form-group">
+                        <label>Age</label>
+
+                        <input
+                          type="number"
+                          name="age"
+                          value={secondResident.age}
+                          onChange={handleSecondResidentChange}
+                        />
+                      </div>
+
+                      <div className="resident-form-group">
+                        <label>Gender</label>
+
+                        <select
+                          name="gender"
+                          value={secondResident.gender}
+                          onChange={handleSecondResidentChange}
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                        </select>
+                      </div>
+
+                      <div className="resident-form-group">
+                        <label>Medical Condition</label>
+
+                        <input
+                          type="text"
+                          name="medicalCondition"
+                          value={secondResident.medicalCondition}
+                          onChange={handleSecondResidentChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
             </div>
+
 
             {/* FAMILY DETAILS */}
 

@@ -30,7 +30,7 @@ const residentSchema = new mongoose.Schema(
 
     status:{
         type:String,
-        enum:["Active","Discharged"],
+        enum:["Active","Discharged","Temporary Leave"],
         default:"Active"
     },
 

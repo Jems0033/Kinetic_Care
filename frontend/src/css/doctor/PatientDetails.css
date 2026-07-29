@@ -981,3 +981,18 @@
   cursor:not-allowed;
   opacity:.7;
 }
+.record-edit-btn{
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.record-edit-btn:hover{
+  background: #1d4ed8;
+}
+
