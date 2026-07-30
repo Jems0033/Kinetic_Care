@@ -26,6 +26,8 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 
 import CaretakerDashboard from "./pages/caretaker/CaretakerDashboard";
 import ResidentCare from "./pages/caretaker/ResidentCare";
+import Profile from "./pages/caretaker/Profile";
+
 
 
 function App() {
@@ -84,6 +86,8 @@ function App() {
   path="/caretaker/resident/:id"
   element={<ResidentCare />}
 />
+
+    <Route path="/caretaker/profile" element={<Profile />} />
 
 
     </Routes>

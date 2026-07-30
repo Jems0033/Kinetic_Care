@@ -6,6 +6,7 @@ import "../../css/auth/Login.css";
 import {
   FaArrowRight,
   FaShieldAlt,
+  FaTimes,
 } from "react-icons/fa";
 
 function Login() {
@@ -127,6 +128,13 @@ function Login() {
         {/* RIGHT SIDE */}
 
         <div className="login-form-section">
+
+          <button
+    className="close-login-btn"
+    onClick={() => navigate("/")}
+  >
+    <FaTimes />
+  </button>
 
           <div className="login-form-wrapper">
 

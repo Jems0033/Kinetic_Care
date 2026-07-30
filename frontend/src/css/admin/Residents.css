@@ -135,6 +135,11 @@
   background: #fff0e1;
   color: #d9822b;
 }
+.resident-status.temporary {
+  background: #ddf4f5;
+  color: rgb(17, 140, 156); 
+}
+
 
 .resident-main-info {
   margin: 17px 0;
@@ -703,4 +708,120 @@
   .resident-modal-actions button {
     width: 100%;
   }
+}
+.order-banner{
+  position: fixed;
+  top: -2px;
+  left: 50%;
+  transform: translate(-50%, -130%);
+  background: #fff;
+  min-width: 320px;
+  max-width: 520px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: 0 10px 10px rgba(0,0,0,0.15);
+  display: none;
+  align-items: flex-start;
+  gap: 12px;
+  z-index: 999999;
+  transition: transform .35s ease;
+}
+
+.order-banner.show{
+  display: flex;
+  transform: translate(-50%, 30px);
+}
+
+.order-banner.success{
+  border-left:5px solid #04b488;
+}
+
+.order-banner.error{
+  border-left:5px solid #e74c3c;
+}
+
+.order-banner-icon{
+  font-size:20px;
+  margin-top:2px;
+}
+
+.order-banner.success .order-banner-icon{
+  color:#04b488;
+}
+
+.order-banner.error .order-banner-icon{
+  color:#e74c3c;
+}
+
+.order-banner-title{
+  font-weight:600;
+  margin-bottom:4px;
+}
+
+.order-banner-detail{
+  font-size:14px;
+  color:#555;
+}
+
+.order-banner-close{
+  background:none;
+  border:none;
+  font-size:20px;
+  cursor:pointer;
+  margin-left:auto;
+}
+.resident-edit-btn:disabled{
+  background:#d1d5db;
+  color:#6b7280;
+  cursor:not-allowed;
+  opacity:.7;
+}
+
+.resident-add-second-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 25px 0;
+}
+
+.resident-add-second-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border: 2px dashed #14b8a6;
+  border-radius: 12px;
+  background: #f0fdfa;
+  color: #0f766e;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resident-add-second-btn:hover {
+  background: #14b8a6;
+  color: #fff;
+  border-color: #14b8a6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(20, 184, 166, 0.25);
+}
+
+.add-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #14b8a6;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.resident-add-second-btn:hover .add-icon {
+  background: #fff;
+  color: #14b8a6;
 }

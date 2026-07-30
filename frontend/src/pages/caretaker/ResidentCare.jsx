@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import {
+  FaArrowLeft,
+  FaUser,
+  FaClock,
+  FaHeart,
+} from "react-icons/fa";
 import "../../css/caretaker/ResidentCare.css";
 
 function ResidentCare() {
@@ -30,6 +36,7 @@ function ResidentCare() {
   const getResidentCare = async () => {
     try {
       setLoading(true);
+      setMessage("");
 
       const token = localStorage.getItem("token");
 
@@ -60,27 +67,28 @@ function ResidentCare() {
       console.log("Resident Care Error:", error);
 
       setMessage(
-        error.response?.data?.message || "Unable to load resident details"
+        error.response?.data?.message ||
+        "Unable to load resident details"
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCheckbox = (e) => {
-    const { name, checked } = e.target;
+  const handleCheckbox = (event) => {
+    const { name, checked } = event.target;
 
-    setCareData({
-      ...careData,
+    setCareData((previousData) => ({
+      ...previousData,
       [name]: checked,
-    });
+    }));
   };
 
-  const handleNotes = (e) => {
-    setCareData({
-      ...careData,
-      notes: e.target.value,
-    });
+  const handleNotes = (event) => {
+    setCareData((previousData) => ({
+      ...previousData,
+      notes: event.target.value,
+    }));
   };
 
   const saveCare = async () => {
@@ -100,12 +108,15 @@ function ResidentCare() {
         }
       );
 
-      setMessage(res.data.message || "Daily care saved successfully");
+      setMessage(
+        res.data.message || "Daily care saved successfully"
+      );
     } catch (error) {
       console.log("Save Care Error:", error);
 
       setMessage(
-        error.response?.data?.message || "Unable to save daily care"
+        error.response?.data?.message ||
+        "Unable to save daily care"
       );
     } finally {
       setSaving(false);
@@ -115,7 +126,11 @@ function ResidentCare() {
   if (loading) {
     return (
       <div className="resident-care-loading">
-        Loading resident care...
+        <div className="resident-care-loader"></div>
+
+        <h2>Loading Resident Care</h2>
+
+        <p>Please wait while resident details are loading.</p>
       </div>
     );
   }
@@ -123,9 +138,21 @@ function ResidentCare() {
   if (!resident) {
     return (
       <div className="resident-care-error">
+        <div className="resident-error-icon">
+          <FaUser />
+        </div>
+
         <h2>{message || "Resident not found"}</h2>
 
-        <button onClick={() => navigate("/caretaker/dashboard")}>
+        <p>
+          The requested resident information could not be loaded.
+        </p>
+
+        <button
+          type="button"
+          onClick={() => navigate("/caretaker/dashboard")}
+        >
+          <FaArrowLeft />
           Back to Dashboard
         </button>
       </div>
@@ -151,125 +178,228 @@ function ResidentCare() {
   return (
     <div className="resident-care-page">
 
-      {/* ================= HEADER ================= */}
+      {/* HEADER */}
 
-      <div className="care-page-header">
-        <button
-          className="back-btn"
-          onClick={() => navigate("/caretaker/dashboard")}
-        >
-          ← Back
-        </button>
+      <header className="resident-care-header">
 
-        <div>
-          <p>Daily Care Management</p>
-          <h1>{resident.name}</h1>
-        </div>
+        <div className="resident-header-left">
 
-        <div className="care-shift">
-          {caretaker.shift} Shift
-        </div>
-      </div>
+          <button
+            type="button"
+            className="resident-back-btn"
+            onClick={() => navigate("/caretaker/dashboard")}
+          >
+            <FaArrowLeft />
+          </button>
 
-      {/* ================= RESIDENT DETAILS ================= */}
+          <div className="resident-header-content">
 
-      <div className="resident-summary-card">
-        <div className="resident-profile">
+            <p className="resident-page-label">
+              Daily Care Management
+            </p>
 
-          <div className="resident-big-avatar">
-            {resident.gender === "Female" ? "👵" : "👴"}
+            <h1>{resident.name}</h1>
+
+            <span>
+              Record and manage today's care activities.
+            </span>
+
           </div>
 
-          <div>
+        </div>
+
+
+        <div className="resident-header-actions">
+
+          <div className="resident-shift-card">
+
+            <div className="resident-shift-icon">
+              <FaClock />
+            </div>
+
+            <div>
+              <span>Current Shift</span>
+
+              <strong>
+                {caretaker.shift || "Not Assigned"}
+              </strong>
+            </div>
+
+          </div>
+
+
+          <div className="resident-caretaker-card">
+
+            <div className="resident-caretaker-icon">
+              <FaHeart />
+            </div>
+
+            <div>
+              <span>Caretaker</span>
+
+              <strong>
+                {caretaker.name || "Caretaker"}
+              </strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </header>
+      {/* RESIDENT SUMMARY */}
+
+      <section className="resident-summary-card">
+
+        <div className="resident-profile-section">
+
+          <div className="resident-avatar-large">
+            {resident.gender?.toLowerCase() === "female" ? "👵" : "👴"}
+          </div>
+
+          <div className="resident-profile-info">
+
+            <span>Resident Profile</span>
+
             <h2>{resident.name}</h2>
 
             <p>
               {resident.age} Years • {resident.gender}
             </p>
+
           </div>
 
         </div>
 
-        <div className="summary-details">
 
-          <div className="summary-item">
-            <span>Room</span>
+        <div className="resident-info-grid">
+
+          <div className="resident-info-box">
+
+            <span>Room Number</span>
 
             <strong>
               {resident.room?.roomNumber || "Not Assigned"}
             </strong>
+
           </div>
 
-          <div className="summary-item">
+
+          <div className="resident-info-box">
+
             <span>Room Type</span>
 
             <strong>
               {resident.room?.roomType || "-"}
             </strong>
+
           </div>
 
-          <div className="summary-item">
+
+          <div className="resident-info-box">
+
             <span>Medical Condition</span>
 
             <strong>
               {resident.medicalCondition || "Normal"}
             </strong>
+
           </div>
 
-          <div className="summary-item">
+
+          <div className="resident-info-box">
+
             <span>Assigned Doctor</span>
 
             <strong>
               {doctor?.name || "Not Assigned"}
             </strong>
+
           </div>
 
         </div>
-      </div>
 
-      {/* ================= PROGRESS ================= */}
+      </section>
 
-      <div className="care-progress-card">
 
-        <div className="progress-heading">
+      {/* CARE PROGRESS */}
+
+      <section className="resident-progress-card">
+
+        <div className="resident-progress-header">
+
           <div>
-            <h3>Today's Care Progress</h3>
-            <p>
-              {completedTasks} of 6 activities completed
+
+            <p className="resident-progress-label">
+              Today's Progress
             </p>
+
+            <h3>
+              Daily Care Status
+            </h3>
+
+            <span>
+              {completedTasks} of 6 care activities completed today.
+            </span>
+
           </div>
 
-          <strong>{progress}%</strong>
+          <div className="resident-progress-circle">
+
+            <strong>
+              {progress}%
+            </strong>
+
+          </div>
+
         </div>
 
-        <div className="progress-bar">
+
+        <div className="resident-progress-bar">
+
           <div
-            className="progress-fill"
+            className="resident-progress-fill"
             style={{
               width: `${progress}%`,
             }}
           ></div>
+
         </div>
 
-      </div>
+      </section>
 
-      {/* ================= CARE TASKS ================= */}
 
-      <div className="care-section">
+      {/* DAILY CARE */}
 
-        <div className="care-section-heading">
-          <h2>Daily Care Activities</h2>
-          <p>
-            Mark the activities completed for this resident.
-          </p>
+      <section className="resident-care-section">
+
+        <div className="resident-section-header">
+
+          <div>
+
+            <p className="resident-section-label">
+              Daily Checklist
+            </p>
+
+            <h2>
+              Care Activities
+            </h2>
+
+          </div>
+
+          <span>
+            Complete all required activities.
+          </span>
+
         </div>
 
-        <div className="care-task-grid">
+
+        <div className="resident-task-grid">
 
           <CareTask
             icon="💊"
             title="Medicine"
-            description="Medicine provided as scheduled"
+            description="Medicine provided as scheduled."
             name="medicine"
             checked={careData.medicine}
             onChange={handleCheckbox}
@@ -278,7 +408,7 @@ function ResidentCare() {
           <CareTask
             icon="🍲"
             title="Meal"
-            description="Meal provided and completed"
+            description="Breakfast / Lunch / Dinner completed."
             name="meal"
             checked={careData.meal}
             onChange={handleCheckbox}
@@ -287,7 +417,7 @@ function ResidentCare() {
           <CareTask
             icon="🚿"
             title="Bath"
-            description="Personal hygiene and bathing completed"
+            description="Personal hygiene completed."
             name="bath"
             checked={careData.bath}
             onChange={handleCheckbox}
@@ -296,7 +426,7 @@ function ResidentCare() {
           <CareTask
             icon="🚶"
             title="Walking"
-            description="Walking or light exercise completed"
+            description="Walking or exercise completed."
             name="walking"
             checked={careData.walking}
             onChange={handleCheckbox}
@@ -305,7 +435,7 @@ function ResidentCare() {
           <CareTask
             icon="💧"
             title="Water"
-            description="Adequate water intake provided"
+            description="Enough water intake completed."
             name="water"
             checked={careData.water}
             onChange={handleCheckbox}
@@ -314,59 +444,84 @@ function ResidentCare() {
           <CareTask
             icon="🛏️"
             title="Rest"
-            description="Rest and sleep routine monitored"
+            description="Rest and sleep monitored."
             name="rest"
             checked={careData.rest}
             onChange={handleCheckbox}
           />
 
         </div>
-      </div>
 
-      {/* ================= NOTES ================= */}
+      </section>
+      {/* NOTES */}
 
-      <div className="care-notes-card">
+      <section className="resident-notes-card">
 
-        <div>
-          <h2>Care Notes</h2>
+        <div className="resident-section-header">
 
-          <p>
-            Add any important observation about the resident.
-          </p>
+          <div>
+
+            <p className="resident-section-label">
+              Care Notes
+            </p>
+
+            <h2>
+              Observation
+            </h2>
+
+          </div>
+
+          <span>
+            Maximum 500 characters
+          </span>
+
         </div>
 
         <textarea
-          placeholder="Example: Resident felt weak during walking, ate less during lunch..."
+          className="resident-notes-input"
+          placeholder="Write today's observation about the resident..."
           value={careData.notes}
           onChange={handleNotes}
           maxLength={500}
         />
 
-        <div className="notes-count">
-          {careData.notes.length}/500
+        <div className="resident-notes-footer">
+
+          <span>
+            {careData.notes.length}/500
+          </span>
+
         </div>
 
-      </div>
+      </section>
+
+
+      {/* MESSAGE */}
 
       {message && (
-        <div className="care-message">
+        <div className="resident-message">
           {message}
         </div>
       )}
 
-      {/* ================= SAVE ================= */}
 
-      <div className="care-actions">
+      {/* ACTION BUTTONS */}
+
+      <div className="resident-action-buttons">
 
         <button
-          className="cancel-care-btn"
-          onClick={() => navigate("/caretaker/dashboard")}
+          type="button"
+          className="resident-cancel-btn"
+          onClick={() =>
+            navigate("/caretaker/dashboard")
+          }
         >
           Cancel
         </button>
 
         <button
-          className="save-care-btn"
+          type="button"
+          className="resident-save-btn"
           onClick={saveCare}
           disabled={saving}
         >
@@ -379,6 +534,11 @@ function ResidentCare() {
   );
 }
 
+
+/* =========================
+   CARE TASK COMPONENT
+========================= */
+
 function CareTask({
   icon,
   title,
@@ -389,29 +549,43 @@ function CareTask({
 }) {
   return (
     <label
-      className={`care-task-card ${
-        checked ? "care-task-completed" : ""
-      }`}
+      className={`resident-task-card ${checked
+          ? "resident-task-active"
+          : ""
+        }`}
     >
-      <div className="task-icon">
+
+      <div className="resident-task-icon">
         {icon}
       </div>
 
-      <div className="task-content">
-        <h3>{title}</h3>
-        <p>{description}</p>
+      <div className="resident-task-content">
+
+        <h3>
+          {title}
+        </h3>
+
+        <p>
+          {description}
+        </p>
+
       </div>
 
-      <input
-        type="checkbox"
-        name={name}
-        checked={checked}
-        onChange={onChange}
-      />
+      <div className="resident-task-check">
 
-      <span className="custom-check">
-        {checked ? "✓" : ""}
-      </span>
+        <input
+          type="checkbox"
+          name={name}
+          checked={checked}
+          onChange={onChange}
+        />
+
+        <span className="resident-custom-checkbox">
+          {checked ? "✓" : ""}
+        </span>
+
+      </div>
+
     </label>
   );
 }

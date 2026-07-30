@@ -270,8 +270,46 @@ const saveDailyCare = async (req, res) => {
   }
 };
 
+// ==========================================
+// Caretaker Profile
+// ==========================================
+
+const getCaretakerProfile = async (req, res) => {
+  try {
+    const caretaker = await Staff.findOne({
+      userId: req.user.id,
+      role: "Caretaker",
+    }).populate("userId", "email");
+
+    if (!caretaker) {
+      return res.status(404).json({
+        message: "Caretaker not found",
+      });
+    }
+
+    res.status(200).json({
+      id: caretaker._id,
+      name: caretaker.name,
+      email: caretaker.userId?.email || "",
+      phone: caretaker.phone,
+      gender: caretaker.gender,
+      role: caretaker.role,
+      shift: caretaker.shift,
+      salary: caretaker.salary,
+    });
+  } catch (error) {
+    console.log("Caretaker Profile Error:", error);
+
+    res.status(500).json({
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getCaretakerDashboard,
   getResidentCare,
   saveDailyCare,
+  getCaretakerProfile,
 };
