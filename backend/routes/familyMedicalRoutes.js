@@ -8,6 +8,9 @@ const {
   getMedicalHistory,
 } = require("../controllers/familyMedicalController");
 
-router.get("/medical-history", protect, getMedicalHistory);
-
+router.get(
+  "/medical-history/:residentId",
+  protect,
+  getMedicalHistory
+);
 module.exports = router;

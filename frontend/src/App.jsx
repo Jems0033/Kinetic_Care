@@ -27,6 +27,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import CaretakerDashboard from "./pages/caretaker/CaretakerDashboard";
 import ResidentCare from "./pages/caretaker/ResidentCare";
 import Profile from "./pages/caretaker/Profile";
+import FamilyProfile from "./pages/family/FamilyProfile";
 
 
 
@@ -57,8 +58,10 @@ function App() {
 
       <Route path="/family/book-visit" element={<BookVisit />} />
 
-      <Route path="/family/medical-history" element={<MedicalHistory />} />
-
+<Route
+  path="/family/medical-history/:residentId"
+  element={<MedicalHistory />}
+/>
       <Route path="/family/donate" element={<FamilyDonate />} />
 
       <Route path="/donate" element={<PublicDonate />} />
@@ -88,6 +91,7 @@ function App() {
 />
 
     <Route path="/caretaker/profile" element={<Profile />} />
+    <Route path="/family/profile" element={<FamilyProfile />} />
 
 
     </Routes>
