@@ -626,6 +626,16 @@
   font-size: 8px;
   font-weight: 800;
 }
+.patient-status.active {
+  background: #e2f7ef;
+  color: #16845f;
+}
+
+.patient-status.temporary {
+  background: #fff0e1;
+  color: #d9822b;
+}
+
 
 
 /* DETAILS */

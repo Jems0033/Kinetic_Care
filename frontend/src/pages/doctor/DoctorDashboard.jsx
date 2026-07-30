@@ -171,7 +171,15 @@ function DoctorDashboard() {
                       <p>{patient.age} years • {patient.gender}</p>
                     </div>
                   </div>
-                  <span className="patient-status">Active</span>
+                  <span
+  className={`patient-status ${
+    patient.status === "Active"
+      ? "active"
+      : "temporary"
+  }`}
+>
+  {patient.status}
+</span>
                 </div>
 
                 <div className="patient-card-details">
