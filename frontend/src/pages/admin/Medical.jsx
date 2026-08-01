@@ -171,7 +171,7 @@ function Medical() {
 
             <input
     type="text"
-    placeholder="Search resident by name..."
+    placeholder="Search record by resident name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />

@@ -86,7 +86,7 @@ function Donor() {
 
   <input
     type="text"
-    placeholder="Search resident by name..."
+    placeholder="Search donor by name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />

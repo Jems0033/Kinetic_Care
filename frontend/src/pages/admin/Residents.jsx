@@ -17,6 +17,11 @@ function Residents() {
 
   const [showSecondResident, setShowSecondResident] = useState(false);
 
+  const [deleteConfirm, setDeleteConfirm] = useState({
+  show: false,
+  residentId: null,
+});
+
   const [secondResident, setSecondResident] = useState({
     name: "",
     age: "",
@@ -384,32 +389,38 @@ await axios.post(
 };
 
   const deleteResident = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this resident?",
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.delete(
+      `http://localhost:5000/api/residents/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
-    if (!confirmDelete) return;
+    setDeleteConfirm({
+      show: false,
+      residentId: null,
+    });
 
-    try {
-      const token = localStorage.getItem("token");
+    await getResidents();
 
-      await axios.delete(
-        `http://localhost:5000/api/residents/${id}`,
+    showAlert("Resident deleted successfully.", "success");
 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+  } catch (error) {
+    console.log(error.response?.data);
 
-      showAlert("Resident deleted successfully.", "success");
+    setDeleteConfirm({
+      show: false,
+      residentId: null,
+    });
 
-      getResidents();
-    } catch (error) {
-      showAlert(getErrorMessage(error), "error");
-    }
-  };
+    showAlert(getErrorMessage(error), "error");
+  }
+};
 
   const filteredResidents = residents.filter((resident) =>
     resident.name.toLowerCase().includes(search.toLowerCase()),
@@ -465,6 +476,47 @@ await axios.post(
           </button>
         </div>
       )}
+
+      {deleteConfirm.show && (
+  <div className="delete-confirm-overlay">
+    <div className="delete-confirm-box">
+
+      <div className="delete-confirm-icon">!</div>
+
+      <h2>Delete Resident?</h2>
+
+      <p>
+        Are you sure you want to delete this resident?
+      </p>
+
+      <div className="delete-confirm-actions">
+
+        <button
+          className="delete-cancel-btn"
+          onClick={() =>
+            setDeleteConfirm({
+              show: false,
+              residentId: null,
+            })
+          }
+        >
+          Cancel
+        </button>
+
+        <button
+          className="delete-confirm-btn"
+          onClick={() =>
+            deleteResident(deleteConfirm.residentId)
+          }
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
 
       <Sidebar />
 
@@ -620,11 +672,16 @@ await axios.post(
                   </button>
 
                   <button
-                    className="resident-delete-btn"
-                    onClick={() => deleteResident(resident._id)}
-                  >
-                    Delete
-                  </button>
+  className="resident-delete-btn"
+  onClick={() =>
+    setDeleteConfirm({
+      show: true,
+      residentId: resident._id,
+    })
+  }
+>
+  Delete
+</button>
                 </div>
               </div>
             ))
