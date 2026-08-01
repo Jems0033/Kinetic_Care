@@ -7,6 +7,16 @@ const addRoom = async (req, res) => {
 
     try {
 
+        const roomExists = await Room.findOne({
+  roomNumber: req.body.roomNumber.toUpperCase(),
+});
+
+if (roomExists) {
+  return res.status(400).json({
+    message: "Room Number Already Exists",
+  });
+}
+
         const room = await Room.create(req.body);
 
         res.status(201).json({
@@ -80,6 +90,17 @@ const getRoomById = async (req, res) => {
 const updateRoom = async (req, res) => {
 
     try {
+
+        const roomExists = await Room.findOne({
+  roomNumber: req.body.roomNumber.toUpperCase(),
+  _id: { $ne: req.params.id },
+});
+
+if (roomExists) {
+  return res.status(400).json({
+    message: "Room Number Already Exists",
+  });
+}
 
         const room = await Room.findByIdAndUpdate(
             req.params.id,

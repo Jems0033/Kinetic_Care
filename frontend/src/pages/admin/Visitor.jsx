@@ -104,7 +104,7 @@ function Visitor() {
 
   <input
     type="text"
-    placeholder="Search resident by name..."
+    placeholder="Search visitor by name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />

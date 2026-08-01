@@ -12,6 +12,10 @@ function Room() {
   const [showModal, setShowModal] = useState(false);
 
   const [editId, setEditId] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    roomId: null,
+  });
 
   const [formData, setFormData] = useState({
     roomNumber: "",
@@ -48,6 +52,12 @@ const validateRoom = () => {
   if (!formData.roomNumber.trim())
     return "Room Number is required.";
 
+  // A101 અથવા A-101 format જ allow
+  const roomRegex = /^[A-Z]\d{3}$/;
+
+  if (!roomRegex.test(formData.roomNumber.trim().toUpperCase()))
+    return "Room Number must be in A101 format.";
+
   if (!formData.roomType)
     return "Please select Room Type.";
 
@@ -60,6 +70,20 @@ const validateRoom = () => {
   return null;
 };
 
+const getErrorMessage = (error) => {
+  const msg = error.response?.data?.message || "";
+
+  switch (msg) {
+    case "Room Number Already Exists":
+      return "This room number already exists.";
+
+    case "Room Number must be in A101 or A-101 format.":
+      return "Room number must be in A101 format.";
+
+    default:
+      return msg || "Something went wrong.";
+  }
+};
   useEffect(() => {
     getRooms();
   }, []);
@@ -100,13 +124,18 @@ useEffect(() => {
   // Handle Change
   // ===========================
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
+ const handleChange = (e) => {
+  let { name, value } = e.target;
 
-      [e.target.name]: e.target.value,
-    });
-  };
+  if (name === "roomNumber") {
+    value = value.toUpperCase();
+  }
+
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
 
   // ===========================
   // Add Room
@@ -139,13 +168,13 @@ if (validationError) {
 
       getRooms();
     } catch (error) {
-      console.log(error);
+  console.log(error);
 
-      showAlert(
-  error.response?.data?.message || "Unable to Add Room",
-  "error"
-);
-    }
+  showAlert(
+    getErrorMessage(error),
+    "error"
+  );
+}
   };
 
   // ===========================
@@ -199,12 +228,13 @@ if (validationError) {
 
       getRooms();
     } catch (error) {
-      console.log(error);
-      showAlert(
-  error.response?.data?.message || "Unable to Update Room",
-  "error"
-);
-    }
+  console.log(error);
+
+  showAlert(
+    getErrorMessage(error),
+    "error"
+  );
+}
   };
 
   // ===========================
@@ -212,7 +242,6 @@ if (validationError) {
   // ===========================
 
   const deleteRoom = async (id) => {
-    if (!window.confirm("Delete this room?")) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -226,12 +255,22 @@ if (validationError) {
           },
         },
       );
+      setDeleteConfirm({
+      show: false,
+      roomId: null,
+    });
+
+    await getRooms();
 
       showAlert("Room Deleted Successfully", "success");
 
       getRooms();
     } catch (error) {
       console.log(error);
+      setDeleteConfirm({
+      show: false,
+      roomId: null,
+    });
       showAlert(
   error.response?.data?.message || "Unable to Delete Room",
   "error"
@@ -304,6 +343,47 @@ if (validationError) {
     </button>
   </div>
 )}
+
+{deleteConfirm.show && (
+  <div className="delete-confirm-overlay">
+    <div className="delete-confirm-box">
+
+      <div className="delete-confirm-icon">!</div>
+
+      <h2>Delete Room?</h2>
+
+      <p>
+        Are you sure you want to delete this Room?
+      </p>
+
+      <div className="delete-confirm-actions">
+
+        <button
+          className="delete-cancel-btn"
+          onClick={() =>
+            setDeleteConfirm({
+              show: false,
+              roomId: null,
+            })
+          }
+        >
+          Cancel
+        </button>
+
+        <button
+          className="delete-confirm-btn"
+          onClick={() =>
+            deleteRoom(deleteConfirm.roomId)
+          }
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
         <Sidebar />
 
         <div className="room-content">
@@ -332,7 +412,7 @@ if (validationError) {
 
   <input
     type="text"
-    placeholder="Search resident by name..."
+    placeholder="Search room by room number..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />
@@ -465,7 +545,12 @@ const capacity =
 
             <button
               className="room-delete-btn"
-              onClick={() => deleteRoom(room._id)}
+              onClick={() =>
+    setDeleteConfirm({
+      show: true,
+      roomId: room._id,
+    })
+  }
             >
               Delete
             </button>
