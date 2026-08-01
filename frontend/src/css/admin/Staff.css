@@ -83,17 +83,6 @@
   margin-bottom: 24px;
 }
 
-.staff-small-title {
-  margin: 0 0 5px;
-
-  color: #1b936f;
-
-  font-size: 11px;
-  font-weight: 800;
-
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
 
 .staff-headers h1 {
   margin: 0;
@@ -146,6 +135,8 @@
 
 .staff-search-box {
   margin-top: 25px;
+  position: relative;
+   max-width: 400px;
 }
 
 .staff-search-box input {
@@ -170,6 +161,24 @@
 
   box-shadow:
     0 0 0 3px rgba(27, 147, 111, 0.1);
+}
+.staff-search-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 30%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.staff-search-clear-btn:hover {
+  color: #ef4444;
+  transform: translateY(-50%) scale(1.15);
 }
 
 

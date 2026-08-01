@@ -91,10 +91,6 @@ function Visitor() {
           <div className="visitor-header">
 
   <div>
-    <p className="visitor-small-title">
-      Visit Management
-    </p>
-
     <h1>Visitors</h1>
 
     <span>
@@ -108,10 +104,20 @@ function Visitor() {
 
   <input
     type="text"
-    placeholder="Search visitor, resident, phone or relation..."
+    placeholder="Search resident by name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />
+
+  {search && (
+    <button
+      className="search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
 
 </div>
 

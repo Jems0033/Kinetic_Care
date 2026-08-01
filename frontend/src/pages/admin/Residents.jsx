@@ -4,34 +4,31 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
+
 function Residents() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [residents, setResidents] = useState([]);
+  const [editId, setEditId] = useState(null);
+
+  const [search, setSearch] = useState("");
+
+  const [rooms, setRooms] = useState([]);
+
+  const [showSecondResident, setShowSecondResident] = useState(false);
+
+  const [secondResident, setSecondResident] = useState({
+    name: "",
+    age: "",
+    gender: "",
+    medicalCondition: "",
+  });
   const [alertBox, setAlertBox] = useState({
     show: false,
     message: "",
     type: "",
   });
-
-  useEffect(() => {
-    getResidents();
-    getRooms();
-  }, []);
-
   const [showModal, setShowModal] = useState(false);
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (location.state?.openModal === "addResident") {
-      setShowModal(true);
-
-      navigate(location.pathname, {
-        replace: true,
-        state: {},
-      });
-    }
-  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -47,20 +44,36 @@ function Residents() {
     relation: "",
   });
 
-  const [editId, setEditId] = useState(null);
+  useEffect(() => {
+    getResidents();
+    getRooms();
+  }, []);
 
-  const [search, setSearch] = useState("");
 
-  const [rooms, setRooms] = useState([]);
 
-  const [showSecondResident, setShowSecondResident] = useState(false);
+  useEffect(() => {
+    if (location.state?.openModal === "addResident") {
+      setShowModal(true);
 
-  const [secondResident, setSecondResident] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    medicalCondition: "",
-  });
+      navigate(location.pathname, {
+        replace: true,
+        state: {},
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+  if (location.state?.searchResident) {
+    setSearch(location.state.searchResident);
+
+    navigate(location.pathname, {
+      replace: true,
+      state: {},
+    });
+  }
+}, [location, navigate]);
+  
+
 
   const showAlert = (message, type = "success") => {
     setAlertBox({
@@ -134,11 +147,15 @@ const validateResident = () => {
     if (!/^9[0-9]{9}$/.test(formData.familyPhone))
       return "Family phone number must contain exactly 10 digits and start with 9.";
 
-    if (!formData.familyPassword.trim())
-      return "Family password is required.";
+if (!editId) {
+  if (!formData.familyPassword.trim()) {
+    return "Family password is required.";
+  }
 
-    if (formData.familyPassword.length < 6)
-      return "Family password must be at least 6 characters.";
+  if (formData.familyPassword.length < 6) {
+    return "Family password must be at least 6 characters.";
+  }
+}
 
     if (!formData.relation.trim())
       return "Relation is required.";
@@ -331,37 +348,40 @@ await axios.post(
   };
 
   const updateResident = async () => {
-    try {
-      const validationError = validateResident();
+  try {
+    const validationError = validateResident();
 
-      if (validationError) {
-        return showAlert(validationError, "error");
-      }
-      const token = localStorage.getItem("token");
-
-      await axios.put(
-        `http://localhost:5000/api/residents/${editId}`,
-
-        formData,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      alert("Resident Updated Successfully");
-
-      setShowModal(false);
-
-      setEditId(null);
-
-      getResidents();
-    } catch (error) {
-      showAlert(getErrorMessage(error), "error");
+    if (validationError) {
+      return showAlert(validationError, "error");
     }
-  };
+
+    const token = localStorage.getItem("token");
+
+    const updateData = { ...formData };
+
+    // Empty password backend પર send નહીં કરવો
+    delete updateData.familyPassword;
+
+    await axios.put(
+      `http://localhost:5000/api/residents/${editId}`,
+      updateData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    showAlert("Resident Updated Successfully", "success");
+
+    setShowModal(false);
+    setEditId(null);
+    getResidents();
+  } catch (error) {
+    console.log(error.response?.data);
+    showAlert(getErrorMessage(error), "error");
+  }
+};
 
   const deleteResident = async (id) => {
     const confirmDelete = window.confirm(
@@ -451,7 +471,6 @@ await axios.post(
       <div className="resident-content">
         <div className="resident-header">
           <div>
-            <p className="resident-small-title">Resident Management</p>
 
             <h1>Residents</h1>
 
@@ -462,13 +481,23 @@ await axios.post(
         </div>
 
         <div className="residents-search-box">
-          <input
-            type="text"
-            placeholder="Search resident by name..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+  <input
+    type="text"
+    placeholder="Search resident by name..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+
+  {search && (
+    <button
+      className="search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
+</div>
         <div className="resident-grid">
           {filteredResidents.length === 0 ? (
             <div className="resident-empty">
@@ -559,7 +588,7 @@ await axios.post(
                   </div>
                 </div>
 
-                <div className="resident-family-box">
+                {resident.family?.name && (<div className="resident-family-box">
                   <div className="family-box-title">
                     <span>Family Contact</span>
                   </div>
@@ -579,7 +608,7 @@ await axios.post(
                   {resident.family?.phone && (
                     <small>📞 {resident.family.phone}</small>
                   )}
-                </div>
+                </div>)}
 
                 <div className="resident-card-actions">
                   <button

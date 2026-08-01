@@ -338,7 +338,6 @@ if (validationError) {
         <div className="staff-content">
           <div className="staff-headers">
             <div>
-              <p className="staff-small-title">Staff Management</p>
 
               <h1>Staff Members</h1>
 
@@ -352,11 +351,21 @@ if (validationError) {
 
           <div className="staff-search-box">
             <input
-              type="text"
-              placeholder="Search by name, role or phone..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+    type="text"
+    placeholder="Search resident by name..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+
+  {search && (
+    <button
+      className="staff-search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
           </div>
 
           <div className="staff-grid">

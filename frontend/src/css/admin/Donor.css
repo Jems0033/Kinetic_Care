@@ -17,14 +17,6 @@
   justify-content: space-between;
 }
 
-.donor-small-title {
-  margin: 0 0 5px;
-  color: #168d70;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
 
 .donor-header h1 {
   margin: 0;
@@ -43,6 +35,8 @@
 
 .donor-search-box {
   margin: 25px 0;
+  position: relative;
+   max-width: 400px;
 }
 
 .donor-search-box input {
@@ -67,6 +61,25 @@
   box-shadow:
     0 0 0 3px rgba(22, 141, 112, 0.1);
 }
+.search-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-clear-btn:hover {
+  color: #ef4444;
+  transform: translateY(-50%) scale(1.15);
+}
+
 
 /* GRID */
 

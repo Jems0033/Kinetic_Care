@@ -157,7 +157,6 @@ function Medical() {
           <div className="medical-header">
 
             <div>
-              <p className="medical-label">Health Management</p>
 
               <h1>Medical Records</h1>
 
@@ -171,11 +170,21 @@ function Medical() {
           <div className="medical-search-box">
 
             <input
-              type="text"
-              placeholder="Search resident, doctor, problem or medicine..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+    type="text"
+    placeholder="Search resident by name..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+
+  {search && (
+    <button
+      className="search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
 
           </div>
 

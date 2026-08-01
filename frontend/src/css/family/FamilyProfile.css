@@ -219,7 +219,7 @@
     width: 100%;
   }
 }
-.logout-btn{
+.family-logout-btn{
     display:flex;
     align-items:center;
     gap:8px;
@@ -234,6 +234,6 @@
     width: 25%;
 }
 
-.logout-btn:hover{
+.family-logout-btn:hover{
     background:#033f2b;
 }
