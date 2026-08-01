@@ -595,7 +595,7 @@
 .quick-arrow {
   color: #9aa5a1;
 
-  font-size: 11px;
+  font-size: 18px;
 }
 
 
@@ -663,4 +663,149 @@
     grid-template-columns: 1fr;
   }
 
+}
+.family-medical-history-btn{
+    width:100%;
+    margin-top:18px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.family-medical-history-btn:hover{
+    background:#1d4ed8;
+}
+.resident-profile-modern{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin:20px 0;
+}
+
+.resident-avatar-large{
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    background:#e9fbf5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+}
+
+.resident-primary-info h3{
+    margin:0;
+    font-size:22px;
+    font-weight:600;
+}
+
+.resident-primary-info span{
+    color:#8b8b8b;
+    font-size:14px;
+}
+
+.resident-info-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.info-card{
+    background:#f7fbfa;
+    border-radius:12px;
+    padding:16px;
+}
+
+.info-card span{
+    display:block;
+    color:#999;
+    font-size:12px;
+    margin-bottom:6px;
+}
+
+.info-card strong{
+    font-size:16px;
+    color:#222;
+}
+
+
+
+.family-panel{
+    background:#fff;
+    border-radius:20px;
+    padding:24px;
+    border:1px solid #eef2f7;
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease,
+        border-color .3s ease;
+
+    cursor:pointer;
+}
+
+.medical-panel:hover{
+    transform:translateY(-6px);
+    border-color:#6e82a7;
+    box-shadow:
+        0 15px 35px rgba(37,99,235,.12),
+        0 4px 10px rgba(0,0,0,.05);
+}
+.medical-header-icons{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.medical-arrow{
+    font-size:14px;
+    color:#94a3b8;
+    transition:.3s;
+}
+
+.medical-panel:hover .medical-arrow{
+    transform:translateX(4px);
+    color:#2563eb;
+}
+.family-hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.family-header-right{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.family-profile-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 18px;
+    border:none;
+    border-radius:12px;
+    background:#ffffff;
+    color:#04a982;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.family-profile-btn:hover{
+    background:#04a982;
+    color:#fff;
+    transform:translateY(-2px);
+}
+
+.family-profile-btn svg{
+    font-size:20px;
 }

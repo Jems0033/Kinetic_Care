@@ -99,29 +99,80 @@ function Residents() {
     }
   };
 
-  const validateResident = () => {
+const validateResident = () => {
+  if (!formData.name.trim())
+    return "Resident name is required.";
+
+  if (!formData.age)
+    return "Age is required.";
+
+  if (Number(formData.age) <= 0)
+    return "Please enter a valid age.";
+
+  if (!formData.gender)
+    return "Please select gender.";
+
+  if (!formData.room)
+    return "Please select a room.";
+
+  if (!formData.medicalCondition.trim())
+    return "Medical condition is required.";
+
+  // Family Details (optional)
+  if (formData.familyEmail) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.familyEmail))
+      return "Please enter a valid family email.";
+
+    if (!formData.familyName.trim())
+      return "Family name is required.";
+
+    if (!formData.familyPhone.trim())
+      return "Family phone number is required.";
+
+    if (!/^9[0-9]{9}$/.test(formData.familyPhone))
+      return "Family phone number must contain exactly 10 digits and start with 9.";
+
+    if (!formData.familyPassword.trim())
+      return "Family password is required.";
+
+    if (formData.familyPassword.length < 6)
+      return "Family password must be at least 6 characters.";
+
+    if (!formData.relation.trim())
+      return "Relation is required.";
+  }
+
+  // Couple Admission Validation
   if (showSecondResident) {
-    if (!secondResident.name.trim()) return "Second resident name is required.";
+    if (!secondResident.name.trim())
+      return "Second resident name is required.";
 
-    if (!secondResident.age) return "Second resident age is required.";
+    if (!secondResident.age)
+      return "Second resident age is required.";
 
-    if (Number(secondResident.age) <= 0) return "Please enter a valid age.";
+    if (Number(secondResident.age) <= 0)
+      return "Please enter a valid second resident age.";
 
-    if (!secondResident.gender) return "Please select second resident gender.";
+    if (!secondResident.gender)
+      return "Please select second resident gender.";
 
     if (!secondResident.medicalCondition.trim())
       return "Second resident medical condition is required.";
 
-    const selectedRoom = rooms.find((room) => room._id === formData.room);
+    const selectedRoom = rooms.find(
+      (room) => room._id === formData.room
+    );
 
-    if (!selectedRoom) {
+    if (!selectedRoom)
       return "Please select a room.";
-    }
 
-    if (selectedRoom.roomType !== "Double") {
+    if (selectedRoom.roomType !== "Double")
       return "Family residents can only stay in Double Bed rooms.";
-    }
   }
+
+  return null;
 };
   const getResidents = async () => {
     try {

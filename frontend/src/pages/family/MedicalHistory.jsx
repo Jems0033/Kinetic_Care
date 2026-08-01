@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "../../css/family/MedicalHistory.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   FaArrowLeft,
@@ -15,6 +15,7 @@ function MedicalHistory() {
   const [records, setRecords] = useState([]);
 
   const navigate = useNavigate();
+  const { residentId } = useParams();
 
   useEffect(() => {
     getMedicalHistory();
@@ -25,13 +26,13 @@ function MedicalHistory() {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:5000/api/family/medical-history",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  `http://localhost:5000/api/family/medical-history/${residentId}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       setRecords(res.data);
     } catch (error) {
