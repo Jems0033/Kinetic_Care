@@ -310,11 +310,7 @@ if (validationError) {
           <div className="room-header">
 
   <div>
-    <p className="room-small-title">
-      Facility Management
-    </p>
-
-    <h1>Room Management</h1>
+    <h1>Rooms</h1>
 
     <span>
       Manage room availability, capacity and occupancy
@@ -336,10 +332,20 @@ if (validationError) {
 
   <input
     type="text"
-    placeholder="Search by room number, type or status..."
+    placeholder="Search resident by name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />
+
+  {search && (
+    <button
+      className="search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
 
 </div>
 

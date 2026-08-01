@@ -207,9 +207,6 @@ useEffect(() => {
           <div className="event-header">
 
   <div>
-    <p className="event-small-title">
-      Activity Management
-    </p>
 
     <h1>Events</h1>
 
@@ -233,10 +230,20 @@ useEffect(() => {
 
   <input
     type="text"
-    placeholder="Search by event title or location..."
+    placeholder="Search resident by name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />
+
+  {search && (
+    <button
+      className="search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
 
 </div>
           <div className="event-grid">

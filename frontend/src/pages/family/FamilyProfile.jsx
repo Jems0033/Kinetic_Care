@@ -67,7 +67,7 @@ function FamilyProfile() {
             <span>View and manage your personal information.</span>
           </div>
 
-          <button className="logout-btn" onClick={logout}>
+          <button className="family-logout-btn" onClick={logout}>
             <FaSignOutAlt />
             Logout
           </button>
