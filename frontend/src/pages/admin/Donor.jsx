@@ -72,10 +72,6 @@ function Donor() {
 
   <div>
 
-    <p className="donor-small-title">
-      Donation Management
-    </p>
-
     <h1>Donors</h1>
 
     <span>
@@ -90,10 +86,20 @@ function Donor() {
 
   <input
     type="text"
-    placeholder="Search by name, phone, email or donation type..."
+    placeholder="Search donor by name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />
+
+  {search && (
+    <button
+      className="search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
 
 </div>
 

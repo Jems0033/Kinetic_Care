@@ -6,6 +6,10 @@ import { useLocation } from "react-router-dom";
 
 function Staff() {
   const [showModal, setShowModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    staffId: null,
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -251,11 +255,6 @@ if (validationError) {
   };
 
   const deleteStaff = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this staff?",
-    );
-
-    if (!confirmDelete) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -265,13 +264,22 @@ if (validationError) {
           Authorization: `Bearer ${token}`,
         },
       });
+      setDeleteConfirm({
+      show: false,
+      staffId: null,
+    });
+
+    await getStaff();
 
       showAlert("Staff Deleted Successfully", "success");
 
       getStaff();
     } catch (error) {
       console.log(error);
-
+      setDeleteConfirm({
+      show: false,
+      staffId: null,
+    });
       showAlert("Unable to Delete Staff", "error");
     }
   };
@@ -333,12 +341,52 @@ if (validationError) {
     </button>
   </div>
 )}
+
+{deleteConfirm.show && (
+  <div className="delete-confirm-overlay">
+    <div className="delete-confirm-box">
+
+      <div className="delete-confirm-icon">!</div>
+
+      <h2>Delete Staff?</h2>
+
+      <p>
+        Are you sure you want to delete this Staff?
+      </p>
+
+      <div className="delete-confirm-actions">
+
+        <button
+          className="delete-cancel-btn"
+          onClick={() =>
+            setDeleteConfirm({
+              show: false,
+              staffId: null,
+            })
+          }
+        >
+          Cancel
+        </button>
+
+        <button
+          className="delete-confirm-btn"
+          onClick={() =>
+            deleteStaff(deleteConfirm.staffId)
+          }
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
         <Sidebar />
 
         <div className="staff-content">
           <div className="staff-headers">
             <div>
-              <p className="staff-small-title">Staff Management</p>
 
               <h1>Staff Members</h1>
 
@@ -352,11 +400,21 @@ if (validationError) {
 
           <div className="staff-search-box">
             <input
-              type="text"
-              placeholder="Search by name, role or phone..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+    type="text"
+    placeholder="Search staff by name..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+
+  {search && (
+    <button
+      className="staff-search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
           </div>
 
           <div className="staff-grid">
@@ -426,7 +484,12 @@ if (validationError) {
 
                     <button
                       className="staff-delete-btn"
-                      onClick={() => deleteStaff(member._id)}
+                      onClick={() =>
+    setDeleteConfirm({
+      show: true,
+      staffId: member._id,
+    })
+  }
                     >
                       Delete
                     </button>

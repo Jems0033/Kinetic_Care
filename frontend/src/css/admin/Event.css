@@ -18,14 +18,6 @@
   gap: 20px;
 }
 
-.event-small-title {
-  margin: 0 0 5px;
-  color: #8a5cc0;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
 
 .event-header h1 {
   margin: 0;
@@ -44,7 +36,7 @@
   padding: 12px 20px;
   border: none;
   border-radius: 12px;
-  background: #8f63c2;
+  background: #1f9d74;
   color: white;
   font-size: 13px;
   font-weight: 700;
@@ -54,7 +46,7 @@
 }
 
 .event-header > button:hover {
-  background: #7953aa;
+  background: #1f9d74;
   transform: translateY(-2px);
 }
 
@@ -62,6 +54,8 @@
 
 .event-search-box {
   margin: 25px 0;
+  position: relative;
+   max-width: 400px;
 }
 
 .event-search-box input {
@@ -78,6 +72,25 @@
   border-color: #8f63c2;
   box-shadow: 0 0 0 3px rgba(143,99,194,.1);
 }
+.search-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-clear-btn:hover {
+  color: #ef4444;
+  transform: translateY(-50%) scale(1.15);
+}
+
 
 /* GRID */
 
@@ -117,17 +130,13 @@
   width: 72px;
   padding: 10px;
   border-radius: 17px;
-  background: linear-gradient(
-    145deg,
-    #f1e8fc,
-    #e7d8f8
-  );
+  background: linear-gradient(145deg, #e7f8f2, #d7efe7);
   text-align: center;
 }
 
 .event-date-box span {
   display: block;
-  color: #8457b5;
+  color: #2a9175;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1px;
@@ -135,12 +144,12 @@
 
 .event-date-box h2 {
   margin: 2px 0;
-  color: #633b90;
+  color: #2a9175;
   font-size: 26px;
 }
 
 .event-date-box small {
-  color: #8a719e;
+  color: #2a9175;
   font-size: 9px;
 }
 
@@ -498,10 +507,10 @@
   }
 }
 
-@media (max-width: 800px) {
+@media screen and (max-width: 992px) {
   .event-content {
     margin-left: 0;
-    padding: 20px;
+    padding-top: 75px;
   }
 }
 

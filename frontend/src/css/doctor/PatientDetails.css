@@ -23,72 +23,75 @@
 /* =========================
    PAGE TOP
 ========================= */
-
 .patient-page-top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 60px;
   margin-bottom: 25px;
 }
 
+/* BACK BUTTON */
 .back-btn {
+  position: absolute;
+  left: 0;
+
   display: flex;
   align-items: center;
-
   gap: 7px;
 
-  margin-bottom: 22px;
-
+  margin: 0;
   padding: 9px 13px;
 
   border: none;
   border-radius: 10px;
 
   background: #e7f6f0;
-
   color: #18815f;
 
   font-size: 11px;
   font-weight: 700;
 
   cursor: pointer;
-
   transition: 0.2s;
 }
 
 .back-btn:hover {
   background: #1f9d74;
-
   color: white;
-
   transform: translateX(-2px);
+}
+
+/* HEADING */
+.patient-page-heading {
+  text-align: center;
+  margin: 0;
 }
 
 .patient-page-heading p {
   margin: 0 0 5px;
 
   color: #1c916d;
-
   font-size: 10px;
   font-weight: 800;
 
   letter-spacing: 1.2px;
-
   text-transform: uppercase;
 }
 
 .patient-page-heading h1 {
   margin: 0;
-
   color: #1e2d34;
-
   font-size: 31px;
 }
 
 .patient-page-heading span {
   display: block;
-
   margin-top: 7px;
 
   color: #8a969a;
-
   font-size: 12px;
 }
 
@@ -975,24 +978,31 @@
   cursor:pointer;
   margin-left:auto;
 }
-.resident-edit-btn:disabled{
+
+.record-edit-btn:disabled{
   background:#d1d5db;
   color:#6b7280;
   cursor:not-allowed;
   opacity:.7;
 }
 .record-edit-btn{
-  padding: 6px 14px;
+  padding: 6px 116px;
   border: none;
   border-radius: 6px;
-  background: #2563eb;
-  color: #fff;
+  background: #e5f7f0;
+  color: #16835f;
   font-size: 13px;
   cursor: pointer;
   transition: .3s;
 }
 
-.record-edit-btn:hover{
-  background: #1d4ed8;
+.record-edit-btn:hover {
+  background: #1f9d74;
+  color: white;
 }
-
+@media screen and (max-width: 600px) {
+  .record-edit-btn {
+    width: 100%;
+    padding: 10px 15px;
+  }
+}

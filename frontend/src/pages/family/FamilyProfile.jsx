@@ -67,7 +67,7 @@ function FamilyProfile() {
             <span>View and manage your personal information.</span>
           </div>
 
-          <button className="logout-btn" onClick={logout}>
+          <button className="family-logout-btn" onClick={logout}>
             <FaSignOutAlt />
             Logout
           </button>
@@ -77,8 +77,8 @@ function FamilyProfile() {
 
         <div className="family-profile-card">
           <div className="family-profile-avatar">
-            <FaUserCircle />
-          </div>
+  {profile.name?.charAt(0).toUpperCase() || "F"}
+</div>
 
           <div className="family-profile-name">
             <h2>{profile.name || "Family Member"}</h2>

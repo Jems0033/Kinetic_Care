@@ -26,13 +26,13 @@ function MedicalHistory() {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-  `http://localhost:5000/api/family/medical-history/${residentId}`,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
+        `http://localhost:5000/api/family/medical-history/${residentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setRecords(res.data);
     } catch (error) {
@@ -52,44 +52,25 @@ function MedicalHistory() {
           onClick={() => navigate("/family-dashboard")}
         >
           <FaArrowLeft />
-          Dashboard
+          Back
         </button>
 
-      </div>
+        {/* HEADING */}
 
+        <div className="medical-history-heading">
 
-      {/* HEADING */}
+          <p>Health Records</p>
 
-      <div className="medical-history-heading">
+          <h1>Medical History</h1>
 
-        <p>Health Records</p>
+          <span>
+            View complete medical records and treatment history
+            of your loved one.
+          </span>
 
-        <h1>Medical History</h1>
-
-        <span>
-          View complete medical records and treatment history
-          of your loved one.
-        </span>
-
-      </div>
-
-
-      {/* SUMMARY */}
-
-      <div className="history-summary">
-
-        <div className="summary-icon">
-          <FaNotesMedical />
-        </div>
-
-        <div>
-          <span>Total Medical Records</span>
-
-          <strong>{records.length}</strong>
         </div>
 
       </div>
-
 
       {/* RECORDS */}
 

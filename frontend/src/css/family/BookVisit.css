@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
 
-  padding: 28px;
+  padding: 15px;
 
   background:
     radial-gradient(
@@ -53,7 +53,7 @@
   display: flex;
   flex-direction: column;
 
-  padding: 32px;
+  padding: 30px;
 
   background:
     linear-gradient(
@@ -73,7 +73,7 @@
 
   gap: 7px;
 
-  padding: 8px 11px;
+  padding: 6px 10px;
 
   border: 1px solid rgba(255,255,255,.2);
   border-radius: 10px;
@@ -93,7 +93,7 @@
 }
 
 .visit-info-content {
-  margin-top: 65px;
+  margin-top: 20px;
 }
 
 .visit-main-icon {
@@ -164,11 +164,11 @@
 /* RIGHT FORM */
 
 .visit-form-panel {
-  padding: 42px;
+  padding: 20px 42px;
 }
 
 .visit-form-header {
-  margin-bottom: 28px;
+  margin-bottom: 10px;
 }
 
 .visit-form-header p {
@@ -332,10 +332,8 @@
 
   gap: 11px;
 
-  margin-top: 28px;
-  padding-top: 21px;
+  padding-top: 15px;
 
-  border-top: 1px solid #e9efed;
 }
 
 .visit-form-actions button {

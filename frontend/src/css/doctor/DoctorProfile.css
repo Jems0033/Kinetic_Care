@@ -5,7 +5,7 @@
 .doctor-profile-page {
   min-height: 100vh;
 
-  padding: 30px;
+  padding: 20px;
 
   background:
     radial-gradient(
@@ -23,15 +23,14 @@
    TOP BAR
 ========================= */
 
-.profile-topbar {
+.doctor-profile-topbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
 
-  margin-bottom: 27px;
+  margin-bottom: 2px;
 }
 
-.back-btn,
+.doctor-back-btn,
 .profile-logout-btn {
   display: flex;
   align-items: center;
@@ -51,13 +50,13 @@
   transition: 0.2s;
 }
 
-.back-btn {
+.doctor-back-btn {
   background: #e8f6f1;
-
+  margin-bottom: 60px;
   color: #18815f;
 }
 
-.back-btn:hover {
+.doctor-back-btn:hover {
   background: #1f9d74;
 
   color: white;
@@ -67,6 +66,7 @@
 
 .profile-logout-btn {
   background: #ffeded;
+    margin-bottom: 60px;
 
   color: #d04f4f;
 }
@@ -84,11 +84,12 @@
    PAGE HEADING
 ========================= */
 
-.profile-heading {
-  margin-bottom: 25px;
+.doctor-profile-heading {
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-.profile-heading p {
+.doctor-profile-heading p {
   margin: 0 0 5px;
 
   color: #1c916d;
@@ -100,7 +101,7 @@
   text-transform: uppercase;
 }
 
-.profile-heading h1 {
+.doctor-profile-heading h1 {
   margin: 0;
 
   color: #1e2d34;
@@ -108,7 +109,7 @@
   font-size: 31px;
 }
 
-.profile-heading span {
+.doctor-profile-heading span {
   display: block;
 
   margin-top: 7px;

@@ -41,7 +41,6 @@ function Dashboard() {
     totalResidents: 0,
     totalStaff: 0,
     totalRooms: 0,
-    pendingPayments: 0,
   });
 
   const [recentResidents, setRecentResidents] = useState([]);
@@ -107,7 +106,6 @@ function Dashboard() {
       "Residents",
       "Staff",
       "Rooms",
-      "Pending Payments",
     ],
 
     datasets: [
@@ -117,8 +115,7 @@ function Dashboard() {
         data: [
           Number(dashboard.totalResidents) || 0,
           Number(dashboard.totalStaff) || 0,
-          Number(dashboard.totalRooms) || 0,
-          Number(dashboard.pendingPayments) || 0,
+          Number(dashboard.totalRooms) || 0
         ],
 
         backgroundColor: [
@@ -173,10 +170,6 @@ function Dashboard() {
             const label = context.label || "";
             const value = context.raw || 0;
 
-            if (label === "Pending Payments") {
-              return `${label}: ₹${value}`;
-            }
-
             return `${label}: ${value}`;
           },
         },
@@ -193,9 +186,6 @@ function Dashboard() {
 
         <header className="dashboard-header">
           <div className="header-text">
-            <p className="dashboard-label">
-              Kinetic Care Dashboard
-            </p>
 
             <h1>
               <FaSun className="sun-icon" />
@@ -208,21 +198,6 @@ function Dashboard() {
             </p>
           </div>
 
-          <div className="header-right">
-            <button
-              type="button"
-              className="notify"
-              aria-label="Notifications"
-            >
-              <FaBell />
-
-              <span className="notification-dot"></span>
-            </button>
-
-            <div className="profile">
-              {user?.name?.charAt(0)?.toUpperCase() || "A"}
-            </div>
-          </div>
         </header>
 
         {/* STAT CARDS */}
@@ -435,11 +410,11 @@ function Dashboard() {
                     <span
                       className={`resident-card-status ${resident.status?.toLowerCase() === "active"
                           ? "active"
-                          : "inactive"
+                          : "temporary"
                         }`}
                     >
 
-                      {resident.status || "Inactive"}
+                      {resident.status || "Not Found"}
 
                     </span>
 
@@ -497,11 +472,18 @@ function Dashboard() {
                   </div>
 
                   <button
-                    type="button"
-                    className="resident-view-button"
-                  >
-                    View Resident
-                  </button>
+  type="button"
+  className="resident-view-button"
+  onClick={() =>
+    navigate("/residents", {
+      state: {
+        searchResident: resident.name,
+      },
+    })
+  }
+>
+  View Resident
+</button>
 
                 </div>
 

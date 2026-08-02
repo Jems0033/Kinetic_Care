@@ -15,6 +15,35 @@ function Event() {
 
   const location = useLocation();
 
+  const [alertBox, setAlertBox] = useState({
+  show: false,
+  message: "",
+  type: "",
+});
+
+const [deleteConfirm, setDeleteConfirm] = useState({
+  show: false,
+  eventId: null,
+});
+
+const getErrorMessage = (error) => {
+  const msg = error.response?.data?.message || "";
+
+  switch (msg) {
+    case "Event Not Found":
+      return "Event not found.";
+
+    case "Unable to Delete Event":
+      return "Unable to delete the event.";
+
+    case "Event Already Exists":
+      return "This event already exists.";
+
+    default:
+      return "Something went wrong. Please try again.";
+  }
+};
+
 useEffect(() => {
   if (location.state?.openModal === "addEvent") {
     setShowModal(true);
@@ -36,6 +65,56 @@ useEffect(() => {
   useEffect(() => {
     getEvents();
   }, []);
+
+  const showAlert = (message, type = "success") => {
+  setAlertBox({
+    show: true,
+    message,
+    type,
+  });
+
+  setTimeout(() => {
+    setAlertBox({
+      show: false,
+      message: "",
+      type: "",
+    });
+  }, 3000);
+};
+
+const validateEvent = () => {
+  if (!formData.title.trim()) {
+    return "Event title is required.";
+  }
+
+  if (!formData.description.trim()) {
+    return "Event description is required.";
+  }
+
+  if (!formData.date) {
+    return "Event date is required.";
+  }
+
+  if (!formData.time) {
+    return "Event time is required.";
+  }
+
+  if (!formData.location.trim()) {
+    return "Event location is required.";
+  }
+
+  const selectedDate = new Date(formData.date);
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+  selectedDate.setHours(0, 0, 0, 0);
+
+  if (!editId && selectedDate < today) {
+    return "Event date cannot be in the past.";
+  }
+
+  return null;
+};
   const getEvents = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -63,30 +142,36 @@ useEffect(() => {
     });
   };
   const addEvent = async () => {
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const validationError = validateEvent();
 
-      await axios.post(
-        "http://localhost:5000/api/events",
-
-        formData,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      alert("Event Added Successfully");
-
-      closeModal();
-
-      getEvents();
-    } catch (error) {
-      console.log(error);
+    if (validationError) {
+      return showAlert(validationError, "error");
     }
-  };
+
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      "http://localhost:5000/api/events",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    closeModal();
+    await getEvents();
+
+    showAlert("Event added successfully.", "success");
+
+  } catch (error) {
+    console.log(error.response?.data);
+
+    showAlert(getErrorMessage(error), "error");
+  }
+};
   // ===========================
   // Edit Event
   // ===========================
@@ -114,59 +199,73 @@ useEffect(() => {
   // ===========================
 
   const updateEvent = async () => {
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const validationError = validateEvent();
 
-      await axios.put(
-        `http://localhost:5000/api/events/${editId}`,
-
-        formData,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      alert("Event Updated Successfully");
-
-      closeModal();
-
-      getEvents();
-    } catch (error) {
-      console.log(error);
+    if (validationError) {
+      return showAlert(validationError, "error");
     }
-  };
+
+    const token = localStorage.getItem("token");
+
+    await axios.put(
+      `http://localhost:5000/api/events/${editId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    closeModal();
+    await getEvents();
+
+    showAlert("Event updated successfully.", "success");
+
+  } catch (error) {
+    console.log(error.response?.data);
+
+    showAlert(getErrorMessage(error), "error");
+  }
+};
 
   // ===========================
   // Delete Event
   // ===========================
 
   const deleteEvent = async (id) => {
-    if (!window.confirm("Delete this event?")) return;
+  try {
+    const token = localStorage.getItem("token");
 
-    try {
-      const token = localStorage.getItem("token");
-
-      await axios.delete(
-        `http://localhost:5000/api/events/${id}`,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    await axios.delete(
+      `http://localhost:5000/api/events/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      }
+    );
 
-      alert("Event Deleted Successfully");
+    setDeleteConfirm({
+      show: false,
+      eventId: null,
+    });
 
-      getEvents();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    await getEvents();
 
+    showAlert("Event deleted successfully.", "success");
+  } catch (error) {
+    console.log(error.response?.data);
+
+    setDeleteConfirm({
+      show: false,
+      eventId: null,
+    });
+
+    showAlert(getErrorMessage(error), "error");
+  }
+};
   // ===========================
   // Close Modal
   // ===========================
@@ -200,6 +299,36 @@ useEffect(() => {
   );
   return (
     <>
+    {alertBox.show && (
+  <div className={`order-banner ${alertBox.type} show`}>
+    <div className="order-banner-icon">
+      {alertBox.type === "success" ? "✔" : "✖"}
+    </div>
+
+    <div>
+      <div className="order-banner-title">
+        {alertBox.type === "success" ? "Success" : "Error"}
+      </div>
+
+      <div className="order-banner-detail">
+        {alertBox.message}
+      </div>
+    </div>
+
+    <button
+      className="order-banner-close"
+      onClick={() =>
+        setAlertBox({
+          show: false,
+          message: "",
+          type: "",
+        })
+      }
+    >
+      ×
+    </button>
+  </div>
+)}
       <div className="event-page">
         <Sidebar />
 
@@ -207,9 +336,6 @@ useEffect(() => {
           <div className="event-header">
 
   <div>
-    <p className="event-small-title">
-      Activity Management
-    </p>
 
     <h1>Events</h1>
 
@@ -233,10 +359,20 @@ useEffect(() => {
 
   <input
     type="text"
-    placeholder="Search by event title or location..."
+    placeholder="Search resident by name..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
   />
+
+  {search && (
+    <button
+      className="search-clear-btn"
+      onClick={() => setSearch("")}
+      type="button"
+    >
+      ✕
+    </button>
+  )}
 
 </div>
           <div className="event-grid">
@@ -389,8 +525,11 @@ useEffect(() => {
                 <button
                   className="event-delete-btn"
                   onClick={() =>
-                    deleteEvent(event._id)
-                  }
+  setDeleteConfirm({
+    show: true,
+    eventId: event._id,
+  })
+}
                 >
                   Delete
                 </button>
@@ -411,6 +550,43 @@ useEffect(() => {
 </div>
         </div>
       </div>
+      {deleteConfirm.show && (
+  <div className="delete-confirm-overlay">
+    <div className="delete-confirm-box">
+      <div className="delete-confirm-icon">!</div>
+
+      <h2>Delete Event?</h2>
+
+      <p>
+        Are you sure you want to delete this event?
+        This action cannot be undone.
+      </p>
+
+      <div className="delete-confirm-actions">
+        <button
+          className="delete-cancel-btn"
+          onClick={() =>
+            setDeleteConfirm({
+              show: false,
+              eventId: null,
+            })
+          }
+        >
+          Cancel
+        </button>
+
+        <button
+          className="delete-confirm-btn"
+          onClick={() =>
+            deleteEvent(deleteConfirm.eventId)
+          }
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       {showModal && (
 

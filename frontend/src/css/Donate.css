@@ -2,14 +2,14 @@
   box-sizing: border-box;
 }
 
-.family-donate-page {
+.donate-page {
   min-height: 100vh;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 28px;
+  padding: 12px;
 
   background:
     radial-gradient(
@@ -48,13 +48,13 @@
 /* LEFT PANEL */
 
 .donation-info-panel {
-  padding: 32px;
+  padding: 25px;
 
   background:
     linear-gradient(
       145deg,
-      #b84b5b,
-      #e06d75
+      #147b5e,
+      #28a980
     );
 
   color: white;
@@ -86,7 +86,7 @@
 }
 
 .donation-info-content {
-  margin-top: 65px;
+  margin-top: 20px;
 }
 
 .donation-main-icon {
@@ -155,17 +155,17 @@
 /* RIGHT SIDE */
 
 .donation-form-panel {
-  padding: 42px;
+  padding: 16px 42px;
 }
 
 .donation-form-header {
-  margin-bottom: 28px;
+  margin-bottom: 10px;
 }
 
 .donation-form-header p {
   margin: 0 0 5px;
 
-  color: #c25564;
+  color: #1e9872;
 
   font-size: 10px;
   font-weight: 800;
@@ -201,14 +201,14 @@
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: 18px;
+  gap: 5px;
 }
 
 .donation-form-group {
   display: flex;
   flex-direction: column;
 
-  gap: 7px;
+  gap: 5px;
 }
 
 .donation-form-group.full-width {
@@ -255,7 +255,7 @@
 
 .donation-input-box:focus-within,
 .donation-textarea-box:focus-within {
-  border-color: #cf6170;
+  border-color: #1e9872;
 
   background: white;
 
@@ -307,12 +307,12 @@
 }
 
 .donation-form-group select:focus {
-  border-color: #cf6170;
+  border-color: #1e9872;
 
   background: white;
 
   box-shadow:
-    0 0 0 3px rgba(207,97,112,.1);
+    0 0 0 3px rgba(30,152,114,.1);
 }
 
 .donation-textarea-box textarea {
@@ -344,10 +344,7 @@
 
   gap: 11px;
 
-  margin-top: 28px;
-  padding-top: 21px;
-
-  border-top: 1px solid #eee7e7;
+  margin-top: 15px;
 }
 
 .donation-actions button {
@@ -359,7 +356,7 @@
 
   min-width: 125px;
 
-  padding: 11px 17px;
+  padding: 9px 17px;
 
   border: none;
   border-radius: 11px;
@@ -380,8 +377,8 @@
   background:
     linear-gradient(
       135deg,
-      #bd4e5e,
-      #df6c75
+      #1b936e,
+      #32b188
     );
 
   color: white;
@@ -420,7 +417,7 @@
 
 @media (max-width: 600px) {
 
-  .family-donate-page {
+  .donate-page {
     padding: 15px;
   }
 

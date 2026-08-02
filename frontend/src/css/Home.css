@@ -161,6 +161,33 @@ body {
   color: #ce4f60;
 }
 
+.home-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #e5f7ef;
+  color: #18815f;
+
+  font-size: 19px;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.home-menu-btn:hover {
+  background: #1f9d74;
+  color: #ffffff;
+}
+
 
 /* HERO */
 
@@ -1032,7 +1059,59 @@ body {
 
 @media (max-width: 1000px) {
 
+  .home-navbar {
+    position: sticky;
+  }
+
+  .home-menu-btn {
+    display: flex;
+    order: 3;
+  }
+
   .home-nav-links {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 4%;
+    right: 4%;
+
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+
+    padding: 12px;
+
+    border: 1px solid #dce8e4;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow: 0 15px 35px rgba(28, 70, 57, 0.15);
+  }
+
+  .home-nav-links.nav-open {
+    display: flex;
+  }
+
+  .home-nav-links li {
+    width: 100%;
+  }
+
+  .home-nav-links a {
+    display: block;
+    width: 100%;
+
+    padding: 12px 14px;
+    border-radius: 9px;
+
+    font-size: 13px;
+  }
+
+  .home-nav-links a:hover {
+    background: #eef9f5;
+  }
+
+  .home-nav-links a::after {
     display: none;
   }
 
@@ -1089,11 +1168,30 @@ body {
 @media (max-width: 650px) {
 
   .home-navbar {
+    gap: 8px;
     padding: 10px 4%;
   }
 
-  .nav-donate-btn {
-    display: none;
+  .home-logo {
+    flex: 1;
+  }
+
+  .home-logo img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-actions {
+    gap: 6px;
+  }
+
+  .nav-login-btn {
+    padding: 9px 12px;
+  }
+
+  .home-menu-btn {
+    width: 40px;
+    height: 40px;
   }
 
   .home-logo h2 {
