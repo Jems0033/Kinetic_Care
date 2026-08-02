@@ -26,7 +26,6 @@ const getFamilyDashboard = async (req, res) => {
       _id: { $in: residentIds },
     }).populate("room");
 
-    // દરેક resident સાથે latest medical ઉમેરો
     const residentData = await Promise.all(
       residents.map(async (resident) => {
         const latestMedical = await MedicalRecord.findOne({
@@ -48,20 +47,36 @@ const getFamilyDashboard = async (req, res) => {
       })
     );
 
-    // કુલ Medical Records
     const medicalCount = await MedicalRecord.countDocuments({
       residentId: { $in: residentIds },
     });
 
     // Upcoming Events
-    const eventCount = await Event.countDocuments({
-      eventDate: { $gte: new Date() },
-    });
+   const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+// Total upcoming event count
+const eventCount = await Event.countDocuments({
+  date: {
+    $gte: today,
+  },
+});
+
+// Next 2 upcoming events
+const upcomingEvents = await Event.find({
+  date: {
+    $gte: today,
+  },
+})
+  .sort({ date: 1 })
+  .limit(2)
+  .select("title date location");
 
     res.status(200).json({
       residents: residentData,
       medicalCount,
       eventCount,
+      upcomingEvents,
     });
 
   } catch (error) {

@@ -5,7 +5,7 @@
 .medical-history-page {
   min-height: 100vh;
 
-  padding: 30px;
+  padding: 25px;
 
   background:
     radial-gradient(
@@ -24,13 +24,23 @@
 ========================= */
 
 .history-topbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 70px;
   margin-bottom: 22px;
 }
 
+/* BACK BUTTON */
+
 .history-back-btn {
+  position: absolute;
+  left: 0;
+
   display: inline-flex;
   align-items: center;
-
   gap: 7px;
 
   padding: 9px 13px;
@@ -39,132 +49,55 @@
   border-radius: 10px;
 
   background: #e7f6f0;
-
   color: #18815f;
 
   font-size: 10px;
   font-weight: 700;
 
   cursor: pointer;
-
   transition: 0.2s;
 }
 
 .history-back-btn:hover {
   background: #1f9d74;
-
   color: white;
-
   transform: translateX(-2px);
 }
 
-
-/* =========================
-   HEADING
-========================= */
+/* HEADING */
 
 .medical-history-heading {
-  margin-bottom: 23px;
+  margin: 0;
+  text-align: center;
 }
 
 .medical-history-heading p {
   margin: 0 0 5px;
 
   color: #1c916d;
-
   font-size: 10px;
   font-weight: 800;
 
   letter-spacing: 1.2px;
-
   text-transform: uppercase;
 }
 
 .medical-history-heading h1 {
   margin: 0;
-
   color: #1e2d34;
-
   font-size: 31px;
 }
 
 .medical-history-heading span {
   display: block;
-
   max-width: 600px;
 
-  margin-top: 7px;
+  margin: 7px auto 0;
 
   color: #899599;
-
   font-size: 12px;
   line-height: 1.6;
 }
-
-
-/* =========================
-   SUMMARY
-========================= */
-
-.history-summary {
-  display: flex;
-  align-items: center;
-
-  gap: 13px;
-
-  width: fit-content;
-
-  margin-bottom: 27px;
-
-  padding: 15px 20px;
-
-  border: 1px solid #e0ebe7;
-  border-radius: 15px;
-
-  background: white;
-
-  box-shadow:
-    0 8px 24px rgba(30, 70, 58, 0.06);
-}
-
-.summary-icon {
-  display: grid;
-
-  width: 43px;
-  height: 43px;
-
-  place-items: center;
-
-  border-radius: 12px;
-
-  background: #e4f7ef;
-
-  color: #18815f;
-
-  font-size: 17px;
-}
-
-.history-summary span {
-  display: block;
-
-  color: #899599;
-
-  font-size: 9px;
-
-  text-transform: uppercase;
-}
-
-.history-summary strong {
-  display: block;
-
-  margin-top: 3px;
-
-  color: #2f3d43;
-
-  font-size: 20px;
-}
-
-
 /* =========================
    TIMELINE
 ========================= */

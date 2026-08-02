@@ -14,12 +14,11 @@ import PatientDetails from "./pages/doctor/PatientDetails";
 import DoctorProfile from "./pages/doctor/DoctorProfile";
 
 import MedicalHistory from "./pages/family/MedicalHistory";
-import FamilyDonate from "./pages/family/FamilyDonate";
 import FamilyDashboard from "./pages/family/FamilyDashboard";
 import BookVisit from "./pages/family/BookVisit";
 
 import Home from "./pages/Home";
-import PublicDonate from "./pages/PublicDonate";
+import Donate from "./pages/Donate";
 
 import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -62,9 +61,8 @@ function App() {
   path="/family/medical-history/:residentId"
   element={<MedicalHistory />}
 />
-      <Route path="/family/donate" element={<FamilyDonate />} />
 
-      <Route path="/donate" element={<PublicDonate />} />
+      <Route path="/donate" element={<Donate />} />
 
       <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
 

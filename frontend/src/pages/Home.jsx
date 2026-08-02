@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Home.css";
 
@@ -16,10 +16,13 @@ import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaCheckCircle,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 function Home() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="home">
@@ -29,7 +32,6 @@ function Home() {
       <nav className="home-navbar">
 
         <div className="home-logo">
-
           <img
             src="/logo.png"
             alt="Kinetic Care"
@@ -38,37 +40,70 @@ function Home() {
           <h2>
             Kinetic<span>Care</span>
           </h2>
-
         </div>
 
-        <ul className="home-nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#contact">Contact</a></li>
+        <ul className={`home-nav-links ${menuOpen ? "nav-open" : ""}`}>
+          <li>
+            <a href="#home" onClick={() => setMenuOpen(false)}>
+              Home
+            </a>
+          </li>
+
+          <li>
+            <a href="#about" onClick={() => setMenuOpen(false)}>
+              About
+            </a>
+          </li>
+
+          <li>
+            <a href="#services" onClick={() => setMenuOpen(false)}>
+              Services
+            </a>
+          </li>
+
+          <li>
+            <a href="#contact" onClick={() => setMenuOpen(false)}>
+              Contact
+            </a>
+          </li>
         </ul>
 
         <div className="nav-actions">
-
           <button
+            type="button"
             className="nav-donate-btn"
-            onClick={() => navigate("/donate")}
+            onClick={() =>
+              navigate("/donate", {
+                state: {
+                  from: "home",
+                },
+              })
+            }
           >
             <FaHeart />
             Donate
           </button>
 
           <button
+            type="button"
             className="nav-login-btn"
             onClick={() => navigate("/login")}
           >
             Login
           </button>
-
         </div>
 
-      </nav>
+        <button
+          type="button"
+          className="home-menu-btn"
+          onClick={() => setMenuOpen((previous) => !previous)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
 
+      </nav>
 
       {/* HERO */}
 
@@ -510,7 +545,13 @@ function Home() {
 
         </div>
 
-        <button onClick={() => navigate("/donate")}>
+        <button
+          onClick={() =>
+            navigate("/donate", {
+              state: { from: "home" },
+            })
+          }
+        >
           <FaHeart />
           Donate Now
         </button>

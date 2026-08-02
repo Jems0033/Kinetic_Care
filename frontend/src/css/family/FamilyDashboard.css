@@ -27,41 +27,21 @@
 
   gap: 20px;
 
-  margin-bottom: 26px;
-  padding: 27px 30px;
+  margin-bottom: 20px;
+  padding: 2px 30px;
 
   overflow: hidden;
 
   border-radius: 23px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #147b5e,
-      #28a97f
-    );
+  color: #1b936e;
 
-  color: white;
-
-  box-shadow:
-    0 14px 35px rgba(23, 125, 94, 0.2);
 }
 
-.family-label {
-  margin: 0 0 6px;
 
-  font-size: 10px;
-  font-weight: 800;
-
-  letter-spacing: 1.3px;
-  text-transform: uppercase;
-
-  opacity: 0.8;
-}
 
 .family-hero h1 {
   margin: 0;
-
   font-size: 29px;
 }
 
@@ -102,7 +82,7 @@
   display: grid;
 
   grid-template-columns:
-    repeat(4, minmax(0, 1fr));
+    repeat(3, minmax(0, 1fr));
 
   gap: 18px;
 
@@ -446,60 +426,89 @@
 
 
 /* EVENT */
-
-.event-summary {
+.family-upcoming-events {
   display: flex;
-  align-items: center;
-
-  gap: 17px;
-
-  padding: 17px;
-
-  border-radius: 16px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #f3ecfb,
-      #faf7fd
-    );
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
 }
 
-.event-summary-number {
-  display: grid;
+.family-upcoming-event-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 
-  width: 66px;
-  height: 66px;
+  padding: 14px;
+
+  border: 1px solid #e3ece9;
+  border-radius: 14px;
+
+  background: #fafcfb;
+
+  transition: 0.2s;
+}
+
+.family-upcoming-event-card:hover {
+  background: #f3faf7;
+  border-color: #c9e5db;
+  transform: translateY(-2px);
+}
+
+.family-event-date-box {
+  width: 55px;
+  height: 55px;
 
   flex-shrink: 0;
 
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-  border-radius: 18px;
+  border-radius: 13px;
 
-  background: #8d62bb;
-
-  color: white;
-
-  font-size: 24px;
-  font-weight: 800;
+  background: #e5f7ef;
+  color: #18815f;
 }
 
-.event-summary h3 {
-  margin: 0;
+.family-event-date-box strong {
+  font-size: 19px;
+  line-height: 1;
+}
 
-  color: #40364b;
+.family-event-date-box span {
+  margin-top: 4px;
 
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.family-event-info {
+  min-width: 0;
+}
+
+.family-event-info h3 {
+  margin: 0 0 5px;
+
+  color: #2d3b40;
   font-size: 14px;
 }
 
-.event-summary p {
-  margin: 5px 0 0;
+.family-event-info p {
+  margin: 0;
 
-  color: #8b8291;
+  color: #7c8b87;
+  font-size: 11px;
+}
 
+.family-event-info span {
+  display: block;
+  margin-top: 4px;
+
+  color: #1c916d;
   font-size: 10px;
-  line-height: 1.5;
+  font-weight: 600;
 }
 
 

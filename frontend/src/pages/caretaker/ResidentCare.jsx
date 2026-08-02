@@ -18,6 +18,7 @@ function ResidentCare() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [careCompleted, setCareCompleted] = useState(false);
 
   const [careData, setCareData] = useState({
     medicine: false,
@@ -53,16 +54,30 @@ function ResidentCare() {
       setCaretaker(res.data.caretaker || {});
 
       if (res.data.todayCare) {
-        setCareData({
-          medicine: res.data.todayCare.medicine || false,
-          meal: res.data.todayCare.meal || false,
-          bath: res.data.todayCare.bath || false,
-          walking: res.data.todayCare.walking || false,
-          water: res.data.todayCare.water || false,
-          rest: res.data.todayCare.rest || false,
-          notes: res.data.todayCare.notes || "",
-        });
-      }
+  const todayCare = res.data.todayCare;
+
+  setCareData({
+    medicine: todayCare.medicine || false,
+    meal: todayCare.meal || false,
+    bath: todayCare.bath || false,
+    walking: todayCare.walking || false,
+    water: todayCare.water || false,
+    rest: todayCare.rest || false,
+    notes: todayCare.notes || "",
+  });
+
+  const allCompleted =
+    todayCare.medicine &&
+    todayCare.meal &&
+    todayCare.bath &&
+    todayCare.walking &&
+    todayCare.water &&
+    todayCare.rest;
+
+  setCareCompleted(allCompleted);
+} else {
+  setCareCompleted(false);
+}
     } catch (error) {
       console.log("Resident Care Error:", error);
 
@@ -111,6 +126,17 @@ function ResidentCare() {
       setMessage(
         res.data.message || "Daily care saved successfully"
       );
+      const allCompleted =
+  careData.medicine &&
+  careData.meal &&
+  careData.bath &&
+  careData.walking &&
+  careData.water &&
+  careData.rest;
+
+if (allCompleted) {
+  setCareCompleted(true);
+}
     } catch (error) {
       console.log("Save Care Error:", error);
 
@@ -403,6 +429,7 @@ function ResidentCare() {
             name="medicine"
             checked={careData.medicine}
             onChange={handleCheckbox}
+            disabled={careCompleted}
           />
 
           <CareTask
@@ -412,6 +439,7 @@ function ResidentCare() {
             name="meal"
             checked={careData.meal}
             onChange={handleCheckbox}
+            disabled={careCompleted}
           />
 
           <CareTask
@@ -421,6 +449,7 @@ function ResidentCare() {
             name="bath"
             checked={careData.bath}
             onChange={handleCheckbox}
+            disabled={careCompleted}
           />
 
           <CareTask
@@ -430,6 +459,7 @@ function ResidentCare() {
             name="walking"
             checked={careData.walking}
             onChange={handleCheckbox}
+            disabled={careCompleted}
           />
 
           <CareTask
@@ -439,6 +469,7 @@ function ResidentCare() {
             name="water"
             checked={careData.water}
             onChange={handleCheckbox}
+            disabled={careCompleted}
           />
 
           <CareTask
@@ -448,6 +479,7 @@ function ResidentCare() {
             name="rest"
             checked={careData.rest}
             onChange={handleCheckbox}
+            disabled={careCompleted}
           />
 
         </div>
@@ -483,6 +515,7 @@ function ResidentCare() {
           value={careData.notes}
           onChange={handleNotes}
           maxLength={500}
+          disabled={careCompleted}
         />
 
         <div className="resident-notes-footer">
@@ -523,10 +556,12 @@ function ResidentCare() {
           type="button"
           className="resident-save-btn"
           onClick={saveCare}
-          disabled={saving}
-        >
-          {saving ? "Saving..." : "Save Daily Care"}
-        </button>
+disabled={saving || careCompleted}        >
+{saving
+  ? "Saving..."
+  : careCompleted
+    ? "Today's Care Completed ✓"
+    : "Save Daily Care"}        </button>
 
       </div>
 
@@ -538,7 +573,6 @@ function ResidentCare() {
 /* =========================
    CARE TASK COMPONENT
 ========================= */
-
 function CareTask({
   icon,
   title,
@@ -546,46 +580,37 @@ function CareTask({
   name,
   checked,
   onChange,
+  disabled,
 }) {
   return (
     <label
-      className={`resident-task-card ${checked
-          ? "resident-task-active"
-          : ""
-        }`}
+      className={`resident-task-card 
+        ${checked ? "resident-task-active" : ""}
+        ${disabled ? "resident-task-disabled" : ""}
+      `}
     >
-
       <div className="resident-task-icon">
         {icon}
       </div>
 
       <div className="resident-task-content">
-
-        <h3>
-          {title}
-        </h3>
-
-        <p>
-          {description}
-        </p>
-
+        <h3>{title}</h3>
+        <p>{description}</p>
       </div>
 
       <div className="resident-task-check">
-
         <input
           type="checkbox"
           name={name}
           checked={checked}
           onChange={onChange}
+          disabled={disabled}
         />
 
         <span className="resident-custom-checkbox">
           {checked ? "✓" : ""}
         </span>
-
       </div>
-
     </label>
   );
 }

@@ -77,8 +77,8 @@ function FamilyProfile() {
 
         <div className="family-profile-card">
           <div className="family-profile-avatar">
-            <FaUserCircle />
-          </div>
+  {profile.name?.charAt(0).toUpperCase() || "F"}
+</div>
 
           <div className="family-profile-name">
             <h2>{profile.name || "Family Member"}</h2>

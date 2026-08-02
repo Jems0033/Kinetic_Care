@@ -281,10 +281,10 @@
   }
 }
 
-@media (max-width: 800px) {
+@media screen and (max-width: 992px) {
   .medical-content {
     margin-left: 0;
-    padding: 20px;
+    padding-top: 75px;
   }
 }
 

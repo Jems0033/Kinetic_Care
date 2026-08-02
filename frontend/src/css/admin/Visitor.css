@@ -426,13 +426,11 @@
 
 }
 
-@media (max-width: 800px) {
-
+@media screen and (max-width: 992px) {
   .visitor-content {
     margin-left: 0;
-    padding: 20px;
+    padding-top: 75px;
   }
-
 }
 
 @media (max-width: 600px) {

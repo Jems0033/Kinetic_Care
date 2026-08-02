@@ -658,9 +658,27 @@
     box-shadow:0 8px 18px rgba(27,147,110,.22);
 }
 
-.resident-save-btn:disabled{
-    opacity:.65;
-    cursor:not-allowed;
+.resident-save-btn:disabled {
+  background: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.75;
+}
+
+.resident-task-disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.resident-task-disabled input {
+  cursor: not-allowed;
+}
+
+.resident-notes-input:disabled {
+  background: #f1f5f4;
+  color: #64748b;
+  cursor: not-allowed;
 }
 
 @media(max-width:700px){

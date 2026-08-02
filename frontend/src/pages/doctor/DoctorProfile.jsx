@@ -53,30 +53,17 @@ function DoctorProfile() {
 
       {/* TOP BAR */}
 
-      <div className="profile-topbar">
+      <div className="doctor-profile-topbar">
 
         <button
-          className="back-btn"
+          className="doctor-back-btn"
           onClick={() => navigate("/doctor/dashboard")}
         >
           <FaArrowLeft />
           Dashboard
         </button>
 
-        <button
-          className="profile-logout-btn"
-          onClick={logout}
-        >
-          <FaSignOutAlt />
-          Logout
-        </button>
-
-      </div>
-
-
-      {/* HEADER */}
-
-      <div className="profile-heading">
+        <div className="doctor-profile-heading">
 
         <p>Doctor Portal</p>
 
@@ -88,6 +75,15 @@ function DoctorProfile() {
 
       </div>
 
+        <button
+          className="profile-logout-btn"
+          onClick={logout}
+        >
+          <FaSignOutAlt />
+          Logout
+        </button>
+
+      </div>
 
       {/* MAIN PROFILE */}
 

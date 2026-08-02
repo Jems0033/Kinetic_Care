@@ -456,10 +456,10 @@
   }
 }
 
-@media (max-width: 800px) {
+@media screen and (max-width: 992px) {
   .staff-content {
     margin-left: 0;
-    padding: 20px;
+    padding-top: 75px;
   }
 }
 
@@ -467,6 +467,7 @@
   .staff-grid {
     grid-template-columns: 1fr;
   }
+
 
   .staff-headers {
     align-items: flex-start;

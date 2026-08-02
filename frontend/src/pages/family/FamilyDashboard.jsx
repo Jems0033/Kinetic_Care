@@ -19,11 +19,11 @@ function FamilyDashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [dashboard, setDashboard] = useState({
-    residents: [],
-    medicalCount: 0,
-    eventCount: 0,
-    latestMedical: {},
-  });
+  residents: [],
+  eventCount: 0,
+  upcomingEvents: [],
+  latestMedical: {},
+});
 
   useEffect(() => {
     getDashboard();
@@ -41,6 +41,7 @@ function FamilyDashboard() {
           },
         },
       );
+      console.log("Family Dashboard Response:", res.data);
 
       setDashboard(res.data);
     } catch (error) {
@@ -55,7 +56,6 @@ function FamilyDashboard() {
       <section className="family-hero">
 
   <div>
-    <p className="family-label">Family Portal</p>
 
     <h1>Welcome, {user?.name || "Family Member"} 👋</h1>
 
@@ -114,20 +114,6 @@ function FamilyDashboard() {
               </h2>
 
             <p>Assigned room</p>
-          </div>
-        </div>
-
-        <div className="family-dashboard-card medical-card">
-          <div className="family-card-icon">
-            <FaHeartbeat />
-          </div>
-
-          <div>
-            <span>Medical Records</span>
-
-            <h2>{dashboard.medicalCount}</h2>
-
-            <p>Total health records</p>
           </div>
         </div>
 
@@ -291,27 +277,81 @@ function FamilyDashboard() {
 ))}
         {/* EVENT SUMMARY */}
 
-        <div className="family-panel event-panel">
-          <div className="family-panel-header">
-            <div>
-              <p>Community Activities</p>
+       <div className="family-panel event-panel">
 
-              <h2>Upcoming Events</h2>
-            </div>
+  <div className="family-panel-header">
+    <div>
+      <p>Community Activities</p>
+      <h2>Upcoming Events</h2>
+    </div>
 
-            <FaCalendarAlt />
+    <FaCalendarAlt />
+  </div>
+
+  {dashboard.upcomingEvents?.length > 0 ? (
+
+    <div className="family-upcoming-events">
+
+      {dashboard.upcomingEvents.map((event) => (
+
+        <div
+          className="family-upcoming-event-card"
+          key={event._id}
+        >
+
+          <div className="family-event-date-box">
+
+            <strong>
+              {new Date(event.date).getDate()}
+            </strong>
+
+            <span>
+              {new Date(event.date).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                }
+              )}
+            </span>
+
           </div>
 
-          <div className="event-summary">
-            <div className="event-summary-number">{dashboard.eventCount}</div>
+          <div className="family-event-info">
 
-            <div>
-              <h3>Upcoming Events</h3>
+            <h3>{event.title}</h3>
 
-              <p>Activities and celebrations scheduled for residents.</p>
-            </div>
+            <p>
+              {new Date(event.date).toLocaleDateString(
+                "en-IN",
+                {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                }
+              )}
+            </p>
+
+            {event.location && (
+              <span>{event.location}</span>
+            )}
+
           </div>
+
         </div>
+
+      ))}
+
+    </div>
+
+  ) : (
+
+    <div className="family-empty-state">
+      No upcoming events available.
+    </div>
+
+  )}
+
+</div>
 
         {/* QUICK ACTIONS */}
 
@@ -338,8 +378,15 @@ function FamilyDashboard() {
               <FaArrowRight className="quick-arrow" />
             </button>
 
-            <button onClick={() => navigate("/family/donate")}>
-              <span className="quick-action-icon donate-action">
+<button
+  onClick={() =>
+    navigate("/donate", {
+      state: {
+        from: "family-dashboard",
+      },
+    })
+  }
+>              <span className="quick-action-icon donate-action">
                 <FaDonate />
               </span>
 
