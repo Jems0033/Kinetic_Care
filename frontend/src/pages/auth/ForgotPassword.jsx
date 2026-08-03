@@ -4,7 +4,6 @@ import axios from "axios";
 import "../../css/auth/ForgotPassword.css";
 
 function ForgotPassword() {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -12,6 +11,9 @@ function ForgotPassword() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const [step, setStep] = useState(1);
+  const [otp, setOtp] = useState("");
 
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -24,40 +26,31 @@ function ForgotPassword() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // =========================
+  // Send OTP
+  // =========================
 
-    setError("");
-    setMessage("");
-
-    if (formData.newPassword !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
+  const sendOTP = async () => {
     try {
-
       setLoading(true);
+      setError("");
+      setMessage("");
 
       const res = await axios.post(
-        "http://localhost:5000/api/users/forgot-password",
+        "http://localhost:5000/api/users/send-reset-otp",
         {
           email: formData.email,
-          newPassword: formData.newPassword,
         }
       );
 
       setMessage(res.data.message);
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+      setStep(2);
 
     } catch (error) {
 
       setError(
         error.response?.data?.message ||
-        "Unable to reset password"
+          "Unable to send OTP"
       );
 
     } finally {
@@ -65,6 +58,95 @@ function ForgotPassword() {
       setLoading(false);
 
     }
+  };
+
+  // =========================
+  // Verify OTP
+  // =========================
+
+  const verifyOTP = async () => {
+    try {
+
+      setLoading(true);
+      setError("");
+      setMessage("");
+
+      const res = await axios.post(
+        "http://localhost:5000/api/users/verify-reset-otp",
+        {
+          email: formData.email,
+          otp,
+        }
+      );
+
+      setMessage(res.data.message);
+
+      setStep(3);
+
+    } catch (error) {
+
+      setError(
+        error.response?.data?.message ||
+          "Invalid OTP"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
+
+  // =========================
+  // Reset Password
+  // =========================
+
+  const resetPassword = async () => {
+
+    setError("");
+    setMessage("");
+
+    if (
+      formData.newPassword !==
+      formData.confirmPassword
+    ) {
+      return setError("Passwords do not match");
+    }
+
+    try {
+
+      setLoading(true);
+
+      const res = await axios.post(
+        "http://localhost:5000/api/users/reset-password",
+        {
+          email: formData.email,
+          otp,
+          newPassword: formData.newPassword,
+        }
+      );
+
+      setMessage(res.data.message);
+
+      setTimeout(() => {
+
+        navigate("/login");
+
+      }, 1500);
+
+    } catch (error) {
+
+      setError(
+        error.response?.data?.message ||
+          "Unable to reset password"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
   };
 
   return (
@@ -82,10 +164,10 @@ function ForgotPassword() {
           Account Recovery
         </p>
 
-        <h1>Reset Password</h1>
+        <h1>Forgot Password</h1>
 
         <span className="forgot-description">
-          Enter your registered email and create a new password.
+          Reset your password securely using OTP verification.
         </span>
 
         {error && (
@@ -100,57 +182,122 @@ function ForgotPassword() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        {/* STEP 1 */}
 
-          <div className="forgot-group">
-            <label>Email Address</label>
+        {step === 1 && (
 
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter registered email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <>
 
-          <div className="forgot-group">
-            <label>New Password</label>
+            <div className="forgot-group">
 
-            <input
-              type="password"
-              name="newPassword"
-              placeholder="Enter new password"
-              value={formData.newPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
+              <label>Email Address</label>
 
-          <div className="forgot-group">
-            <label>Confirm Password</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter registered email"
+                value={formData.email}
+                onChange={handleChange}
+              />
 
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm new password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
+            </div>
 
-          <button
-            className="reset-btn"
-            disabled={loading}
-          >
-            {loading
-              ? "Updating..."
-              : "Reset Password"}
-          </button>
+            <button
+              className="reset-btn"
+              onClick={sendOTP}
+              disabled={loading}
+            >
+              {loading
+                ? "Sending OTP..."
+                : "Send OTP"}
+            </button>
 
-        </form>
+          </>
+
+        )}
+
+        {/* STEP 2 */}
+
+        {step === 2 && (
+
+          <>
+
+            <div className="forgot-group">
+
+              <label>OTP</label>
+
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) =>
+                  setOtp(e.target.value)
+                }
+              />
+
+            </div>
+
+            <button
+              className="reset-btn"
+              onClick={verifyOTP}
+              disabled={loading}
+            >
+              {loading
+                ? "Verifying..."
+                : "Verify OTP"}
+            </button>
+
+          </>
+
+        )}
+
+        {/* STEP 3 */}
+
+        {step === 3 && (
+
+          <>
+
+            <div className="forgot-group">
+
+              <label>New Password</label>
+
+              <input
+                type="password"
+                name="newPassword"
+                placeholder="Enter new password"
+                value={formData.newPassword}
+                onChange={handleChange}
+              />
+
+            </div>
+
+            <div className="forgot-group">
+
+              <label>Confirm Password</label>
+
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
+
+            </div>
+
+            <button
+              className="reset-btn"
+              onClick={resetPassword}
+              disabled={loading}
+            >
+              {loading
+                ? "Updating..."
+                : "Reset Password"}
+            </button>
+
+          </>
+
+        )}
 
         <button
           className="back-login"
