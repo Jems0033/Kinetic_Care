@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 // Login User
 const loginUser = async (req, res) => {
@@ -59,43 +60,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-
-const forgotPassword = async (req, res) => {
-  try {
-
-    const { email, newPassword } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
-
-    user.password = hashedPassword;
-
-    await user.save();
-
-    res.json({
-      message: "Password reset successfully",
-    });
-
-  } catch (error) {
-
-    console.log(error);
-
-    res.status(500).json({
-      message: "Unable to reset password",
-    });
-
-  }
-};
 
 // Register User
 const registerUser = async (req, res) => {
@@ -163,9 +127,173 @@ const getUsers = async (req, res) => {
   }
 };
 
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+const sendResetOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // 6 digit OTP
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    user.resetOTP = otp;
+    user.resetOTPExpire = Date.now() + 5 * 60 * 1000; // 5 min
+
+    await user.save();
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Kinetic Care - Password Reset OTP",
+      html: `
+        <h2>Password Reset Request</h2>
+
+        <p>Your OTP is:</p>
+
+        <h1 style="letter-spacing:4px;color:#1f9d74;">
+          ${otp}
+        </h1>
+
+        <p>This OTP is valid for 5 minutes.</p>
+
+        <br>
+
+        <p>Kinetic Care</p>
+      `,
+    });
+
+    res.status(200).json({
+      message: "OTP sent successfully",
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
+};
+
+const verifyResetOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (!user.resetOTP || !user.resetOTPExpire) {
+      return res.status(400).json({
+        message: "Please request a new OTP",
+      });
+    }
+
+    if (new Date() > user.resetOTPExpire) {
+      return res.status(400).json({
+        message: "OTP has expired",
+      });
+    }
+
+    if (user.resetOTP !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    res.status(200).json({
+      message: "OTP Verified Successfully",
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+
+    const { email, otp, newPassword } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (!user.resetOTP || !user.resetOTPExpire) {
+      return res.status(400).json({
+        message: "Please request a new OTP",
+      });
+    }
+
+    if (new Date() > user.resetOTPExpire) {
+      return res.status(400).json({
+        message: "OTP has expired",
+      });
+    }
+
+    if (user.resetOTP !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10
+    );
+
+    user.password = hashedPassword;
+
+    user.resetOTP = null;
+    user.resetOTPExpire = null;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Password reset successfully",
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
+};
+
 module.exports = {
   registerUser,
   getUsers,
   loginUser,
-  forgotPassword
+  resetPassword,
+  sendResetOTP,
+  verifyResetOTP,
 };

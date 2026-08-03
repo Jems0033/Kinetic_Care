@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-
+const userSchema = new mongoose.Schema(
+{
     name:{
         type:String,
         required:true
@@ -26,12 +26,23 @@ const userSchema = new mongoose.Schema({
 
     phone:{
         type:String
+    },
+
+    // ===== Forgot Password OTP =====
+
+    resetOTP:{
+        type:String,
+        default:null
+    },
+
+    resetOTPExpire:{
+        type:Date,
+        default:null
     }
 
 },
 {
     timestamps:true
 });
-
 
 module.exports = mongoose.model("User", userSchema);
