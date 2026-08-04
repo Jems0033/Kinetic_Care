@@ -14,7 +14,6 @@ function Staff() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: "",
     phone: "",
     gender: "",
     role: "",
@@ -77,12 +76,6 @@ const showAlert = (message, type = "success") => {
 
   if (!editId && !emailRegex.test(formData.email))
     return "Please enter a valid email address.";
-
-  if (!editId && !formData.password.trim())
-    return "Password is required.";
-
-  if (!editId && formData.password.length < 6)
-    return "Password must be at least 6 characters.";
 
   if (!formData.phone.trim())
     return "Phone number is required.";
@@ -160,7 +153,6 @@ if (validationError) {
         {
           name: formData.name,
           email: formData.email,
-          password: formData.password,
           role: formData.role,
           phone: formData.phone,
           gender: formData.gender,
@@ -174,12 +166,14 @@ if (validationError) {
         },
       );
 
-      showAlert("Staff Added Successfully", "success");
+      showAlert(
+  "Staff added successfully. Login credentials have been sent to the registered email.",
+  "success"
+);
 
       setFormData({
         name: "",
         email: "",
-        password: "",
         phone: "",
         gender: "",
         role: "",
@@ -207,7 +201,6 @@ if (validationError) {
       shift: member.shift,
       salary: member.salary,
       email: "",
-      password: "",
     });
 
     setEditId(member._id);
@@ -292,7 +285,6 @@ if (validationError) {
     setFormData({
       name: "",
       email: "",
-      password: "",
       phone: "",
       gender: "",
       role: "",
@@ -514,7 +506,7 @@ if (validationError) {
                 <span>
                   {editId
                     ? "Update staff information"
-                    : "Create a new staff account"}
+                    : "Create a new staff account. Login credentials will be sent automatically by email."}
                 </span>
               </div>
 
@@ -545,20 +537,6 @@ if (validationError) {
                     name="email"
                     placeholder="Enter email address"
                     value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-              )}
-
-              {!editId && (
-                <div className="form-group">
-                  <label>Password</label>
-
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Create password"
-                    value={formData.password}
                     onChange={handleChange}
                   />
                 </div>

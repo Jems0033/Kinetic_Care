@@ -409,3 +409,154 @@
   }
 
 }
+/* =========================
+   DONATION TYPE BADGES
+========================= */
+
+.donation-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 7px 11px;
+
+  border-radius: 50px;
+
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.donation-type-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.donation-type-badge.money {
+  background: #e5f7ef;
+  color: #16835f;
+}
+
+.donation-type-badge.food {
+  background: #fff1df;
+  color: #d47a20;
+}
+
+.donation-type-badge.medicine {
+  background: #e9efff;
+  color: #5276c8;
+}
+
+.donation-type-badge.clothes {
+  background: #f3e9fb;
+  color: #8a59ad;
+}
+
+.donation-type-badge.other {
+  background: #f1f5f4;
+  color: #64748b;
+}
+
+/* =========================
+   VALUE / QUANTITY BOX
+========================= */
+
+.donation-amount-box {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  margin-top: 18px;
+  padding: 15px;
+
+  border-radius: 15px;
+}
+
+.donation-value-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 43px;
+  height: 43px;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  font-size: 17px;
+}
+
+.donation-amount-box span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.donation-amount-box h2 {
+  margin: 0;
+
+  font-size: 21px;
+}
+
+/* MONEY */
+
+.donation-amount-box.money {
+  background: #edf9f4;
+  color: #16835f;
+}
+
+.donation-amount-box.money .donation-value-icon {
+  background: #d8f1e7;
+}
+
+/* FOOD */
+
+.donation-amount-box.food {
+  background: #fff7eb;
+  color: #d47a20;
+}
+
+.donation-amount-box.food .donation-value-icon {
+  background: #ffe8c7;
+}
+
+/* MEDICINE */
+
+.donation-amount-box.medicine {
+  background: #f1f4ff;
+  color: #5276c8;
+}
+
+.donation-amount-box.medicine .donation-value-icon {
+  background: #dfe7ff;
+}
+
+/* CLOTHES */
+
+.donation-amount-box.clothes {
+  background: #f8f1fc;
+  color: #8a59ad;
+}
+
+.donation-amount-box.clothes .donation-value-icon {
+  background: #eadcf5;
+}
+
+/* OTHER */
+
+.donation-amount-box.other {
+  background: #f4f7f6;
+  color: #64748b;
+}
+
+.donation-amount-box.other .donation-value-icon {
+  background: #e7edeb;
+}

@@ -6,11 +6,9 @@ import "../../css/family/FamilyDashboard.css";
 import {
   FaUserAlt,
   FaBed,
-  FaHeartbeat,
   FaCalendarAlt,
   FaDonate,
   FaArrowRight,
-  FaUserFriends,
   FaUserCircle,
 } from "react-icons/fa";
 function FamilyDashboard() {

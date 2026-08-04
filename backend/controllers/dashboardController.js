@@ -12,11 +12,7 @@ const getDashboard = async (req, res) => {
 
         const totalStaff = await Staff.countDocuments();
 
-        const totalRooms = await Room.countDocuments();
-
-        const totalDonors = await Donor.countDocuments();
-
-        const totalEvents = await Event.countDocuments();  
+        const totalRooms = await Room.countDocuments();  
 
         res.status(200).json({
 
@@ -25,10 +21,6 @@ const getDashboard = async (req, res) => {
             totalStaff,
 
             totalRooms,
-
-            totalDonors,
-
-            totalEvents
 
         });
 

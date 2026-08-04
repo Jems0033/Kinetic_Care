@@ -157,25 +157,246 @@ const sendResetOTP = async (req, res) => {
     await user.save();
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Kinetic Care - Password Reset OTP",
-      html: `
-        <h2>Password Reset Request</h2>
+  from: `"Kinetic Care" <${process.env.EMAIL_USER}>`,
+  to: email,
+  subject: "Reset Your Kinetic Care Password",
 
-        <p>Your OTP is:</p>
+  html: `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
 
-        <h1 style="letter-spacing:4px;color:#1f9d74;">
-          ${otp}
-        </h1>
+  <body style="
+    margin:0;
+    padding:0;
+    background-color:#f4f7f6;
+    font-family:Arial, Helvetica, sans-serif;
+  ">
 
-        <p>This OTP is valid for 5 minutes.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" 
+      style="background-color:#f4f7f6; padding:40px 15px;">
+      
+      <tr>
+        <td align="center">
 
-        <br>
+          <!-- Main Card -->
+          <table width="100%" cellpadding="0" cellspacing="0"
+            style="
+              max-width:550px;
+              background:#ffffff;
+              border-radius:14px;
+              overflow:hidden;
+              box-shadow:0 4px 15px rgba(0,0,0,0.08);
+            "
+          >
 
-        <p>Kinetic Care</p>
-      `,
-    });
+            <!-- Header -->
+            <tr>
+              <td align="center" style="
+                background:#1f9d74;
+                padding:30px 20px;
+              ">
+
+                <!-- LOGO -->
+                <img
+                  src="https://raw.githubusercontent.com/Jems0033/Kinetic_Care/main/frontend/public/logo.png"
+                  alt="Kinetic Care"
+                  width="75"
+                  style="
+                    display:block;
+                    margin-bottom:12px;
+                  "
+                />
+
+                <h1 style="
+                  color:#ffffff;
+                  margin:0;
+                  font-size:26px;
+                  letter-spacing:0.5px;
+                ">
+                  Kinetic Care
+                </h1>
+
+                <p style="
+                  color:#dff5ed;
+                  margin:7px 0 0;
+                  font-size:14px;
+                ">
+                  Caring Today. Comforting Tomorrow.
+                </p>
+
+              </td>
+            </tr>
+
+
+            <!-- Content -->
+            <tr>
+              <td style="padding:35px 40px;">
+
+                <h2 style="
+                  color:#222222;
+                  margin-top:0;
+                  font-size:22px;
+                ">
+                  Password Reset Request
+                </h2>
+
+                <p style="
+                  color:#555555;
+                  font-size:15px;
+                  line-height:1.6;
+                ">
+                  Hello ${user.name},
+                </p>
+
+                <p style="
+                  color:#555555;
+                  font-size:15px;
+                  line-height:1.6;
+                ">
+                  We received a request to reset the password for your
+                  <strong>Kinetic Care</strong> account.
+                </p>
+
+                <p style="
+                  color:#555555;
+                  font-size:15px;
+                  line-height:1.6;
+                ">
+                  Please use the verification code below to continue:
+                </p>
+
+
+                <!-- OTP BOX -->
+                <div style="
+                  background:#f0faf6;
+                  border:1px solid #ccebdd;
+                  border-radius:10px;
+                  padding:20px;
+                  text-align:center;
+                  margin:25px 0;
+                ">
+
+                  <p style="
+                    margin:0 0 10px;
+                    color:#666666;
+                    font-size:13px;
+                    text-transform:uppercase;
+                    letter-spacing:1px;
+                  ">
+                    Verification Code
+                  </p>
+
+                  <div style="
+                    font-size:34px;
+                    font-weight:bold;
+                    letter-spacing:10px;
+                    color:#1f9d74;
+                  ">
+                    ${otp}
+                  </div>
+
+                </div>
+
+
+                <p style="
+                  text-align:center;
+                  color:#777777;
+                  font-size:14px;
+                ">
+                  This code will expire in
+                  <strong style="color:#333333;">5 minutes</strong>.
+                </p>
+
+
+                <!-- Security Warning -->
+                <div style="
+                  background:#fff8e6;
+                  border-left:4px solid #f0b429;
+                  padding:12px 15px;
+                  margin-top:25px;
+                  border-radius:4px;
+                ">
+
+                  <p style="
+                    margin:0;
+                    color:#665c3d;
+                    font-size:13px;
+                    line-height:1.5;
+                  ">
+                    🔒 <strong>Security Notice:</strong>
+                    Never share this OTP with anyone. Kinetic Care
+                    will never ask you for your OTP or password.
+                  </p>
+
+                </div>
+
+
+                <p style="
+                  color:#777777;
+                  font-size:13px;
+                  line-height:1.6;
+                  margin-top:25px;
+                ">
+                  If you did not request a password reset, you can safely
+                  ignore this email. Your account password will remain
+                  unchanged.
+                </p>
+
+              </td>
+            </tr>
+
+
+            <!-- Footer -->
+            <tr>
+              <td align="center" style="
+                background:#f8faf9;
+                border-top:1px solid #eeeeee;
+                padding:22px;
+              ">
+
+                <p style="
+                  margin:0 0 5px;
+                  color:#1f9d74;
+                  font-weight:bold;
+                  font-size:15px;
+                ">
+                  Kinetic Care
+                </p>
+
+                <p style="
+                  margin:0;
+                  color:#999999;
+                  font-size:12px;
+                ">
+                  Old Age Home Management System
+                </p>
+
+                <p style="
+                  margin:8px 0 0;
+                  color:#aaaaaa;
+                  font-size:11px;
+                ">
+                  © ${new Date().getFullYear()} Kinetic Care.
+                  All rights reserved.
+                </p>
+
+              </td>
+            </tr>
+
+          </table>
+
+        </td>
+      </tr>
+
+    </table>
+
+  </body>
+  </html>
+  `
+});
 
     res.status(200).json({
       message: "OTP sent successfully",

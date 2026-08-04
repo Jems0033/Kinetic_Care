@@ -45,7 +45,6 @@ function Residents() {
     familyName: "",
     familyEmail: "",
     familyPhone: "",
-    familyPassword: "",
     relation: "",
   });
 
@@ -152,16 +151,6 @@ const validateResident = () => {
     if (!/^9[0-9]{9}$/.test(formData.familyPhone))
       return "Family phone number must contain exactly 10 digits and start with 9.";
 
-if (!editId) {
-  if (!formData.familyPassword.trim()) {
-    return "Family password is required.";
-  }
-
-  if (formData.familyPassword.length < 6) {
-    return "Family password must be at least 6 characters.";
-  }
-}
-
     if (!formData.relation.trim())
       return "Relation is required.";
   }
@@ -260,7 +249,12 @@ await axios.post(
   }
 );
 
-      showAlert("Resident Added Successfully", "success");
+      showAlert(
+  showSecondResident
+    ? "Family residents added successfully. Login credentials have been sent to the registered family email."
+    : "Resident added successfully. Family login credentials have been sent to the registered email.",
+  "success"
+);
 
       setShowModal(false);
 
@@ -276,7 +270,6 @@ await axios.post(
         familyName: "",
         familyEmail: "",
         familyPhone: "",
-        familyPassword: "",
         relation: "",
       });
       setShowSecondResident(false);
@@ -309,7 +302,6 @@ await axios.post(
       familyName: "",
       familyEmail: "",
       familyPhone: "",
-      familyPassword: "",
       relation: "",
     });
     setShowSecondResident(false);
@@ -364,8 +356,6 @@ await axios.post(
 
     const updateData = { ...formData };
 
-    // Empty password backend પર send નહીં કરવો
-    delete updateData.familyPassword;
 
     await axios.put(
       `http://localhost:5000/api/residents/${editId}`,
@@ -706,7 +696,7 @@ await axios.post(
                 <span>
                   {editId
                     ? "Update resident and family information."
-                    : "Register a new resident in Kinetic Care."}
+                    : "Register a new resident. Family login credentials will be generated automatically and sent by email."}
                 </span>
               </div>
             </div>
@@ -952,19 +942,6 @@ await axios.post(
                   />
                 </div>
 
-                {!editId && (
-                  <div className="resident-form-group full-width">
-                    <label>Password</label>
-
-                    <input
-                      type="password"
-                      name="familyPassword"
-                      placeholder="Create family login password"
-                      value={formData.familyPassword}
-                      onChange={handleChange}
-                    />
-                  </div>
-                )}
               </div>
             </div>
 

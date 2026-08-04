@@ -8,13 +8,10 @@ import {
   FaUserFriends,
   FaUsers,
   FaBed,
-  FaDonate,
-  FaBell,
   FaSun,
   FaUserPlus,
   FaUserNurse,
   FaDoorOpen,
-  FaHandHoldingHeart,
 FaCalendarPlus,
 } from "react-icons/fa";
 
