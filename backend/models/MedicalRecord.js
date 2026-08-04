@@ -1,33 +1,27 @@
 const mongoose = require("mongoose");
 
-
 const medicalSchema = new mongoose.Schema({
+  residentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Resident",
+    required: true,
+  },
+  staffId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Staff",
+    required: true,
+  },
 
-    residentId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Resident",
-        required: true
+  doctor: String,
 
-    },
-    staffId:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Staff",
-    required: true
+  problem: String,
 
-},
+  medicine: String,
 
-    doctor:String,
-
-    problem:String,
-
-    medicine:String,
-
-    date:{
-        type:Date,
-        default:Date.now
-    }
-
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
-
 
 module.exports = mongoose.model("MedicalRecord", medicalSchema);

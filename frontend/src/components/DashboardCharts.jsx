@@ -16,11 +16,10 @@ ChartJS.register(
   Legend,
   CategoryScale,
   LinearScale,
-  BarElement
+  BarElement,
 );
 
 function DashboardCharts({ dashboard }) {
-
   const pieData = {
     labels: ["Residents", "Staff", "Rooms"],
 
@@ -32,11 +31,7 @@ function DashboardCharts({ dashboard }) {
           dashboard.totalRooms,
         ],
 
-        backgroundColor: [
-          "#4CAF50",
-          "#2196F3",
-          "#FF9800",
-        ],
+        backgroundColor: ["#4CAF50", "#2196F3", "#FF9800"],
       },
     ],
   };
@@ -61,7 +56,6 @@ function DashboardCharts({ dashboard }) {
 
   return (
     <div className="charts">
-
       <div className="chart-card">
         <h3>Overview</h3>
 
@@ -73,7 +67,6 @@ function DashboardCharts({ dashboard }) {
 
         <Bar data={barData} />
       </div>
-
     </div>
   );
 }

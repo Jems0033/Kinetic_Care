@@ -1,68 +1,67 @@
 const mongoose = require("mongoose");
 
 const residentSchema = new mongoose.Schema(
-{
-    name:{
-        type:String,
-        required:true,
-        trim:true
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
 
-    age:{
-        type:Number,
-        required:true
+    age: {
+      type: Number,
+      required: true,
     },
 
-    gender:{
-        type:String,
-        enum:["Male","Female","Other"],
-        required:true
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      required: true,
     },
 
-    medicalCondition:{
-        type:String
+    medicalCondition: {
+      type: String,
     },
 
-    admissionDate:{
-        type:Date,
-        default:Date.now
+    admissionDate: {
+      type: Date,
+      default: Date.now,
     },
 
-    status:{
-        type:String,
-        enum:["Active","Discharged","Temporary Leave"],
-        default:"Active"
+    status: {
+      type: String,
+      enum: ["Active", "Discharged", "Temporary Leave"],
+      default: "Active",
     },
 
-    room:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Room"
+    room: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Room",
     },
 
     morningDoctor: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Staff",
-},
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Staff",
+    },
 
-morningCaretaker: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Staff",
-},
+    morningCaretaker: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Staff",
+    },
 
-nightDoctor: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Staff",
-},
+    nightDoctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Staff",
+    },
 
-nightCaretaker: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Staff",
-},
-
-},
-{
-    timestamps:true
-}
+    nightCaretaker: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Staff",
+    },
+  },
+  {
+    timestamps: true,
+  },
 );
 
-module.exports = mongoose.model("Resident",residentSchema);
+module.exports = mongoose.model("Resident", residentSchema);

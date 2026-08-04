@@ -1,5 +1,6 @@
 const Resident = require("../models/Resident");
-
+const generatePassword = require("../utils/generatePassword");
+const sendMail = require("../utils/sendMail");
 const Room = require("../models/Room");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
@@ -60,17 +61,7 @@ const addResident = async (req, res) => {
       });
     }
 
-    if (isFamily && room.roomType !== "Double") {
-      return res.status(400).json({
-        message: "Family residents can only stay in Double Bed rooms.",
-      });
-    }
-
     let totalCapacity = room.capacity;
-
-    if (room.roomType === "Double") {
-      totalCapacity = room.capacity * 2;
-    }
 
     if (room.occupiedBeds >= totalCapacity) {
       return res.status(400).json({
@@ -85,25 +76,25 @@ const addResident = async (req, res) => {
     const morningDoctor = await getLeastAssignedStaff(
       "Doctor",
       "Morning",
-      "morningDoctor"
+      "morningDoctor",
     );
 
     const nightDoctor = await getLeastAssignedStaff(
       "Doctor",
       "Night",
-      "nightDoctor"
+      "nightDoctor",
     );
 
     const morningCaretaker = await getLeastAssignedStaff(
       "Caretaker",
       "Morning",
-      "morningCaretaker"
+      "morningCaretaker",
     );
 
     const nightCaretaker = await getLeastAssignedStaff(
       "Caretaker",
       "Night",
-      "nightCaretaker"
+      "nightCaretaker",
     );
 
     if (
@@ -128,7 +119,6 @@ const addResident = async (req, res) => {
       familyData.familyName &&
       familyData.familyEmail &&
       familyData.familyPhone &&
-      familyData.familyPassword &&
       familyData.relation;
 
     if (hasFamily) {
@@ -179,10 +169,9 @@ const addResident = async (req, res) => {
       });
 
       if (hasFamily) {
-        const hashedPassword = await bcrypt.hash(
-          resident1.familyPassword,
-          10
-        );
+        const generatedPassword = generatePassword();
+
+        const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
         const user = await User.create({
           name: resident1.familyName,
@@ -203,6 +192,341 @@ const addResident = async (req, res) => {
           residentId: secondResident._id,
           relation: resident1.relation,
         });
+        const familyName = resident1.familyName;
+
+        const familyEmail = resident1.familyEmail;
+
+        const residentsText = `${resident1.name} and ${resident2.name}`;
+        const emailHtml = `
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+
+    <body
+      style="
+        margin: 0;
+        padding: 0;
+        background-color: #f3f7f5;
+        font-family: Arial, Helvetica, sans-serif;
+      "
+    >
+      <table
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+        border="0"
+        style="background-color: #f3f7f5; padding: 40px 15px;"
+      >
+        <tr>
+          <td align="center">
+
+            <table
+              width="100%"
+              cellpadding="0"
+              cellspacing="0"
+              border="0"
+              style="
+                max-width: 580px;
+                background-color: #ffffff;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+              "
+            >
+
+              <!-- Header -->
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    background-color: #1f9d74;
+                    padding: 32px 25px;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/Jems0033/Kinetic_Care/main/frontend/public/logo.png"
+                    alt="Kinetic Care Logo"
+                    width="80"
+                    style="
+                      display: block;
+                      width: 80px;
+                      height: auto;
+                      margin: 0 auto 12px;
+                      border: 0;
+                    "
+                  />
+
+                  <h1
+                    style="
+                      margin: 0;
+                      color: #ffffff;
+                      font-size: 28px;
+                      font-weight: 700;
+                    "
+                  >
+                    Kinetic Care
+                  </h1>
+
+                  <p
+                    style="
+                      margin: 8px 0 0;
+                      color: #dff5ed;
+                      font-size: 14px;
+                    "
+                  >
+                    Caring Today, Comforting Tomorrow
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Main Content -->
+              <tr>
+                <td style="padding: 36px 40px;">
+
+                  <h2
+                    style="
+                      margin: 0 0 20px;
+                      color: #222222;
+                      font-size: 23px;
+                    "
+                  >
+                    Welcome to Kinetic Care
+                  </h2>
+
+                  <p
+                    style="
+                      margin: 0 0 16px;
+                      color: #555555;
+                      font-size: 15px;
+                      line-height: 1.7;
+                    "
+                  >
+                    Hello <strong>${familyName}</strong>,
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0 0 16px;
+                      color: #555555;
+                      font-size: 15px;
+                      line-height: 1.7;
+                    "
+                  >
+                    Your family account has been created successfully.
+                    You can now use this account to monitor and stay
+                    connected with
+                    <strong>${residentsText}</strong>.
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0 0 20px;
+                      color: #555555;
+                      font-size: 15px;
+                      line-height: 1.7;
+                    "
+                  >
+                    Please use the following credentials to log in:
+                  </p>
+
+                  <!-- Credentials Card -->
+                  <table
+                    width="100%"
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                      background-color: #f0faf6;
+                      border: 1px solid #cdeadd;
+                      border-radius: 12px;
+                      margin: 22px 0;
+                    "
+                  >
+                    <tr>
+                      <td style="padding: 22px;">
+
+                        <p
+                          style="
+                            margin: 0 0 7px;
+                            color: #777777;
+                            font-size: 12px;
+                            font-weight: bold;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                          "
+                        >
+                          Login Email
+                        </p>
+
+                        <p
+                          style="
+                            margin: 0 0 20px;
+                            color: #222222;
+                            font-size: 16px;
+                            font-weight: bold;
+                            word-break: break-all;
+                          "
+                        >
+                          ${familyEmail}
+                        </p>
+
+                        <p
+                          style="
+                            margin: 0 0 7px;
+                            color: #777777;
+                            font-size: 12px;
+                            font-weight: bold;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                          "
+                        >
+                          Password
+                        </p>
+
+                        <div
+                          style="
+                            display: inline-block;
+                            background-color: #ffffff;
+                            border: 1px dashed #1f9d74;
+                            border-radius: 8px;
+                            padding: 12px 18px;
+                            color: #1f9d74;
+                            font-size: 20px;
+                            font-weight: bold;
+                            letter-spacing: 2px;
+                          "
+                        >
+                          ${generatedPassword}
+                        </div>
+
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- Security Alert -->
+                  <table
+                    width="100%"
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                      background-color: #fff8e6;
+                      border-left: 4px solid #e8ad24;
+                      border-radius: 6px;
+                      margin-top: 25px;
+                    "
+                  >
+                    <tr>
+                      <td
+                        style="
+                          padding: 14px 16px;
+                          color: #665c3d;
+                          font-size: 13px;
+                          line-height: 1.6;
+                        "
+                      >
+                        <strong>Security Notice:</strong>
+                        Please change this temporary password after your
+                        first login. Never share your password with anyone.
+                      </td>
+                    </tr>
+                  </table>
+
+
+                  <p
+                    style="
+                      margin: 25px 0 0;
+                      color: #777777;
+                      font-size: 13px;
+                      line-height: 1.7;
+                    "
+                  >
+                    If you believe you received this email by mistake,
+                    please contact the Kinetic Care administration.
+                  </p>
+
+                  <p
+                    style="
+                      margin: 28px 0 0;
+                      color: #555555;
+                      font-size: 14px;
+                      line-height: 1.6;
+                    "
+                  >
+                    Regards,<br />
+                    <strong style="color: #1f9d74;">
+                      Kinetic Care Team
+                    </strong>
+                  </p>
+
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    background-color: #f8faf9;
+                    border-top: 1px solid #eeeeee;
+                    padding: 22px 20px;
+                  "
+                >
+                  <p
+                    style="
+                      margin: 0 0 5px;
+                      color: #1f9d74;
+                      font-size: 15px;
+                      font-weight: bold;
+                    "
+                  >
+                    Kinetic Care
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0;
+                      color: #999999;
+                      font-size: 12px;
+                    "
+                  >
+                    Old Age Home Management System
+                  </p>
+
+                  <p
+                    style="
+                      margin: 8px 0 0;
+                      color: #aaaaaa;
+                      font-size: 11px;
+                    "
+                  >
+                    © ${new Date().getFullYear()} Kinetic Care.
+                    All rights reserved.
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+
+          </td>
+        </tr>
+      </table>
+    </body>
+  </html>
+`;
+
+        try {
+          await sendMail({
+            email: resident1.familyEmail,
+            subject: "Kinetic Care Family Login Credentials",
+            html: emailHtml,
+          });
+        } catch (err) {
+          console.log(err.message);
+        }
       }
 
       room.occupiedBeds += 2;
@@ -211,7 +535,6 @@ const addResident = async (req, res) => {
     // ===========================
     // SINGLE RESIDENT
     // ===========================
-
     else {
       resident = await Resident.create({
         name: req.body.name,
@@ -228,10 +551,9 @@ const addResident = async (req, res) => {
       });
 
       if (hasFamily) {
-        const hashedPassword = await bcrypt.hash(
-          familyData.familyPassword,
-          10
-        );
+        const generatedPassword = generatePassword();
+
+        const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
         const user = await User.create({
           name: familyData.familyName,
@@ -246,6 +568,342 @@ const addResident = async (req, res) => {
           residentId: resident._id,
           relation: familyData.relation,
         });
+
+        const familyName = familyData.familyName;
+
+        const familyEmail = familyData.familyEmail;
+
+        const residentsText = resident.name;
+
+        const emailHtml = `
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+
+    <body
+      style="
+        margin: 0;
+        padding: 0;
+        background-color: #f3f7f5;
+        font-family: Arial, Helvetica, sans-serif;
+      "
+    >
+      <table
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+        border="0"
+        style="background-color: #f3f7f5; padding: 40px 15px;"
+      >
+        <tr>
+          <td align="center">
+
+            <table
+              width="100%"
+              cellpadding="0"
+              cellspacing="0"
+              border="0"
+              style="
+                max-width: 580px;
+                background-color: #ffffff;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+              "
+            >
+
+              <!-- Header -->
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    background-color: #1f9d74;
+                    padding: 32px 25px;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/Jems0033/Kinetic_Care/main/frontend/public/logo.png"
+                    alt="Kinetic Care Logo"
+                    width="80"
+                    style="
+                      display: block;
+                      width: 80px;
+                      height: auto;
+                      margin: 0 auto 12px;
+                      border: 0;
+                    "
+                  />
+
+                  <h1
+                    style="
+                      margin: 0;
+                      color: #ffffff;
+                      font-size: 28px;
+                      font-weight: 700;
+                    "
+                  >
+                    Kinetic Care
+                  </h1>
+
+                  <p
+                    style="
+                      margin: 8px 0 0;
+                      color: #dff5ed;
+                      font-size: 14px;
+                    "
+                  >
+                    Caring Today, Comforting Tomorrow
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Main Content -->
+              <tr>
+                <td style="padding: 36px 40px;">
+
+                  <h2
+                    style="
+                      margin: 0 0 20px;
+                      color: #222222;
+                      font-size: 23px;
+                    "
+                  >
+                    Welcome to Kinetic Care
+                  </h2>
+
+                  <p
+                    style="
+                      margin: 0 0 16px;
+                      color: #555555;
+                      font-size: 15px;
+                      line-height: 1.7;
+                    "
+                  >
+                    Hello <strong>${familyName}</strong>,
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0 0 16px;
+                      color: #555555;
+                      font-size: 15px;
+                      line-height: 1.7;
+                    "
+                  >
+                    Your family account has been created successfully.
+                    You can now use this account to monitor and stay
+                    connected with
+                    <strong>${residentsText}</strong>.
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0 0 20px;
+                      color: #555555;
+                      font-size: 15px;
+                      line-height: 1.7;
+                    "
+                  >
+                    Please use the following credentials to log in:
+                  </p>
+
+                  <!-- Credentials Card -->
+                  <table
+                    width="100%"
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                      background-color: #f0faf6;
+                      border: 1px solid #cdeadd;
+                      border-radius: 12px;
+                      margin: 22px 0;
+                    "
+                  >
+                    <tr>
+                      <td style="padding: 22px;">
+
+                        <p
+                          style="
+                            margin: 0 0 7px;
+                            color: #777777;
+                            font-size: 12px;
+                            font-weight: bold;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                          "
+                        >
+                          Login Email
+                        </p>
+
+                        <p
+                          style="
+                            margin: 0 0 20px;
+                            color: #222222;
+                            font-size: 16px;
+                            font-weight: bold;
+                            word-break: break-all;
+                          "
+                        >
+                          ${familyEmail}
+                        </p>
+
+                        <p
+                          style="
+                            margin: 0 0 7px;
+                            color: #777777;
+                            font-size: 12px;
+                            font-weight: bold;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                          "
+                        >
+                          Password
+                        </p>
+
+                        <div
+                          style="
+                            display: inline-block;
+                            background-color: #ffffff;
+                            border: 1px dashed #1f9d74;
+                            border-radius: 8px;
+                            padding: 12px 18px;
+                            color: #1f9d74;
+                            font-size: 20px;
+                            font-weight: bold;
+                            letter-spacing: 2px;
+                          "
+                        >
+                          ${generatedPassword}
+                        </div>
+
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- Security Alert -->
+                  <table
+                    width="100%"
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                      background-color: #fff8e6;
+                      border-left: 4px solid #e8ad24;
+                      border-radius: 6px;
+                      margin-top: 25px;
+                    "
+                  >
+                    <tr>
+                      <td
+                        style="
+                          padding: 14px 16px;
+                          color: #665c3d;
+                          font-size: 13px;
+                          line-height: 1.6;
+                        "
+                      >
+                        <strong>Security Notice:</strong>
+                        Please change this temporary password after your
+                        first login. Never share your password with anyone.
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p
+                    style="
+                      margin: 25px 0 0;
+                      color: #777777;
+                      font-size: 13px;
+                      line-height: 1.7;
+                    "
+                  >
+                    If you believe you received this email by mistake,
+                    please contact the Kinetic Care administration.
+                  </p>
+
+                  <p
+                    style="
+                      margin: 28px 0 0;
+                      color: #555555;
+                      font-size: 14px;
+                      line-height: 1.6;
+                    "
+                  >
+                    Regards,<br />
+                    <strong style="color: #1f9d74;">
+                      Kinetic Care Team
+                    </strong>
+                  </p>
+
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td
+                  align="center"
+                  style="
+                    background-color: #f8faf9;
+                    border-top: 1px solid #eeeeee;
+                    padding: 22px 20px;
+                  "
+                >
+                  <p
+                    style="
+                      margin: 0 0 5px;
+                      color: #1f9d74;
+                      font-size: 15px;
+                      font-weight: bold;
+                    "
+                  >
+                    Kinetic Care
+                  </p>
+
+                  <p
+                    style="
+                      margin: 0;
+                      color: #999999;
+                      font-size: 12px;
+                    "
+                  >
+                    Old Age Home Management System
+                  </p>
+
+                  <p
+                    style="
+                      margin: 8px 0 0;
+                      color: #aaaaaa;
+                      font-size: 11px;
+                    "
+                  >
+                    © ${new Date().getFullYear()} Kinetic Care.
+                    All rights reserved.
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+
+          </td>
+        </tr>
+      </table>
+    </body>
+  </html>
+`;
+
+        try {
+          await sendMail({
+            email: familyData.familyEmail,
+            subject: "Kinetic Care Family Login Credentials",
+            html: emailHtml,
+          });
+        } catch (err) {
+          console.log(err.message);
+        }
       }
 
       room.occupiedBeds++;
@@ -259,13 +917,15 @@ const addResident = async (req, res) => {
 
     if (isFamily) {
       return res.status(201).json({
-        message: "Family Residents Added Successfully",
+        message:
+          "Family residents added successfully. Login credentials have been sent to the registered family email.",
         residents: [firstResident, secondResident],
       });
     }
 
     return res.status(201).json({
-      message: "Resident Added Successfully",
+      message:
+        "Resident added successfully. Family login credentials have been sent to the registered email.",
       resident,
     });
   } catch (error) {
@@ -292,7 +952,8 @@ const addResident = async (req, res) => {
 const getResidents = async (req, res) => {
   try {
     const residents = await Resident.find()
-      .populate("room", "roomNumber roomType")
+      .sort({ createdAt: -1 })
+      .populate("room", "roomNumber")
       .populate("morningDoctor", "name phone shift")
       .populate("morningCaretaker", "name phone shift")
       .populate("nightDoctor", "name phone shift")
@@ -332,7 +993,7 @@ const getResidents = async (req, res) => {
 const getResidentById = async (req, res) => {
   try {
     const resident = await Resident.findById(req.params.id)
-      .populate("room", "roomNumber roomType")
+      .populate("room", "roomNumber")
       .populate("morningDoctor", "name phone")
       .populate("morningCaretaker", "name phone")
       .populate("nightDoctor", "name phone")
@@ -364,8 +1025,35 @@ const updateResident = async (req, res) => {
       });
     }
 
-    // Room change thayo?
-    if (resident.room.toString() !== req.body.room) {
+    // ==========================
+    // Resident Discharge
+    // ==========================
+    if (req.body.status === "Discharged" && resident.status !== "Discharged") {
+      if (resident.room) {
+        const room = await Room.findById(resident.room);
+
+        if (room) {
+          room.occupiedBeds--;
+
+          if (room.occupiedBeds < 0) {
+            room.occupiedBeds = 0;
+          }
+
+          if (room.occupiedBeds < room.capacity) {
+            room.status = "Available";
+          }
+
+          await room.save();
+        }
+      }
+
+      resident.room = null;
+    }
+
+    // ==========================
+    // Room Changed
+    // ==========================
+    else if (resident.room && resident.room.toString() !== req.body.room) {
       // Old Room
       const oldRoom = await Room.findById(resident.room);
 
@@ -376,13 +1064,7 @@ const updateResident = async (req, res) => {
           oldRoom.occupiedBeds = 0;
         }
 
-        let oldCapacity = oldRoom.capacity;
-
-        if (oldRoom.roomType === "Double") {
-          oldCapacity = oldRoom.capacity * 2;
-        }
-
-        if (oldRoom.occupiedBeds < oldCapacity) {
+        if (oldRoom.occupiedBeds < oldRoom.capacity) {
           oldRoom.status = "Available";
         }
 
@@ -398,13 +1080,7 @@ const updateResident = async (req, res) => {
         });
       }
 
-      let newCapacity = newRoom.capacity;
-
-      if (newRoom.roomType === "Double") {
-        newCapacity = newRoom.capacity * 2;
-      }
-
-      if (newRoom.occupiedBeds >= newCapacity) {
+      if (newRoom.occupiedBeds >= newRoom.capacity) {
         return res.status(400).json({
           message: "Room Full",
         });
@@ -412,22 +1088,34 @@ const updateResident = async (req, res) => {
 
       newRoom.occupiedBeds++;
 
-      if (newRoom.occupiedBeds === newCapacity) {
+      if (newRoom.occupiedBeds >= newRoom.capacity) {
         newRoom.status = "Occupied";
       }
 
       await newRoom.save();
+
+      resident.room = req.body.room;
     }
 
+    // ==========================
+    // Update Resident
+    // ==========================
     resident.name = req.body.name;
     resident.age = req.body.age;
     resident.gender = req.body.gender;
-    resident.room = req.body.room;
+
+    if (req.body.status !== "Discharged") {
+      resident.room = req.body.room;
+    }
+
     resident.medicalCondition = req.body.medicalCondition;
     resident.status = req.body.status;
 
     await resident.save();
 
+    // ==========================
+    // Update Family
+    // ==========================
     const family = await FamilyMember.findOne({
       residentId: resident._id,
     });
@@ -437,17 +1125,11 @@ const updateResident = async (req, res) => {
 
       await family.save();
 
-      await User.findByIdAndUpdate(
-        family.userId,
-
-        {
-          name: req.body.familyName,
-
-          email: req.body.familyEmail,
-
-          phone: req.body.familyPhone,
-        },
-      );
+      await User.findByIdAndUpdate(family.userId, {
+        name: req.body.familyName,
+        email: req.body.familyEmail,
+        phone: req.body.familyPhone,
+      });
     }
 
     res.status(200).json({
@@ -460,7 +1142,6 @@ const updateResident = async (req, res) => {
     });
   }
 };
-
 // ===============================
 // Delete Resident
 // ===============================
@@ -490,22 +1171,20 @@ const deleteResident = async (req, res) => {
     }
 
     const family = await FamilyMember.findOne({
-  residentId: resident._id,
-});
+      residentId: resident._id,
+    });
 
-if (family) {
+    if (family) {
+      const totalLinks = await FamilyMember.countDocuments({
+        userId: family.userId,
+      });
 
-  const totalLinks = await FamilyMember.countDocuments({
-    userId: family.userId,
-  });
+      await FamilyMember.findByIdAndDelete(family._id);
 
-  await FamilyMember.findByIdAndDelete(family._id);
-
-  if (totalLinks === 1) {
-    await User.findByIdAndDelete(family.userId);
-  }
-
-}
+      if (totalLinks === 1) {
+        await User.findByIdAndDelete(family.userId);
+      }
+    }
     // Delete Resident
     await Resident.findByIdAndDelete(req.params.id);
 

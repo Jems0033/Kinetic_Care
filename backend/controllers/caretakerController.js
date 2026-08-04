@@ -8,7 +8,6 @@ const CareRecord = require("../models/CareRecord");
 
 const getCaretakerDashboard = async (req, res) => {
   try {
-    // Logged in user mathi caretaker find karo
     const caretaker = await Staff.findOne({
       userId: req.user.id,
       role: "Caretaker",
@@ -22,7 +21,6 @@ const getCaretakerDashboard = async (req, res) => {
 
     let residents = [];
 
-    // Morning caretaker hoy
     if (caretaker.shift === "Morning") {
       residents = await Resident.find({
         morningCaretaker: caretaker._id,
@@ -31,12 +29,9 @@ const getCaretakerDashboard = async (req, res) => {
         .populate("room", "roomNumber roomType")
         .populate("morningDoctor", "name phone")
         .select(
-          "name age gender medicalCondition room morningDoctor morningCaretaker"
+          "name age gender medicalCondition room morningDoctor morningCaretaker",
         );
-    }
-
-    // Night caretaker hoy
-    else if (caretaker.shift === "Night") {
+    } else if (caretaker.shift === "Night") {
       residents = await Resident.find({
         nightCaretaker: caretaker._id,
         status: "Active",
@@ -44,7 +39,7 @@ const getCaretakerDashboard = async (req, res) => {
         .populate("room", "roomNumber roomType")
         .populate("nightDoctor", "name phone")
         .select(
-          "name age gender medicalCondition room nightDoctor nightCaretaker"
+          "name age gender medicalCondition room nightDoctor nightCaretaker",
         );
     }
 
@@ -156,7 +151,6 @@ const getResidentCare = async (req, res) => {
   }
 };
 
-
 // ==========================================
 // Save / Update Daily Care
 // ==========================================
@@ -204,15 +198,8 @@ const saveDailyCare = async (req, res) => {
       });
     }
 
-    const {
-      medicine,
-      meal,
-      bath,
-      walking,
-      water,
-      rest,
-      notes,
-    } = req.body;
+    const { medicine, meal, bath, walking, water, rest, notes, customTasks } =
+      req.body;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -238,6 +225,7 @@ const saveDailyCare = async (req, res) => {
       careRecord.water = water;
       careRecord.rest = rest;
       careRecord.notes = notes;
+      careRecord.customTasks = customTasks || [];
 
       await careRecord.save();
     } else {
@@ -253,6 +241,7 @@ const saveDailyCare = async (req, res) => {
         water,
         rest,
         notes,
+        customTasks: customTasks || [],
       });
     }
 

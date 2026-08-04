@@ -8,30 +8,18 @@ import {
   FaUserFriends,
   FaUsers,
   FaBed,
-  FaDonate,
-  FaBell,
   FaSun,
   FaUserPlus,
   FaUserNurse,
   FaDoorOpen,
-  FaHandHoldingHeart,
-FaCalendarPlus,
+  FaCalendarPlus,
 } from "react-icons/fa";
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 import { Pie } from "react-chartjs-2";
 
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -55,14 +43,11 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        "http://localhost:5000/api/dashboard",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get("http://localhost:5000/api/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setDashboard(res.data);
     } catch (err) {
@@ -80,7 +65,7 @@ function Dashboard() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setRecentResidents(res.data);
@@ -102,11 +87,7 @@ function Dashboard() {
   }
 
   const chartData = {
-    labels: [
-      "Residents",
-      "Staff",
-      "Rooms",
-    ],
+    labels: ["Residents", "Staff", "Rooms"],
 
     datasets: [
       {
@@ -115,22 +96,12 @@ function Dashboard() {
         data: [
           Number(dashboard.totalResidents) || 0,
           Number(dashboard.totalStaff) || 0,
-          Number(dashboard.totalRooms) || 0
+          Number(dashboard.totalRooms) || 0,
         ],
 
-        backgroundColor: [
-          "#1f9d74",
-          "#4f7cff",
-          "#ff9f43",
-          "#9b59b6",
-        ],
+        backgroundColor: ["#1f9d74", "#4f7cff", "#ff9f43", "#9b59b6"],
 
-        borderColor: [
-          "#ffffff",
-          "#ffffff",
-          "#ffffff",
-          "#ffffff",
-        ],
+        borderColor: ["#ffffff", "#ffffff", "#ffffff", "#ffffff"],
 
         borderWidth: 4,
         hoverOffset: 10,
@@ -186,10 +157,8 @@ function Dashboard() {
 
         <header className="dashboard-header">
           <div className="header-text">
-
             <h1>
               <FaSun className="sun-icon" />
-
               {greeting}, {user?.name || "Admin"}
             </h1>
 
@@ -197,7 +166,6 @@ function Dashboard() {
               Monitor residents, rooms, staff and payments from one place.
             </p>
           </div>
-
         </header>
 
         {/* STAT CARDS */}
@@ -244,7 +212,6 @@ function Dashboard() {
               <p>Ready for allocation</p>
             </div>
           </div>
-
         </section>
 
         {/* CHART AND QUICK ACTIONS */}
@@ -265,10 +232,7 @@ function Dashboard() {
             </div>
 
             <div className="pie-chart-container">
-              <Pie
-                data={chartData}
-                options={chartOptions}
-              />
+              <Pie data={chartData} options={chartOptions} />
             </div>
           </div>
 
@@ -337,22 +301,22 @@ function Dashboard() {
               </button>
 
               <button
-  type="button"
-  onClick={() =>
-    navigate("/events", {
-      state: { openModal: "addEvent" },
-    })
-  }
->
-  <span className="quick-icon event-action">
-    <FaCalendarPlus />
-  </span>
+                type="button"
+                onClick={() =>
+                  navigate("/events", {
+                    state: { openModal: "addEvent" },
+                  })
+                }
+              >
+                <span className="quick-icon event-action">
+                  <FaCalendarPlus />
+                </span>
 
-  <span>
-    <strong>Add Event</strong>
-    <small>Create a new event</small>
-  </span>
-</button>
+                <span>
+                  <strong>Add Event</strong>
+                  <small>Create a new event</small>
+                </span>
+              </button>
             </div>
           </div>
         </section>
@@ -360,9 +324,7 @@ function Dashboard() {
         {/* RECENT RESIDENTS */}
 
         <section className="resident-card-box">
-
           <div className="resident-box-header">
-
             <div>
               <p className="section-label">Latest Entries</p>
               <h2>Recent Residents</h2>
@@ -371,128 +333,82 @@ function Dashboard() {
             <span className="resident-count">
               {recentResidents.length} Residents
             </span>
-
           </div>
 
           {loading ? (
-
-            <div className="resident-message">
-              Loading residents...
-            </div>
-
+            <div className="resident-message">Loading residents...</div>
           ) : recentResidents.length === 0 ? (
-
-            <div className="resident-message">
-              No recent residents found.
-            </div>
-
+            <div className="resident-message">No recent residents found.</div>
           ) : (
-
             <div className="resident-profile-grid">
-
               {recentResidents.slice(0, 6).map((resident) => (
-
-                <div
-                  className="resident-profile-card"
-                  key={resident._id}
-                >
-
+                <div className="resident-profile-card" key={resident._id}>
                   <div className="resident-card-top">
-
                     <div className="resident-large-avatar">
-
-                      {resident.gender?.toLowerCase() === "male"
-                        ? "👴"
-                        : "👵"}
-
+                      {resident.gender?.toLowerCase() === "male" ? "👴" : "👵"}
                     </div>
 
                     <span
-                      className={`resident-card-status ${resident.status?.toLowerCase() === "active"
+                      className={`resident-card-status ${
+                        resident.status?.toLowerCase() === "active"
                           ? "active"
                           : "temporary"
-                        }`}
+                      }`}
                     >
-
                       {resident.status || "Not Found"}
-
                     </span>
-
                   </div>
 
                   <div className="resident-profile-info">
-
                     <h3>{resident.name}</h3>
 
                     <p className="resident-condition">
-
                       {resident.medicalCondition ||
                         "No medical condition added"}
-
                     </p>
-
                   </div>
 
                   <div className="resident-information-grid">
-
                     <div className="resident-info-item">
-
                       <span>Age</span>
 
-                      <strong>
-                        {resident.age || "N/A"}
-                      </strong>
-
+                      <strong>{resident.age || "N/A"}</strong>
                     </div>
 
                     <div className="resident-info-item">
-
                       <span>Gender</span>
 
-                      <strong>
-                        {resident.gender || "N/A"}
-                      </strong>
-
+                      <strong>{resident.gender || "N/A"}</strong>
                     </div>
 
                     <div className="resident-info-item">
-
                       <span>Room</span>
 
                       <strong>
-
                         {resident.room?.roomNumber ||
                           resident.room ||
                           "Not Assigned"}
-
                       </strong>
-
                     </div>
-
                   </div>
 
                   <button
-  type="button"
-  className="resident-view-button"
-  onClick={() =>
-    navigate("/residents", {
-      state: {
-        searchResident: resident.name,
-      },
-    })
-  }
->
-  View Resident
-</button>
-
+                    type="button"
+                    className="resident-view-button"
+                    onClick={() =>
+                      navigate("/residents", {
+                        state: {
+                          searchResident: resident.name,
+                        },
+                      })
+                    }
+                  >
+                    View Resident
+                  </button>
                 </div>
-
               ))}
-
             </div>
-
           )}
-
         </section>
       </main>
     </div>

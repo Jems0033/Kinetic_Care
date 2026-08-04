@@ -126,9 +126,7 @@ const BookVisit = () => {
       return "Visit date is required.";
     }
 
-    const selectedDate = new Date(
-      `${formData.visitDate}T00:00:00`
-    );
+    const selectedDate = new Date(`${formData.visitDate}T00:00:00`);
 
     const today = new Date();
 
@@ -213,14 +211,11 @@ const BookVisit = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       // Success Alert
-      showAlert(
-        res.data.message || "Visit booked successfully.",
-        "success"
-      );
+      showAlert(res.data.message || "Visit booked successfully.", "success");
 
       // Clear Form
       setFormData({
@@ -235,15 +230,10 @@ const BookVisit = () => {
       setTimeout(() => {
         navigate("/family-dashboard");
       }, 1200);
-
     } catch (error) {
       console.log("Book Visit Error:", error.response?.data);
 
-      showAlert(
-        getErrorMessage(error),
-        "error"
-      );
-
+      showAlert(getErrorMessage(error), "error");
     } finally {
       setLoading(false);
     }
@@ -253,35 +243,26 @@ const BookVisit = () => {
   // TODAY DATE
   // =========================
 
-  const todayDate = new Date()
-    .toISOString()
-    .split("T")[0];
+  const todayDate = new Date().toISOString().split("T")[0];
 
   return (
     <div className="book-visit-page">
-
       {/* =========================
           CUSTOM ALERT
       ========================= */}
 
       {alertBox.show && (
-        <div
-          className={`order-banner ${alertBox.type} show`}
-        >
+        <div className={`order-banner ${alertBox.type} show`}>
           <div className="order-banner-icon">
             {alertBox.type === "success" ? "✔" : "✖"}
           </div>
 
           <div>
             <div className="order-banner-title">
-              {alertBox.type === "success"
-                ? "Success"
-                : "Error"}
+              {alertBox.type === "success" ? "Success" : "Error"}
             </div>
 
-            <div className="order-banner-detail">
-              {alertBox.message}
-            </div>
+            <div className="order-banner-detail">{alertBox.message}</div>
           </div>
 
           <button
@@ -301,74 +282,54 @@ const BookVisit = () => {
       )}
 
       <div className="book-visit-container">
-
         {/* =========================
             LEFT INFO
         ========================= */}
 
         <div className="visit-info-panel">
-
           <button
             type="button"
             className="visit-back-btn"
-            onClick={() =>
-              navigate("/family-dashboard")
-            }
+            onClick={() => navigate("/family-dashboard")}
           >
             <FaArrowLeft />
             Back
           </button>
 
           <div className="visit-info-content">
-
             <div className="visit-main-icon">
               <FaUserFriends />
             </div>
 
-            <p className="visit-label">
-              Family Visit
-            </p>
+            <p className="visit-label">Family Visit</p>
 
-            <h1>
-              Spend meaningful time with your loved one.
-            </h1>
+            <h1>Spend meaningful time with your loved one.</h1>
 
             <p className="visit-description">
-              Schedule your visit in advance and help us
-              provide a comfortable experience for residents
-              and their families.
+              Schedule your visit in advance and help us provide a comfortable
+              experience for residents and their families.
             </p>
 
             <div className="visit-guidelines">
-
               <div>
                 <FaCheckCircle />
 
-                <span>
-                  Enter accurate visitor information
-                </span>
+                <span>Enter accurate visitor information</span>
               </div>
 
               <div>
                 <FaCheckCircle />
 
-                <span>
-                  Select your preferred visit date
-                </span>
+                <span>Select your preferred visit date</span>
               </div>
 
               <div>
                 <FaCheckCircle />
 
-                <span>
-                  Mention the purpose of your visit
-                </span>
+                <span>Mention the purpose of your visit</span>
               </div>
-
             </div>
-
           </div>
-
         </div>
 
         {/* =========================
@@ -376,34 +337,22 @@ const BookVisit = () => {
         ========================= */}
 
         <div className="visit-form-panel">
-
           <div className="visit-form-header">
-
             <p>Visit Scheduling</p>
 
             <h2>Book a Visit</h2>
 
-            <span>
-              Fill in the details below to schedule your visit.
-            </span>
-
+            <span>Fill in the details below to schedule your visit.</span>
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            noValidate
-          >
-
+          <form onSubmit={handleSubmit} noValidate>
             <div className="visit-form-grid">
-
               {/* VISITOR NAME */}
 
               <div className="visit-form-group">
-
                 <label>Visitor Name</label>
 
                 <div className="visit-input-box">
-
                   <FaUserFriends />
 
                   <input
@@ -414,19 +363,15 @@ const BookVisit = () => {
                     onChange={handleChange}
                     maxLength={50}
                   />
-
                 </div>
-
               </div>
 
               {/* PHONE */}
 
               <div className="visit-form-group">
-
                 <label>Phone Number</label>
 
                 <div className="visit-input-box">
-
                   <FaPhoneAlt />
 
                   <input
@@ -438,19 +383,15 @@ const BookVisit = () => {
                     maxLength={10}
                     inputMode="numeric"
                   />
-
                 </div>
-
               </div>
 
               {/* RELATION */}
 
               <div className="visit-form-group">
-
                 <label>Relation</label>
 
                 <div className="visit-input-box">
-
                   <FaHeart />
 
                   <input
@@ -461,19 +402,15 @@ const BookVisit = () => {
                     onChange={handleChange}
                     maxLength={30}
                   />
-
                 </div>
-
               </div>
 
               {/* VISIT DATE */}
 
               <div className="visit-form-group">
-
                 <label>Visit Date</label>
 
                 <div className="visit-input-box">
-
                   <FaCalendarAlt />
 
                   <input
@@ -483,19 +420,15 @@ const BookVisit = () => {
                     onChange={handleChange}
                     min={todayDate}
                   />
-
                 </div>
-
               </div>
 
               {/* PURPOSE */}
 
               <div className="visit-form-group full-width">
-
                 <label>Purpose of Visit</label>
 
                 <div className="visit-textarea-box">
-
                   <FaCommentDots />
 
                   <textarea
@@ -506,11 +439,8 @@ const BookVisit = () => {
                     onChange={handleChange}
                     maxLength={500}
                   />
-
                 </div>
-
               </div>
-
             </div>
 
             {/* =========================
@@ -518,13 +448,10 @@ const BookVisit = () => {
             ========================= */}
 
             <div className="visit-form-actions">
-
               <button
                 type="button"
                 className="visit-cancel-btn"
-                onClick={() =>
-                  navigate("/family-dashboard")
-                }
+                onClick={() => navigate("/family-dashboard")}
               >
                 Cancel
               </button>
@@ -534,19 +461,12 @@ const BookVisit = () => {
                 className="visit-submit-btn"
                 disabled={loading}
               >
-                {loading
-                  ? "Booking Visit..."
-                  : "Book Visit"}
+                {loading ? "Booking Visit..." : "Book Visit"}
               </button>
-
             </div>
-
           </form>
-
         </div>
-
       </div>
-
     </div>
   );
 };

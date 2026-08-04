@@ -5,16 +5,15 @@ const router = express.Router();
 const protect = require("../middleware/authMiddleware");
 
 const {
-    addStaff,
-    getStaff,
-    getStaffById,
-    updateStaff,
-    deleteStaff,
-    getDoctors,
-    getStaffDashboard,
-    getStaffResidents,
-    getStaffResidentById,
-    getResidentHistory,
+  addStaff,
+  getStaff,
+  getStaffById,
+  updateStaff,
+  deleteStaff,
+  getDoctors,
+  getStaffDashboard,
+  getStaffResidents,
+  getStaffResidentById,
 } = require("../controllers/staffController");
 
 router.get("/dashboard", protect, getStaffDashboard);
@@ -25,11 +24,6 @@ router.get("/residents", protect, getStaffResidents);
 
 router.get("/resident/:id", protect, getStaffResidentById);
 
-router.get(
-    "/resident/:id/history",
-    protect,
-    getResidentHistory
-);
 router.get("/", protect, getStaff);
 
 router.get("/:id", protect, getStaffById);

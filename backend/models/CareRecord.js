@@ -50,6 +50,40 @@ const careRecordSchema = new mongoose.Schema(
       default: false,
     },
 
+    // =========================
+    // CUSTOM TASKS
+    // =========================
+    customTasks: [
+      {
+        key: {
+          type: String,
+          required: true,
+        },
+
+        title: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+
+        description: {
+          type: String,
+          trim: true,
+          default: "",
+        },
+
+        icon: {
+          type: String,
+          default: "📋",
+        },
+
+        completed: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
+
     notes: {
       type: String,
       trim: true,
@@ -62,7 +96,7 @@ const careRecordSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("CareRecord", careRecordSchema);

@@ -5,11 +5,11 @@ const router = express.Router();
 const protect = require("../middleware/authMiddleware");
 
 const {
-    addEvent,
-    getEvents,
-    getEventById,
-    updateEvent,
-    deleteEvent
+  addEvent,
+  getEvents,
+  getEventById,
+  updateEvent,
+  deleteEvent,
 } = require("../controllers/eventController");
 
 // Get All Events

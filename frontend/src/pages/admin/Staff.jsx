@@ -14,7 +14,6 @@ function Staff() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: "",
     phone: "",
     gender: "",
     role: "",
@@ -29,26 +28,26 @@ function Staff() {
   const [search, setSearch] = useState("");
 
   const [alertBox, setAlertBox] = useState({
-  show: false,
-  message: "",
-  type: "",
-});
-
-const showAlert = (message, type = "success") => {
-  setAlertBox({
-    show: true,
-    message,
-    type,
+    show: false,
+    message: "",
+    type: "",
   });
 
-  setTimeout(() => {
+  const showAlert = (message, type = "success") => {
     setAlertBox({
-      show: false,
-      message: "",
-      type: "",
+      show: true,
+      message,
+      type,
     });
-  }, 3000);
-};
+
+    setTimeout(() => {
+      setAlertBox({
+        show: false,
+        message: "",
+        type: "",
+      });
+    }, 3000);
+  };
 
   const getStaff = async () => {
     try {
@@ -67,64 +66,50 @@ const showAlert = (message, type = "success") => {
   };
 
   const validateStaff = () => {
-  if (!formData.name.trim())
-    return "Staff name is required.";
+    if (!formData.name.trim()) return "Staff name is required.";
 
-  if (!editId && !formData.email.trim())
-    return "Email is required.";
+    if (!editId && !formData.email.trim()) return "Email is required.";
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!editId && !emailRegex.test(formData.email))
-    return "Please enter a valid email address.";
+    if (!editId && !emailRegex.test(formData.email))
+      return "Please enter a valid email address.";
 
-  if (!editId && !formData.password.trim())
-    return "Password is required.";
+    if (!formData.phone.trim()) return "Phone number is required.";
 
-  if (!editId && formData.password.length < 6)
-    return "Password must be at least 6 characters.";
+    if (!/^9[0-9]{9}$/.test(formData.phone))
+      return "Phone number must contain exactly 10 digits and start with 9.";
 
-  if (!formData.phone.trim())
-    return "Phone number is required.";
+    if (!formData.gender && !editId) return "Please select gender.";
 
-  if (!/^9[0-9]{9}$/.test(formData.phone))
-    return "Phone number must contain exactly 10 digits and start with 9.";
+    if (!formData.role) return "Please select staff role.";
 
-  if (!formData.gender && !editId)
-    return "Please select gender.";
+    if (!formData.shift) return "Please select shift.";
 
-  if (!formData.role)
-    return "Please select staff role.";
+    if (!formData.salary) return "Salary is required.";
 
-  if (!formData.shift)
-    return "Please select shift.";
+    if (Number(formData.salary) <= 0) return "Please enter a valid salary.";
 
-  if (!formData.salary)
-    return "Salary is required.";
+    return null;
+  };
 
-  if (Number(formData.salary) <= 0)
-    return "Please enter a valid salary.";
+  const getErrorMessage = (error) => {
+    const msg = error.response?.data?.message || "";
 
-  return null;
-};
+    switch (msg) {
+      case "Email Already Exists":
+        return "This email is already registered.";
 
-const getErrorMessage = (error) => {
-  const msg = error.response?.data?.message || "";
+      case "Staff Not Found":
+        return "Staff member not found.";
 
-  switch (msg) {
-    case "Email Already Exists":
-      return "This email is already registered.";
+      case "Unable to Delete Staff":
+        return "Unable to delete staff.";
 
-    case "Staff Not Found":
-      return "Staff member not found.";
-
-    case "Unable to Delete Staff":
-      return "Unable to delete staff.";
-
-    default:
-      return "Something went wrong. Please try again.";
-  }
-};
+      default:
+        return "Something went wrong. Please try again.";
+    }
+  };
 
   useEffect(() => {
     getStaff();
@@ -150,9 +135,9 @@ const getErrorMessage = (error) => {
     try {
       const validationError = validateStaff();
 
-if (validationError) {
-  return showAlert(validationError, "error");
-}
+      if (validationError) {
+        return showAlert(validationError, "error");
+      }
       const token = localStorage.getItem("token");
 
       await axios.post(
@@ -160,7 +145,6 @@ if (validationError) {
         {
           name: formData.name,
           email: formData.email,
-          password: formData.password,
           role: formData.role,
           phone: formData.phone,
           gender: formData.gender,
@@ -174,12 +158,14 @@ if (validationError) {
         },
       );
 
-      showAlert("Staff Added Successfully", "success");
+      showAlert(
+        "Staff added successfully. Login credentials have been sent to the registered email.",
+        "success",
+      );
 
       setFormData({
         name: "",
         email: "",
-        password: "",
         phone: "",
         gender: "",
         role: "",
@@ -191,12 +177,11 @@ if (validationError) {
       getStaff();
     } catch (error) {
       showAlert(
-  error.response?.data?.message || "Unable to Add Staff",
-  "error"
-);
+        error.response?.data?.message || "Unable to Add Staff",
+        "error",
+      );
     }
   };
-
 
   const editStaff = (member) => {
     setFormData({
@@ -207,7 +192,6 @@ if (validationError) {
       shift: member.shift,
       salary: member.salary,
       email: "",
-      password: "",
     });
 
     setEditId(member._id);
@@ -219,9 +203,9 @@ if (validationError) {
     try {
       const validationError = validateStaff();
 
-if (validationError) {
-  return showAlert(validationError, "error");
-}
+      if (validationError) {
+        return showAlert(validationError, "error");
+      }
       const token = localStorage.getItem("token");
 
       await axios.put(
@@ -255,7 +239,6 @@ if (validationError) {
   };
 
   const deleteStaff = async (id) => {
-
     try {
       const token = localStorage.getItem("token");
 
@@ -265,11 +248,11 @@ if (validationError) {
         },
       });
       setDeleteConfirm({
-      show: false,
-      staffId: null,
-    });
+        show: false,
+        staffId: null,
+      });
 
-    await getStaff();
+      await getStaff();
 
       showAlert("Staff Deleted Successfully", "success");
 
@@ -277,9 +260,9 @@ if (validationError) {
     } catch (error) {
       console.log(error);
       setDeleteConfirm({
-      show: false,
-      staffId: null,
-    });
+        show: false,
+        staffId: null,
+      });
       showAlert("Unable to Delete Staff", "error");
     }
   };
@@ -292,7 +275,6 @@ if (validationError) {
     setFormData({
       name: "",
       email: "",
-      password: "",
       phone: "",
       gender: "",
       role: "",
@@ -311,83 +293,72 @@ if (validationError) {
   return (
     <>
       <div className="staff-page">
-      {alertBox.show && (
-  <div className={`order-banner ${alertBox.type} show`}>
-    <div className="order-banner-icon">
-      {alertBox.type === "success" ? "✔" : "✖"}
-    </div>
+        {alertBox.show && (
+          <div className={`order-banner ${alertBox.type} show`}>
+            <div className="order-banner-icon">
+              {alertBox.type === "success" ? "✔" : "✖"}
+            </div>
 
-    <div>
-      <div className="order-banner-title">
-        {alertBox.type === "success" ? "Success" : "Error"}
-      </div>
+            <div>
+              <div className="order-banner-title">
+                {alertBox.type === "success" ? "Success" : "Error"}
+              </div>
 
-      <div className="order-banner-detail">
-        {alertBox.message}
-      </div>
-    </div>
+              <div className="order-banner-detail">{alertBox.message}</div>
+            </div>
 
-    <button
-      className="order-banner-close"
-      onClick={() =>
-        setAlertBox({
-          show: false,
-          message: "",
-          type: "",
-        })
-      }
-    >
-      ×
-    </button>
-  </div>
-)}
+            <button
+              className="order-banner-close"
+              onClick={() =>
+                setAlertBox({
+                  show: false,
+                  message: "",
+                  type: "",
+                })
+              }
+            >
+              ×
+            </button>
+          </div>
+        )}
 
-{deleteConfirm.show && (
-  <div className="delete-confirm-overlay">
-    <div className="delete-confirm-box">
+        {deleteConfirm.show && (
+          <div className="delete-confirm-overlay">
+            <div className="delete-confirm-box">
+              <div className="delete-confirm-icon">!</div>
 
-      <div className="delete-confirm-icon">!</div>
+              <h2>Delete Staff?</h2>
 
-      <h2>Delete Staff?</h2>
+              <p>Are you sure you want to delete this Staff?</p>
 
-      <p>
-        Are you sure you want to delete this Staff?
-      </p>
+              <div className="delete-confirm-actions">
+                <button
+                  className="delete-cancel-btn"
+                  onClick={() =>
+                    setDeleteConfirm({
+                      show: false,
+                      staffId: null,
+                    })
+                  }
+                >
+                  Cancel
+                </button>
 
-      <div className="delete-confirm-actions">
-
-        <button
-          className="delete-cancel-btn"
-          onClick={() =>
-            setDeleteConfirm({
-              show: false,
-              staffId: null,
-            })
-          }
-        >
-          Cancel
-        </button>
-
-        <button
-          className="delete-confirm-btn"
-          onClick={() =>
-            deleteStaff(deleteConfirm.staffId)
-          }
-        >
-          Delete
-        </button>
-
-      </div>
-
-    </div>
-  </div>
-)}
+                <button
+                  className="delete-confirm-btn"
+                  onClick={() => deleteStaff(deleteConfirm.staffId)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <Sidebar />
 
         <div className="staff-content">
           <div className="staff-headers">
             <div>
-
               <h1>Staff Members</h1>
 
               <span>
@@ -400,21 +371,21 @@ if (validationError) {
 
           <div className="staff-search-box">
             <input
-    type="text"
-    placeholder="Search staff by name..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
+              type="text"
+              placeholder="Search staff by name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-  {search && (
-    <button
-      className="staff-search-clear-btn"
-      onClick={() => setSearch("")}
-      type="button"
-    >
-      ✕
-    </button>
-  )}
+            {search && (
+              <button
+                className="staff-search-clear-btn"
+                onClick={() => setSearch("")}
+                type="button"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           <div className="staff-grid">
@@ -485,11 +456,11 @@ if (validationError) {
                     <button
                       className="staff-delete-btn"
                       onClick={() =>
-    setDeleteConfirm({
-      show: true,
-      staffId: member._id,
-    })
-  }
+                        setDeleteConfirm({
+                          show: true,
+                          staffId: member._id,
+                        })
+                      }
                     >
                       Delete
                     </button>
@@ -514,7 +485,7 @@ if (validationError) {
                 <span>
                   {editId
                     ? "Update staff information"
-                    : "Create a new staff account"}
+                    : "Create a new staff account. Login credentials will be sent automatically by email."}
                 </span>
               </div>
 
@@ -545,20 +516,6 @@ if (validationError) {
                     name="email"
                     placeholder="Enter email address"
                     value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-              )}
-
-              {!editId && (
-                <div className="form-group">
-                  <label>Password</label>
-
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Create password"
-                    value={formData.password}
                     onChange={handleChange}
                   />
                 </div>

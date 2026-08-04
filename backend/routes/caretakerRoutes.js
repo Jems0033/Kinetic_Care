@@ -1,5 +1,5 @@
 const express = require("express");
-const protect=require("../middleware/authMiddleware");
+const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -13,6 +13,6 @@ const {
 router.get("/dashboard", protect, getCaretakerDashboard);
 router.get("/resident/:id", protect, getResidentCare);
 router.post("/resident/:id", protect, saveDailyCare);
-router.get("/profile",protect,getCaretakerProfile);
+router.get("/profile", protect, getCaretakerProfile);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../css/family/FamilyDashboard.css";
@@ -6,11 +6,9 @@ import "../../css/family/FamilyDashboard.css";
 import {
   FaUserAlt,
   FaBed,
-  FaHeartbeat,
   FaCalendarAlt,
   FaDonate,
   FaArrowRight,
-  FaUserFriends,
   FaUserCircle,
 } from "react-icons/fa";
 function FamilyDashboard() {
@@ -19,11 +17,11 @@ function FamilyDashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [dashboard, setDashboard] = useState({
-  residents: [],
-  eventCount: 0,
-  upcomingEvents: [],
-  latestMedical: {},
-});
+    residents: [],
+    eventCount: 0,
+    upcomingEvents: [],
+    latestMedical: {},
+  });
 
   useEffect(() => {
     getDashboard();
@@ -54,31 +52,25 @@ function FamilyDashboard() {
       {/* HERO */}
 
       <section className="family-hero">
+        <div>
+          <h1>Welcome, {user?.name || "Family Member"} 👋</h1>
 
-  <div>
+          <span>
+            Stay connected with your loved one and keep track of their care,
+            health and daily activities.
+          </span>
+        </div>
 
-    <h1>Welcome, {user?.name || "Family Member"} 👋</h1>
-
-    <span>
-      Stay connected with your loved one and keep track of their care,
-      health and daily activities.
-    </span>
-  </div>
-
-  <div className="family-header-right">
-
-    <button
-      className="family-profile-btn"
-      onClick={() => navigate("/family/profile")}
-    >
-      <FaUserCircle />
-      My Profile
-    </button>
-
-
-  </div>
-
-</section>
+        <div className="family-header-right">
+          <button
+            className="family-profile-btn"
+            onClick={() => navigate("/family/profile")}
+          >
+            <FaUserCircle />
+            My Profile
+          </button>
+        </div>
+      </section>
 
       {/* SUMMARY CARDS */}
 
@@ -109,9 +101,9 @@ function FamilyDashboard() {
           <div>
             <span>Room</span>
 
-              <h2>
-                {dashboard.residents.length ? dashboard.residents[0].room : "-"}
-              </h2>
+            <h2>
+              {dashboard.residents.length ? dashboard.residents[0].room : "-"}
+            </h2>
 
             <p>Assigned room</p>
           </div>
@@ -136,222 +128,162 @@ function FamilyDashboard() {
 
       <section className="family-main-grid">
         {dashboard.residents.map((resident) => (
-  <React.Fragment key={resident._id}>
+          <React.Fragment key={resident._id}>
+            {/* RESIDENT PROFILE */}
 
-    {/* RESIDENT PROFILE */}
+            <div className="family-panel resident-panel" key={resident._id}>
+              <div className="family-panel-header">
+                <div>
+                  <p>Resident Overview</p>
+                  <h2>Resident Profile</h2>
+                </div>
 
-     <div
-    className="family-panel resident-panel"
-    key={resident._id}
-  >
-    <div className="family-panel-header">
-      <div>
-        <p>Resident Overview</p>
-        <h2>Resident Profile</h2>
-      </div>
+                <FaUserAlt />
+              </div>
 
-      <FaUserAlt />
-    </div>
+              <div className="resident-profile-modern">
+                <div className="resident-avatar-large">
+                  {resident.gender?.toLowerCase() === "male" ? "👴" : "👵"}
+                </div>
 
-    <div className="resident-profile-modern">
+                <div className="resident-primary-info">
+                  <h3>{resident.name}</h3>
+                  <span>Kinetic Care Resident</span>
+                </div>
+              </div>
 
-      <div className="resident-avatar-large">
-        {resident.gender?.toLowerCase() === "male" ? "👴" : "👵"}
-      </div>
+              <div className="resident-info-grid">
+                <div className="info-card">
+                  <span>Age</span>
+                  <strong>{resident.age}</strong>
+                </div>
 
-      <div className="resident-primary-info">
-        <h3>{resident.name}</h3>
-        <span>Kinetic Care Resident</span>
-      </div>
+                <div className="info-card">
+                  <span>Gender</span>
+                  <strong>{resident.gender}</strong>
+                </div>
 
-    </div>
-
-    <div className="resident-info-grid">
-
-      <div className="info-card">
-        <span>Age</span>
-        <strong>{resident.age}</strong>
-      </div>
-
-      <div className="info-card">
-        <span>Gender</span>
-        <strong>{resident.gender}</strong>
-      </div>
-
-      <div className="info-card">
-        <span>Room</span>
-        <strong>{resident.room}</strong>
-      </div>
-
-    </div>
-
-  </div>
-
-    {/* LATEST MEDICAL */}
-
-    <div className="family-panel medical-panel"   onClick={() =>
-    navigate(`/family/medical-history/${resident._id}`)
-  }>
-
-      <div className="family-panel-header">
-
-  <div>
-    <p>Latest Health Update</p>
-    <h2>Medical Record</h2>
-  </div>
-
-  <div className="medical-header-icons">
-    {/* <FaNotesMedical /> */}
-    {/* <FaChevronRight className="medical-arrow" />
-     */}
-     <FaArrowRight className="quick-arrow" />
-  </div>
-
-</div>
-
-      {resident.latestMedical ? (
-
-        <div
-  className="latest-medical-card"
->
-
-          <div className="medical-doctor-row">
-
-            <div className="medical-doctor-avatar">
-              🩺
+                <div className="info-card">
+                  <span>Room</span>
+                  <strong>{resident.room}</strong>
+                </div>
+              </div>
             </div>
 
-            <div>
+            {/* LATEST MEDICAL */}
 
-              <span>Doctor</span>
+            <div
+              className="family-panel medical-panel"
+              onClick={() =>
+                navigate(`/family/medical-history/${resident._id}`)
+              }
+            >
+              <div className="family-panel-header">
+                <div>
+                  <p>Latest Health Update</p>
+                  <h2>Medical Record</h2>
+                </div>
 
-              <strong>
-                Dr. {resident.latestMedical.staffId?.name || "Not Assigned"}
-              </strong>
+                <div className="medical-header-icons">
+                  <FaArrowRight className="quick-arrow" />
+                </div>
+              </div>
 
+              {resident.latestMedical ? (
+                <div className="latest-medical-card">
+                  <div className="medical-doctor-row">
+                    <div className="medical-doctor-avatar">🩺</div>
+
+                    <div>
+                      <span>Doctor</span>
+
+                      <strong>
+                        Dr.{" "}
+                        {resident.latestMedical.staffId?.name || "Not Assigned"}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="medical-mini-grid">
+                    <div>
+                      <span>Problem</span>
+                      <strong>{resident.latestMedical.problem}</strong>
+                    </div>
+
+                    <div>
+                      <span>Medicine</span>
+                      <strong>{resident.latestMedical.medicine}</strong>
+                    </div>
+                  </div>
+
+                  <div className="medical-date">
+                    <span>Last Updated</span>
+
+                    <strong>
+                      {resident.latestMedical.date
+                        ? new Date(
+                            resident.latestMedical.date,
+                          ).toLocaleDateString("en-IN")
+                        : "-"}
+                    </strong>
+                  </div>
+                </div>
+              ) : (
+                <div className="family-empty-state">
+                  No medical record available
+                </div>
+              )}
             </div>
-
-          </div>
-
-          <div className="medical-mini-grid">
-
-            <div>
-              <span>Problem</span>
-              <strong>{resident.latestMedical.problem}</strong>
-            </div>
-
-            <div>
-              <span>Medicine</span>
-              <strong>{resident.latestMedical.medicine}</strong>
-            </div>
-
-          </div>
-
-          <div className="medical-date">
-
-            <span>Last Updated</span>
-
-            <strong>
-              {resident.latestMedical.date
-                ? new Date(
-                    resident.latestMedical.date
-                  ).toLocaleDateString("en-IN")
-                : "-"}
-            </strong>
-
-          </div>
-
-        </div>
-
-      ) : (
-
-        <div className="family-empty-state">
-          No medical record available
-        </div>
-
-      )}
-
-    </div>
-
-  </React.Fragment>
-))}
+          </React.Fragment>
+        ))}
         {/* EVENT SUMMARY */}
 
-       <div className="family-panel event-panel">
+        <div className="family-panel event-panel">
+          <div className="family-panel-header">
+            <div>
+              <p>Community Activities</p>
+              <h2>Upcoming Events</h2>
+            </div>
 
-  <div className="family-panel-header">
-    <div>
-      <p>Community Activities</p>
-      <h2>Upcoming Events</h2>
-    </div>
-
-    <FaCalendarAlt />
-  </div>
-
-  {dashboard.upcomingEvents?.length > 0 ? (
-
-    <div className="family-upcoming-events">
-
-      {dashboard.upcomingEvents.map((event) => (
-
-        <div
-          className="family-upcoming-event-card"
-          key={event._id}
-        >
-
-          <div className="family-event-date-box">
-
-            <strong>
-              {new Date(event.date).getDate()}
-            </strong>
-
-            <span>
-              {new Date(event.date).toLocaleDateString(
-                "en-US",
-                {
-                  month: "short",
-                }
-              )}
-            </span>
-
+            <FaCalendarAlt />
           </div>
 
-          <div className="family-event-info">
+          {dashboard.upcomingEvents?.length > 0 ? (
+            <div className="family-upcoming-events">
+              {dashboard.upcomingEvents.map((event) => (
+                <div className="family-upcoming-event-card" key={event._id}>
+                  <div className="family-event-date-box">
+                    <strong>{new Date(event.date).getDate()}</strong>
 
-            <h3>{event.title}</h3>
+                    <span>
+                      {new Date(event.date).toLocaleDateString("en-US", {
+                        month: "short",
+                      })}
+                    </span>
+                  </div>
 
-            <p>
-              {new Date(event.date).toLocaleDateString(
-                "en-IN",
-                {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                }
-              )}
-            </p>
+                  <div className="family-event-info">
+                    <h3>{event.title}</h3>
 
-            {event.location && (
-              <span>{event.location}</span>
-            )}
+                    <p>
+                      {new Date(event.date).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
 
-          </div>
-
+                    {event.location && <span>{event.location}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="family-empty-state">
+              No upcoming events available.
+            </div>
+          )}
         </div>
-
-      ))}
-
-    </div>
-
-  ) : (
-
-    <div className="family-empty-state">
-      No upcoming events available.
-    </div>
-
-  )}
-
-</div>
 
         {/* QUICK ACTIONS */}
 
@@ -378,26 +310,25 @@ function FamilyDashboard() {
               <FaArrowRight className="quick-arrow" />
             </button>
 
-<button
-  onClick={() =>
-    navigate("/donate", {
-      state: {
-        from: "family-dashboard",
-      },
-    })
-  }
->              <span className="quick-action-icon donate-action">
+            <button
+              onClick={() =>
+                navigate("/donate", {
+                  state: {
+                    from: "family-dashboard",
+                  },
+                })
+              }
+            >
+              {" "}
+              <span className="quick-action-icon donate-action">
                 <FaDonate />
               </span>
-
               <div>
                 <strong>Donate</strong>
                 <small>Support Kinetic Care residents</small>
               </div>
-
               <FaArrowRight className="quick-arrow" />
             </button>
-
           </div>
         </div>
       </section>

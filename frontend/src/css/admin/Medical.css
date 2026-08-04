@@ -33,7 +33,7 @@
   font-size: 30px;
 }
 
-.medical-header>div>span {
+.medical-header > div > span {
   display: block;
   margin-top: 7px;
   color: #899599;
@@ -45,7 +45,7 @@
 .medical-search-box {
   margin: 25px 0;
   position: relative;
-   max-width: 400px;
+  max-width: 400px;
 }
 
 .medical-search-box input {
@@ -107,9 +107,7 @@
   left: 0;
   width: 5px;
   height: 100%;
-  background: linear-gradient(to bottom,
-      #168d70,
-      #57c9ad);
+  background: linear-gradient(to bottom, #168d70, #57c9ad);
   content: "";
 }
 
@@ -289,13 +287,12 @@
 }
 
 @media (max-width: 600px) {
-
   .medical-header {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .medical-header>button {
+  .medical-header > button {
     width: 100%;
   }
 

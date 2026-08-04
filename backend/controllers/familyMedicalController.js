@@ -5,7 +5,6 @@ const getMedicalHistory = async (req, res) => {
   try {
     const residentId = req.params.residentId;
 
-    // Check કે આ resident logged-in family સાથે linked છે કે નહીં
     const family = await FamilyMember.findOne({
       userId: req.user.id,
       residentId: residentId,
@@ -24,7 +23,6 @@ const getMedicalHistory = async (req, res) => {
       .sort({ date: -1 });
 
     res.status(200).json(records);
-
   } catch (error) {
     console.log(error);
 

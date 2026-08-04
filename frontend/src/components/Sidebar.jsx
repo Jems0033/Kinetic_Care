@@ -25,7 +25,7 @@ function Sidebar() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    navigate("/login");
+    navigate("/");
   };
 
   const closeSidebar = () => {
@@ -45,14 +45,10 @@ function Sidebar() {
 
       {/* MOBILE OVERLAY */}
       {sidebarOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={closeSidebar}
-        />
+        <div className="sidebar-overlay" onClick={closeSidebar} />
       )}
 
       <div className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
-
         {/* MOBILE CLOSE BUTTON */}
         <button
           type="button"
@@ -83,9 +79,7 @@ function Sidebar() {
             <NavLink
               to="/dashboard"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaHome />
               <span>Dashboard</span>
@@ -96,9 +90,7 @@ function Sidebar() {
             <NavLink
               to="/residents"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaUserFriends />
               <span>Residents</span>
@@ -109,9 +101,7 @@ function Sidebar() {
             <NavLink
               to="/staff"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaUsers />
               <span>Staff</span>
@@ -122,9 +112,7 @@ function Sidebar() {
             <NavLink
               to="/rooms"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaBed />
               <span>Rooms</span>
@@ -135,9 +123,7 @@ function Sidebar() {
             <NavLink
               to="/medical"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaNotesMedical />
               <span>Medical</span>
@@ -148,9 +134,7 @@ function Sidebar() {
             <NavLink
               to="/visitors"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaWalking />
               <span>Visitors</span>
@@ -161,9 +145,7 @@ function Sidebar() {
             <NavLink
               to="/donors"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaHeart />
               <span>Donors</span>
@@ -174,9 +156,7 @@ function Sidebar() {
             <NavLink
               to="/events"
               onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive ? "sidebar-active" : ""
-              }
+              className={({ isActive }) => (isActive ? "sidebar-active" : "")}
             >
               <FaCalendarAlt />
               <span>Events</span>
@@ -185,11 +165,7 @@ function Sidebar() {
         </ul>
 
         {/* LOGOUT */}
-        <button
-          type="button"
-          className="logout-btn"
-          onClick={logout}
-        >
+        <button type="button" className="logout-btn" onClick={logout}>
           <FaSignOutAlt />
           <span>Logout</span>
         </button>

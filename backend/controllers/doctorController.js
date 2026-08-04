@@ -3,52 +3,6 @@ const Staff = require("../models/Staff");
 const Resident = require("../models/Resident");
 const Room = require("../models/Room");
 
-
-const getDoctorDashboard = async (req, res) => {
-  try {
-
-    const staff = await Staff.findOne({ userId: req.user.id });
-
-    if (!staff) {
-      return res.status(404).json({
-        message: "Doctor not found",
-      });
-    }
-
-    const assignedPatientsCount = await Resident.countDocuments({
-      $or: [
-        { morningDoctor: staff._id },
-        { nightDoctor: staff._id }
-      ]
-    });
-
-    const records = await MedicalRecord.find({
-      staffId: staff._id,
-    })
-      .populate("residentId", "name age")
-      .sort({ date: -1 });
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const todayRecords = records.filter(
-      (r) => r.residentId && new Date(r.date) >= today
-    );
-
-    res.json({
-      totalPatients: assignedPatientsCount,
-      totalRecords: records.length,
-      todayRecords: todayRecords.length,
-      latestRecords: records.slice(0, 5),
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
 const getDoctorPatients = async (req, res) => {
   try {
     const staff = await Staff.findOne({
@@ -62,20 +16,17 @@ const getDoctorPatients = async (req, res) => {
     }
 
     const residents = await Resident.find({
-  $or: [
-    { morningDoctor: staff._id },
-    { nightDoctor: staff._id }
-  ],
-  status: {
-    $ne: "Discharged"
-  }
-}).populate("room");
+      $or: [{ morningDoctor: staff._id }, { nightDoctor: staff._id }],
+      status: {
+        $ne: "Discharged",
+      },
+    }).populate("room");
 
     const patients = [];
 
     for (const resident of residents) {
       const latestRecord = await MedicalRecord.findOne({
-        residentId: resident._id
+        residentId: resident._id,
       }).sort({ date: -1 });
 
       patients.push({
@@ -84,30 +35,24 @@ const getDoctorPatients = async (req, res) => {
         age: resident.age,
         gender: resident.gender,
         room: resident.room ? resident.room.roomNumber : "-",
-        latestProblem: latestRecord ? latestRecord.problem : "No medical problem",
+        latestProblem: latestRecord
+          ? latestRecord.problem
+          : "No medical problem",
         status: resident.status,
       });
     }
 
     res.json(patients);
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
 
 const getDoctorPatient = async (req, res) => {
   try {
-
-    console.log("Patient ID:", req.params.id);
-
     const resident = await Resident.findById(req.params.id);
-
-    console.log("Resident:", resident);
 
     if (!resident) {
       return res.status(404).json({
@@ -119,7 +64,6 @@ const getDoctorPatient = async (req, res) => {
 
     if (resident.room) {
       const room = await Room.findById(resident.room);
-      console.log("Room:", room);
 
       if (room) {
         roomNumber = room.roomNumber;
@@ -130,37 +74,28 @@ const getDoctorPatient = async (req, res) => {
       residentId: resident._id,
     }).sort({ date: -1 });
 
-    console.log("Records:", records);
-
     res.json({
-  resident: {
-    _id: resident._id,
-    name: resident.name,
-    age: resident.age,
-    gender: resident.gender,
-    medicalCondition: resident.medicalCondition,
-    room: roomNumber,
-    status: resident.status,
-  },
-  records,
-});
-
+      resident: {
+        _id: resident._id,
+        name: resident.name,
+        age: resident.age,
+        gender: resident.gender,
+        medicalCondition: resident.medicalCondition,
+        room: roomNumber,
+        status: resident.status,
+      },
+      records,
+    });
   } catch (error) {
-
     console.error(error);
 
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
-
 const addMedicalRecord = async (req, res) => {
   try {
-
-    
-
     const staff = await Staff.findOne({
       userId: req.user.id,
     });
@@ -174,11 +109,12 @@ const addMedicalRecord = async (req, res) => {
     const { residentId, problem, medicine } = req.body;
     const resident = await Resident.findById(residentId);
 
-if (resident.status === "Temporary Leave") {
-  return res.status(400).json({
-    message: "Resident is on Temporary Leave. Medical records cannot be added."
-  });
-}
+    if (resident.status === "Temporary Leave") {
+      return res.status(400).json({
+        message:
+          "Resident is on Temporary Leave. Medical records cannot be added.",
+      });
+    }
 
     const record = await MedicalRecord.create({
       residentId,
@@ -193,48 +129,40 @@ if (resident.status === "Temporary Leave") {
       message: "Medical Record Added",
       record,
     });
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
 const getDoctorProfile = async (req, res) => {
+  try {
+    const staff = await Staff.findOne({
+      userId: req.user.id,
+    }).populate("userId");
 
-    try {
-
-        const staff = await Staff.findOne({
-            userId: req.user.id
-        }).populate("userId");
-
-        if (!staff) {
-            return res.status(404).json({
-                message: "Doctor not found"
-            });
-        }
-
-        res.json({
-            name: staff.name,
-            email: staff.userId.email,
-            phone: staff.phone,
-            role: staff.role,
-            shift: staff.shift
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
+    if (!staff) {
+      return res.status(404).json({
+        message: "Doctor not found",
+      });
     }
 
+    res.json({
+      name: staff.name,
+      email: staff.userId.email,
+      phone: staff.phone,
+      role: staff.role,
+      shift: staff.shift,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 
 const updateMedicalRecord = async (req, res) => {
   try {
-    
     const staff = await Staff.findOne({
       userId: req.user.id,
     });
@@ -248,11 +176,12 @@ const updateMedicalRecord = async (req, res) => {
     const record = await MedicalRecord.findById(req.params.id);
     const resident = await Resident.findById(record.residentId);
 
-if (resident.status === "Temporary Leave") {
-  return res.status(400).json({
-    message: "Resident is on Temporary Leave. Medical records cannot be updated."
-  });
-}
+    if (resident.status === "Temporary Leave") {
+      return res.status(400).json({
+        message:
+          "Resident is on Temporary Leave. Medical records cannot be updated.",
+      });
+    }
 
     if (!record) {
       return res.status(404).json({
@@ -260,14 +189,12 @@ if (resident.status === "Temporary Leave") {
       });
     }
 
-    // માત્ર પોતાનો record જ edit કરી શકે
     if (record.staffId.toString() !== staff._id.toString()) {
       return res.status(403).json({
         message: "You are not allowed to edit this record",
       });
     }
 
-    // માત્ર આજના record edit થઈ શકે
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -289,7 +216,6 @@ if (resident.status === "Temporary Leave") {
       message: "Medical Record Updated Successfully",
       record,
     });
-
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -298,7 +224,6 @@ if (resident.status === "Temporary Leave") {
 };
 
 module.exports = {
-  getDoctorDashboard,
   getDoctorPatients,
   getDoctorPatient,
   addMedicalRecord,

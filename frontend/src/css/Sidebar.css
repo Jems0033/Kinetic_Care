@@ -114,8 +114,6 @@
   color: white;
 }
 
-/* MOBILE BUTTON */
-
 .sidebar-menu-btn {
   display: none;
   position: fixed;
@@ -156,8 +154,6 @@
   display: none;
 }
 
-/* TABLET AND MOBILE */
-
 @media screen and (max-width: 992px) {
   .sidebar {
     transform: translateX(-100%);
@@ -184,10 +180,7 @@
     backdrop-filter: blur(2px);
     z-index: 999;
   }
-
 }
-
-/* SMALL MOBILE */
 
 @media screen and (max-width: 480px) {
   .sidebar {
