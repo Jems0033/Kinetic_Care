@@ -46,7 +46,6 @@ function PatientDetails() {
           },
         },
       );
-      console.log(res.data.resident);
       setResident(res.data.resident);
       setRecords(res.data.records);
     } catch (error) {

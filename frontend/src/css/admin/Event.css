@@ -18,7 +18,6 @@
   gap: 20px;
 }
 
-
 .event-header h1 {
   margin: 0;
   color: #1e2d34;
@@ -55,7 +54,7 @@
 .event-search-box {
   margin: 25px 0;
   position: relative;
-   max-width: 400px;
+  max-width: 400px;
 }
 
 .event-search-box input {
@@ -70,7 +69,7 @@
 
 .event-search-box input:focus {
   border-color: #8f63c2;
-  box-shadow: 0 0 0 3px rgba(143,99,194,.1);
+  box-shadow: 0 0 0 3px rgba(143, 99, 194, 0.1);
 }
 .search-clear-btn {
   position: absolute;
@@ -91,7 +90,6 @@
   transform: translateY(-50%) scale(1.15);
 }
 
-
 /* GRID */
 
 .event-grid {
@@ -105,17 +103,17 @@
   border: 1px solid #e6e2ec;
   border-radius: 22px;
   background: #fff;
-  box-shadow: 0 10px 28px rgba(47, 38, 60, .07);
-  transition: .25s;
+  box-shadow: 0 10px 28px rgba(47, 38, 60, 0.07);
+  transition: 0.25s;
 }
 
 .event-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 38px rgba(47, 38, 60, .12);
+  box-shadow: 0 18px 38px rgba(47, 38, 60, 0.12);
 }
 
 .completed-event-card {
-  opacity: .78;
+  opacity: 0.78;
 }
 
 /* TOP */
@@ -311,7 +309,7 @@
 
   padding: 20px;
 
-  background: rgba(30, 24, 37, .6);
+  background: rgba(30, 24, 37, 0.6);
   backdrop-filter: blur(7px);
 }
 
@@ -327,15 +325,15 @@
   border-radius: 26px;
   background: white;
 
-  box-shadow: 0 30px 80px rgba(30, 24, 37, .3);
+  box-shadow: 0 30px 80px rgba(30, 24, 37, 0.3);
 
-  animation: eventModalOpen .3s ease;
+  animation: eventModalOpen 0.3s ease;
 }
 
 @keyframes eventModalOpen {
   from {
     opacity: 0;
-    transform: scale(.97) translateY(20px);
+    transform: scale(0.97) translateY(20px);
   }
 
   to {
@@ -455,7 +453,7 @@
 .event-form-group textarea:focus {
   border-color: #8f63c2;
   background: white;
-  box-shadow: 0 0 0 3px rgba(143,99,194,.1);
+  box-shadow: 0 0 0 3px rgba(143, 99, 194, 0.1);
 }
 
 /* MODAL ACTIONS */
@@ -490,13 +488,9 @@
 }
 
 .event-save-btn {
-  background: linear-gradient(
-    135deg,
-    #8f63c2,
-    #a875d8
-  );
+  background: linear-gradient(135deg, #8f63c2, #a875d8);
   color: white;
-  box-shadow: 0 8px 20px rgba(143,99,194,.22);
+  box-shadow: 0 8px 20px rgba(143, 99, 194, 0.22);
 }
 
 /* RESPONSIVE */
@@ -515,7 +509,6 @@
 }
 
 @media (max-width: 600px) {
-
   .event-grid {
     grid-template-columns: 1fr;
   }

@@ -11,21 +11,16 @@ const {
   getRecentResidents,
 } = require("../controllers/residentController");
 
-// Create
-router.post("/", addResident);
+router.post("/", protect, addResident);
 
 router.get("/recent", protect, getRecentResidents);
-// Read All
-router.get("/", getResidents);
 
-// Read Single
-router.get("/:id", getResidentById);
+router.get("/", protect, getResidents);
 
-// Update
-router.put("/:id", updateResident);
+router.get("/:id", protect, getResidentById);
 
-// Delete
-router.delete("/:id", deleteResident);
+router.put("/:id", protect, updateResident);
 
+router.delete("/:id", protect, deleteResident);
 
 module.exports = router;

@@ -17,52 +17,22 @@ function DoctorDashboard() {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const [dashboard, setDashboard] = useState({
-    totalPatients: 0,
-    totalRecords: 0,
-    todayRecords: 0,
-    latestRecords: [],
-  });
-
   const [patients, setPatients] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    getDashboard();
     getPatients();
   }, []);
-
-  const getDashboard = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.get(
-        "http://localhost:5000/api/doctor/dashboard",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setDashboard(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const getPatients = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        "http://localhost:5000/api/doctor/patients",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get("http://localhost:5000/api/doctor/patients", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setPatients(res.data);
     } catch (error) {
@@ -71,37 +41,23 @@ function DoctorDashboard() {
   };
 
   const filteredPatients = patients.filter((patient) =>
-    patient.name
-      ?.toLowerCase()
-      .includes(search.toLowerCase())
+    patient.name?.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="doctor-dashboard">
-
       {/* HEADER */}
 
       <header className="doctor-header">
-
         <div className="doctor-welcome">
+          <p className="doctor-label">Doctor Portal</p>
 
-          <p className="doctor-label">
-            Doctor Portal
-          </p>
+          <h1>Welcome Back, Dr. {user?.name || "Doctor"}</h1>
 
-          <h1>
-            Welcome Back, Dr. {user?.name || "Doctor"}
-          </h1>
-
-          <span>
-            Manage your patients and medical records from one place.
-          </span>
-
+          <span>Manage your patients and medical records from one place.</span>
         </div>
 
-
         <div className="doctor-header-actions">
-
           <button
             className="doctor-profile-btn"
             onClick={() => navigate("/doctor/profile")}
@@ -113,22 +69,23 @@ function DoctorDashboard() {
             <div>
               <span>Doctor Profile</span>
 
-              <strong>
-                Dr. {user?.name || "Doctor"}
-              </strong>
+              <strong>Dr. {user?.name || "Doctor"}</strong>
             </div>
           </button>
-
         </div>
-
       </header>
-
-
 
       {/* PATIENTS LIST */}
 
-      <section className="recent-section" style={{ background: "transparent", border: "none", boxShadow: "none", padding: 0 }}>
-
+      <section
+        className="recent-section"
+        style={{
+          background: "transparent",
+          border: "none",
+          boxShadow: "none",
+          padding: 0,
+        }}
+      >
         {/* SEARCH / SUMMARY TOOLBAR */}
         <section className="patients-toolbar" style={{ margin: "0 0 20px 0" }}>
           <div className="patient-count-box">
@@ -168,18 +125,18 @@ function DoctorDashboard() {
                     <div>
                       <span>Patient</span>
                       <h3>{patient.name}</h3>
-                      <p>{patient.age} years • {patient.gender}</p>
+                      <p>
+                        {patient.age} years • {patient.gender}
+                      </p>
                     </div>
                   </div>
                   <span
-  className={`patient-status ${
-    patient.status === "Active"
-      ? "active"
-      : "temporary"
-  }`}
->
-  {patient.status}
-</span>
+                    className={`patient-status ${
+                      patient.status === "Active" ? "active" : "temporary"
+                    }`}
+                  >
+                    {patient.status}
+                  </span>
                 </div>
 
                 <div className="patient-card-details">
@@ -199,7 +156,9 @@ function DoctorDashboard() {
                     </div>
                     <div>
                       <span>Latest Problem</span>
-                      <strong>{patient.latestProblem || "No medical problem"}</strong>
+                      <strong>
+                        {patient.latestProblem || "No medical problem"}
+                      </strong>
                     </div>
                   </div>
                 </div>
@@ -215,9 +174,7 @@ function DoctorDashboard() {
             ))
           )}
         </section>
-
       </section>
-
     </div>
   );
 }

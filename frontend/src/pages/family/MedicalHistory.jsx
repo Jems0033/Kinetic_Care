@@ -31,7 +31,7 @@ function MedicalHistory() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setRecords(res.data);
@@ -42,11 +42,9 @@ function MedicalHistory() {
 
   return (
     <div className="medical-history-page">
-
       {/* TOP */}
 
       <div className="history-topbar">
-
         <button
           className="history-back-btn"
           onClick={() => navigate("/family-dashboard")}
@@ -58,53 +56,36 @@ function MedicalHistory() {
         {/* HEADING */}
 
         <div className="medical-history-heading">
-
           <p>Health Records</p>
 
           <h1>Medical History</h1>
 
           <span>
-            View complete medical records and treatment history
-            of your loved one.
+            View complete medical records and treatment history of your loved
+            one.
           </span>
-
         </div>
-
       </div>
 
       {/* RECORDS */}
 
       {records.length === 0 ? (
-
         <div className="medical-history-empty">
-
           <div className="history-empty-icon">
             <FaNotesMedical />
           </div>
 
           <h3>No Medical Records Found</h3>
 
-          <p>
-            Medical records will appear here once they are added.
-          </p>
-
+          <p>Medical records will appear here once they are added.</p>
         </div>
-
       ) : (
-
         <div className="medical-history-list">
-
           {records.map((record, index) => (
-
-            <div
-              className="medical-history-item"
-              key={record._id}
-            >
-
+            <div className="medical-history-item" key={record._id}>
               {/* TIMELINE */}
 
               <div className="history-timeline">
-
                 <div className="timeline-dot">
                   <FaNotesMedical />
                 </div>
@@ -112,47 +93,31 @@ function MedicalHistory() {
                 {index !== records.length - 1 && (
                   <div className="timeline-line"></div>
                 )}
-
               </div>
-
 
               {/* CARD */}
 
               <div className="history-record-card">
-
                 <div className="history-card-header">
-
                   <div>
-
                     <span>Medical Record</span>
 
-                    <h3>
-                      {record.problem || "General Checkup"}
-                    </h3>
-
+                    <h3>{record.problem || "General Checkup"}</h3>
                   </div>
-
 
                   <div className="history-date">
-
                     <FaCalendarAlt />
 
-                    {new Date(record.date)
-                      .toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-
+                    {new Date(record.date).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </div>
-
                 </div>
 
-
                 <div className="history-details-grid">
-
                   <div className="history-detail">
-
                     <div className="history-detail-icon doctor-history-icon">
                       <FaUserMd />
                     </div>
@@ -164,12 +129,9 @@ function MedicalHistory() {
                         Dr. {record.staffId?.name || "Not Available"}
                       </strong>
                     </div>
-
                   </div>
 
-
                   <div className="history-detail">
-
                     <div className="history-detail-icon problem-history-icon">
                       <FaNotesMedical />
                     </div>
@@ -177,16 +139,11 @@ function MedicalHistory() {
                     <div>
                       <span>Problem</span>
 
-                      <strong>
-                        {record.problem || "Not specified"}
-                      </strong>
+                      <strong>{record.problem || "Not specified"}</strong>
                     </div>
-
                   </div>
 
-
                   <div className="history-detail medicine-history-detail">
-
                     <div className="history-detail-icon medicine-history-icon">
                       <FaPills />
                     </div>
@@ -194,25 +151,15 @@ function MedicalHistory() {
                     <div>
                       <span>Medicine</span>
 
-                      <strong>
-                        {record.medicine || "Not prescribed"}
-                      </strong>
+                      <strong>{record.medicine || "Not prescribed"}</strong>
                     </div>
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           ))}
-
         </div>
-
       )}
-
     </div>
   );
 }

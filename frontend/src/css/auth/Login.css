@@ -51,11 +51,7 @@
 
   padding: 30px 45px;
 
-  background: linear-gradient(
-    145deg,
-    #137b5e,
-    #24a57c
-  );
+  background: linear-gradient(145deg, #137b5e, #24a57c);
 
   color: #ffffff;
 }
@@ -128,10 +124,10 @@
 
   padding: 15px;
 
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
 
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 
   backdrop-filter: blur(7px);
 }
@@ -148,7 +144,7 @@
 
   border-radius: 13px;
 
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
 
   font-size: 18px;
 }
@@ -187,7 +183,7 @@
 
   border-radius: 50%;
 
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .circle-one {
@@ -335,8 +331,7 @@
 
   background: #ffffff;
 
-  box-shadow:
-    0 0 0 3px rgba(31, 157, 116, 0.1);
+  box-shadow: 0 0 0 3px rgba(31, 157, 116, 0.1);
 }
 
 .login-input-box > svg {
@@ -406,12 +401,7 @@
   border: none;
   border-radius: 13px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #1b936e,
-      #30b187
-    );
+  background: linear-gradient(135deg, #1b936e, #30b187);
 
   color: #ffffff;
 
@@ -420,8 +410,7 @@
 
   cursor: pointer;
 
-  box-shadow:
-    0 10px 24px rgba(27,147,110,.23);
+  box-shadow: 0 10px 24px rgba(27, 147, 110, 0.23);
 
   transition: 0.25s;
 }
@@ -429,8 +418,7 @@
 .login-btn:hover:not(:disabled) {
   transform: translateY(-2px);
 
-  box-shadow:
-    0 14px 28px rgba(27,147,110,.3);
+  box-shadow: 0 14px 28px rgba(27, 147, 110, 0.3);
 }
 
 .login-btn:disabled {
@@ -461,7 +449,6 @@
 /* RESPONSIVE */
 
 @media (max-width: 850px) {
-
   .login-container {
     grid-template-columns: 1fr;
 
@@ -490,11 +477,9 @@
 
     object-fit: contain;
   }
-
 }
 
 @media (max-width: 500px) {
-
   .login-page {
     padding: 14px;
   }
@@ -512,7 +497,6 @@
   .login-heading h2 {
     font-size: 24px;
   }
-
 }
 .modern-input {
   position: relative;
@@ -557,17 +541,14 @@
 .modern-input input:focus {
   border-color: #1f9d74;
 
-  box-shadow:
-    0 0 0 3px rgba(31, 157, 116, 0.1);
+  box-shadow: 0 0 0 3px rgba(31, 157, 116, 0.1);
 }
 
 .modern-input input:focus + span,
 .modern-input input:not(:placeholder-shown) + span {
-
   display: none;
   font-size: 9px;
   font-weight: 700;
-
 }
 
 .password-modern input {

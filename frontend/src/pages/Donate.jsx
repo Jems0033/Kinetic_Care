@@ -21,12 +21,9 @@ function Donate() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const fromFamilyDashboard =
-    location.state?.from === "family-dashboard";
+  const fromFamilyDashboard = location.state?.from === "family-dashboard";
 
-  const redirectPath = fromFamilyDashboard
-    ? "/family-dashboard"
-    : "/";
+  const redirectPath = fromFamilyDashboard ? "/family-dashboard" : "/";
 
   const [formData, setFormData] = useState({
     name: "",
@@ -205,12 +202,12 @@ function Donate() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       showAlert(
         response.data?.message || "Thank you for your donation ❤️",
-        "success"
+        "success",
       );
 
       setFormData({
@@ -247,9 +244,7 @@ function Donate() {
               {alertBox.type === "success" ? "Success" : "Error"}
             </div>
 
-            <div className="order-banner-detail">
-              {alertBox.message}
-            </div>
+            <div className="order-banner-detail">{alertBox.message}</div>
           </div>
 
           <button
@@ -288,18 +283,13 @@ function Donate() {
               <FaHandHoldingHeart />
             </div>
 
-            <p className="donation-label">
-              Make a Difference
-            </p>
+            <p className="donation-label">Make a Difference</p>
 
-            <h1>
-              Your kindness can bring comfort and happiness.
-            </h1>
+            <h1>Your kindness can bring comfort and happiness.</h1>
 
             <p className="donation-description">
-              Every contribution helps us provide better care,
-              healthy meals, medicines and meaningful activities
-              for our residents.
+              Every contribution helps us provide better care, healthy meals,
+              medicines and meaningful activities for our residents.
             </p>
 
             <div className="donation-points">
@@ -329,9 +319,7 @@ function Donate() {
 
             <h2>Support Kinetic Care</h2>
 
-            <span>
-              Fill in your details and make a contribution.
-            </span>
+            <span>Fill in your details and make a contribution.</span>
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
@@ -390,31 +378,19 @@ function Donate() {
 
               <div className="donation-form-group">
                 <label>
-                  {formData.donationType === "Money"
-                    ? "Amount"
-                    : "Quantity"}
+                  {formData.donationType === "Money" ? "Amount" : "Quantity"}
                 </label>
 
                 <div className="donation-input-box">
-                  {formData.donationType === "Money" && (
-                    <FaRupeeSign />
-                  )}
+                  {formData.donationType === "Money" && <FaRupeeSign />}
 
-                  {formData.donationType === "Food" && (
-                    <FaUtensils />
-                  )}
+                  {formData.donationType === "Food" && <FaUtensils />}
 
-                  {formData.donationType === "Medicine" && (
-                    <FaPills />
-                  )}
+                  {formData.donationType === "Medicine" && <FaPills />}
 
-                  {formData.donationType === "Clothes" && (
-                    <FaTshirt />
-                  )}
+                  {formData.donationType === "Clothes" && <FaTshirt />}
 
-                  {!formData.donationType && (
-                    <FaHandHoldingHeart />
-                  )}
+                  {!formData.donationType && <FaHandHoldingHeart />}
 
                   <input
                     type="text"
@@ -442,25 +418,15 @@ function Donate() {
                   value={formData.donationType}
                   onChange={handleChange}
                 >
-                  <option value="">
-                    Select Donation Type
-                  </option>
+                  <option value="">Select Donation Type</option>
 
-                  <option value="Money">
-                    Money
-                  </option>
+                  <option value="Money">Money</option>
 
-                  <option value="Food">
-                    Food
-                  </option>
+                  <option value="Food">Food</option>
 
-                  <option value="Medicine">
-                    Medicine
-                  </option>
+                  <option value="Medicine">Medicine</option>
 
-                  <option value="Clothes">
-                    Clothes
-                  </option>
+                  <option value="Clothes">Clothes</option>
                 </select>
               </div>
 
@@ -498,9 +464,7 @@ function Donate() {
               >
                 <FaHeart />
 
-                {loading
-                  ? "Processing..."
-                  : "Donate Now"}
+                {loading ? "Processing..." : "Donate Now"}
               </button>
             </div>
           </form>

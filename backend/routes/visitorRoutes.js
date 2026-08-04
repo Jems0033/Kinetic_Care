@@ -5,13 +5,13 @@ const router = express.Router();
 const protect = require("../middleware/authMiddleware");
 
 const {
-    addVisitor,
-    getVisitors,
-    getVisitorById,
-    updateVisitor,
-    deleteVisitor,
-    checkOutVisitor,
-    bookVisit,
+  addVisitor,
+  getVisitors,
+  getVisitorById,
+  updateVisitor,
+  deleteVisitor,
+  checkOutVisitor,
+  bookVisit,
 } = require("../controllers/visitorController");
 
 router.get("/", protect, getVisitors);

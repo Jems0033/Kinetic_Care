@@ -26,14 +26,11 @@ function DoctorProfile() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        "http://localhost:5000/api/doctor/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get("http://localhost:5000/api/doctor/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setDoctor(res.data);
     } catch (error) {
@@ -45,16 +42,14 @@ function DoctorProfile() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <div className="doctor-profile-page">
-
       {/* TOP BAR */}
 
       <div className="doctor-profile-topbar">
-
         <button
           className="doctor-back-btn"
           onClick={() => navigate("/doctor/dashboard")}
@@ -64,82 +59,56 @@ function DoctorProfile() {
         </button>
 
         <div className="doctor-profile-heading">
+          <p>Doctor Portal</p>
 
-        <p>Doctor Portal</p>
+          <h1>My Profile</h1>
 
-        <h1>My Profile</h1>
+          <span>View your personal and professional information</span>
+        </div>
 
-        <span>
-          View your personal and professional information
-        </span>
-
-      </div>
-
-        <button
-          className="profile-logout-btn"
-          onClick={logout}
-        >
+        <button className="doctor-profile-logout-btn" onClick={logout}>
           <FaSignOutAlt />
           Logout
         </button>
-
       </div>
 
       {/* MAIN PROFILE */}
 
       <div className="doctor-profile-container">
-
         {/* PROFILE SUMMARY */}
 
         <div className="doctor-profile-summary">
-
           <div className="profile-avatar-large">
             <FaUserMd />
           </div>
 
-          <h2>
-            Dr. {doctor.name || "Doctor"}
-          </h2>
+          <h2>Dr. {doctor.name || "Doctor"}</h2>
 
-          <span className="doctor-role">
-            {doctor.role || "Doctor"}
-          </span>
+          <span className="doctor-role">{doctor.role || "Doctor"}</span>
 
-          <p>
-            Kinetic Care Medical Team
-          </p>
+          <p>Kinetic Care Medical Team</p>
 
           <div className="profile-status">
             <span></span>
             Active
           </div>
-
         </div>
-
 
         {/* DETAILS */}
 
         <div className="doctor-profile-details">
-
           <div className="details-header">
-
             <div>
               <p>Personal Information</p>
 
               <h2>Profile Details</h2>
             </div>
 
-            <span className="verified-badge">
-              Verified Profile
-            </span>
-
+            <span className="verified-badge">Verified Profile</span>
           </div>
 
-
           <div className="profile-details-grid">
-
             <div className="profile-detail-card">
-
               <div className="detail-icon">
                 <FaUserMd />
               </div>
@@ -147,16 +116,11 @@ function DoctorProfile() {
               <div>
                 <span>Full Name</span>
 
-                <strong>
-                  Dr. {doctor.name || "Not Available"}
-                </strong>
+                <strong>Dr. {doctor.name || "Not Available"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card">
-
               <div className="detail-icon email-icon">
                 <FaEnvelope />
               </div>
@@ -164,16 +128,11 @@ function DoctorProfile() {
               <div>
                 <span>Email Address</span>
 
-                <strong>
-                  {doctor.email || "Not Available"}
-                </strong>
+                <strong>{doctor.email || "Not Available"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card">
-
               <div className="detail-icon phone-icon">
                 <FaPhoneAlt />
               </div>
@@ -181,16 +140,11 @@ function DoctorProfile() {
               <div>
                 <span>Phone Number</span>
 
-                <strong>
-                  {doctor.phone || "Not Available"}
-                </strong>
+                <strong>{doctor.phone || "Not Available"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card">
-
               <div className="detail-icon role-icon">
                 <FaBriefcaseMedical />
               </div>
@@ -198,16 +152,11 @@ function DoctorProfile() {
               <div>
                 <span>Role</span>
 
-                <strong>
-                  {doctor.role || "Doctor"}
-                </strong>
+                <strong>{doctor.role || "Doctor"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card full-detail-card">
-
               <div className="detail-icon shift-icon">
                 <FaClock />
               </div>
@@ -215,19 +164,12 @@ function DoctorProfile() {
               <div>
                 <span>Assigned Shift</span>
 
-                <strong>
-                  {doctor.shift || "Not Assigned"}
-                </strong>
+                <strong>{doctor.shift || "Not Assigned"}</strong>
               </div>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }

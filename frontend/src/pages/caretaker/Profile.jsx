@@ -32,7 +32,7 @@ function Profile() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setCaretaker(res.data);
@@ -45,101 +45,72 @@ function Profile() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <div className="caretaker-profile-page">
-
       {/* TOP BAR */}
 
       <div className="profile-topbar">
-
         <button
-          className="back-btn"
+          className="caretaker-back-btn"
           onClick={() => navigate("/caretaker/dashboard")}
         >
           <FaArrowLeft />
           Dashboard
         </button>
 
-        <button
-          className="profile-logout-btn"
-          onClick={logout}
-        >
+        {/* HEADER */}
+
+        <div className="profile-heading">
+          <p>Caretaker Portal</p>
+
+          <h1>My Profile</h1>
+
+          <span>View your personal and professional information</span>
+        </div>
+
+        <button className="profile-logout-btn" onClick={logout}>
           <FaSignOutAlt />
           Logout
         </button>
-
       </div>
-
-
-      {/* HEADER */}
-
-      <div className="profile-heading">
-
-        <p>Caretaker Portal</p>
-
-        <h1>My Profile</h1>
-
-        <span>
-          View your personal and professional information
-        </span>
-
-      </div>
-
 
       {/* MAIN PROFILE */}
 
       <div className="caretaker-profile-container">
-
         {/* PROFILE SUMMARY */}
 
         <div className="caretaker-profile-summary">
-
           <div className="profile-avatar-large">
             <FaUserNurse />
           </div>
 
-          <h2>
-           {caretaker.name || "CareTaker"}
-          </h2>
+          <h2>{caretaker.name || "CareTaker"}</h2>
 
           <span className="caretaker-role">
             {caretaker.role || "CareTaker"}
           </span>
 
-          <span className="caretaker-role">
-            {caretaker.gender || "Gender"}
-          </span>
-
-
+          <span className="caretaker-role">{caretaker.gender || "Gender"}</span>
         </div>
-
 
         {/* DETAILS */}
 
         <div className="caretaker-profile-details">
-
           <div className="details-header">
-
             <div>
               <p>Personal Information</p>
 
               <h2>Profile Details</h2>
             </div>
 
-            <span className="verified-badge">
-              Verified Profile
-            </span>
-
+            <span className="verified-badge">Verified Profile</span>
           </div>
 
-
           <div className="profile-details-grid">
-
             <div className="profile-detail-card">
-
               <div className="detail-icon">
                 <FaUserNurse />
               </div>
@@ -147,16 +118,11 @@ function Profile() {
               <div>
                 <span>Full Name</span>
 
-                <strong>
-                  {caretaker.name || "Not Available"}
-                </strong>
+                <strong>{caretaker.name || "Not Available"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card">
-
               <div className="detail-icon email-icon">
                 <FaEnvelope />
               </div>
@@ -164,16 +130,11 @@ function Profile() {
               <div>
                 <span>Email Address</span>
 
-                <strong>
-                  {caretaker.email || "Not Available"}
-                </strong>
+                <strong>{caretaker.email || "Not Available"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card">
-
               <div className="detail-icon phone-icon">
                 <FaPhoneAlt />
               </div>
@@ -181,16 +142,11 @@ function Profile() {
               <div>
                 <span>Phone Number</span>
 
-                <strong>
-                  {caretaker.phone || "Not Available"}
-                </strong>
+                <strong>{caretaker.phone || "Not Available"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card">
-
               <div className="detail-icon role-icon">
                 <FaBriefcaseMedical />
               </div>
@@ -198,16 +154,11 @@ function Profile() {
               <div>
                 <span>Role</span>
 
-                <strong>
-                  {caretaker.role || "CareTaker"}
-                </strong>
+                <strong>{caretaker.role || "CareTaker"}</strong>
               </div>
-
             </div>
 
-
             <div className="profile-detail-card full-detail-card">
-
               <div className="detail-icon shift-icon">
                 <FaClock />
               </div>
@@ -215,19 +166,12 @@ function Profile() {
               <div>
                 <span>Assigned Shift</span>
 
-                <strong>
-                  {caretaker.shift || "Not Assigned"}
-                </strong>
+                <strong>{caretaker.shift || "Not Assigned"}</strong>
               </div>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }

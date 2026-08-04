@@ -18,7 +18,6 @@
   font-family: "Segoe UI", sans-serif;
 }
 
-
 /* =========================
    TOP BAR
 ========================= */
@@ -31,7 +30,7 @@
 }
 
 .doctor-back-btn,
-.profile-logout-btn {
+.doctor-profile-logout-btn {
   display: flex;
   align-items: center;
 
@@ -52,7 +51,8 @@
 
 .doctor-back-btn {
   background: #e8f6f1;
-  margin-bottom: 60px;
+  margin-bottom: 80px;
+  margin-top: 20px;
   color: #18815f;
 }
 
@@ -64,21 +64,20 @@
   transform: translateX(-2px);
 }
 
-.profile-logout-btn {
+.doctor-profile-logout-btn {
   background: #ffeded;
-    margin-bottom: 60px;
-
+  margin-bottom: 80px;
+  margin-top: 20px;
   color: #d04f4f;
 }
 
-.profile-logout-btn:hover {
+.doctor-profile-logout-btn:hover {
   background: #d85555;
 
   color: white;
 
   transform: translateY(-2px);
 }
-
 
 /* =========================
    PAGE HEADING
@@ -119,7 +118,6 @@
   font-size: 13px;
 }
 
-
 /* =========================
    MAIN CONTAINER
 ========================= */
@@ -127,12 +125,10 @@
 .doctor-profile-container {
   display: grid;
 
-  grid-template-columns:
-    300px minmax(0, 1fr);
+  grid-template-columns: 300px minmax(0, 1fr);
 
   gap: 24px;
 }
-
 
 /* =========================
    PROFILE SUMMARY
@@ -148,17 +144,11 @@
   border: 1px solid #e0ebe7;
   border-radius: 24px;
 
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f5fbf8
-    );
+  background: linear-gradient(145deg, #ffffff, #f5fbf8);
 
   text-align: center;
 
-  box-shadow:
-    0 12px 32px rgba(29, 70, 57, 0.08);
+  box-shadow: 0 12px 32px rgba(29, 70, 57, 0.08);
 }
 
 .profile-avatar-large {
@@ -174,19 +164,13 @@
   border: 7px solid #eef9f5;
   border-radius: 29px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #d9f3ea,
-      #bfe9da
-    );
+  background: linear-gradient(135deg, #d9f3ea, #bfe9da);
 
   color: #18815f;
 
   font-size: 43px;
 
-  box-shadow:
-    0 12px 28px rgba(31, 157, 116, 0.17);
+  box-shadow: 0 12px 28px rgba(31, 157, 116, 0.17);
 }
 
 .doctor-profile-summary h2 {
@@ -248,10 +232,8 @@
 
   background: #25a77c;
 
-  box-shadow:
-    0 0 0 4px rgba(37, 167, 124, 0.12);
+  box-shadow: 0 0 0 4px rgba(37, 167, 124, 0.12);
 }
-
 
 /* =========================
    DETAILS SECTION
@@ -265,8 +247,7 @@
 
   background: #ffffff;
 
-  box-shadow:
-    0 12px 32px rgba(29, 70, 57, 0.08);
+  box-shadow: 0 12px 32px rgba(29, 70, 57, 0.08);
 }
 
 .details-header {
@@ -315,7 +296,6 @@
   font-weight: 800;
 }
 
-
 /* =========================
    DETAILS GRID
 ========================= */
@@ -323,8 +303,7 @@
 .profile-details-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 15px;
 }
@@ -428,13 +407,11 @@
   white-space: nowrap;
 }
 
-
 /* =========================
    RESPONSIVE
 ========================= */
 
 @media (max-width: 850px) {
-
   .doctor-profile-container {
     grid-template-columns: 1fr;
   }
@@ -442,11 +419,9 @@
   .doctor-profile-summary {
     padding: 28px;
   }
-
 }
 
 @media (max-width: 600px) {
-
   .doctor-profile-page {
     padding: 18px;
   }
@@ -471,5 +446,4 @@
     align-items: flex-start;
     flex-direction: column;
   }
-
 }

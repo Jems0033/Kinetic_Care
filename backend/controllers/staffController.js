@@ -2,26 +2,17 @@ const Room = require("../models/Room");
 const Staff = require("../models/Staff");
 const User = require("../models/User");
 const Resident = require("../models/Resident");
-const MedicineLog = require("../models/MedicineLog");
 const bcrypt = require("bcrypt");
 const generatePassword = require("../utils/generatePassword");
 const sendMail = require("../utils/sendMail");
+
 // Add Staff
 const addStaff = async (req, res) => {
   let createdUser = null;
 
   try {
-
-    const {
-      name,
-      email,
-      phone,
-      gender,
-      role,
-      shift,
-      salary,
-      address,
-    } = req.body;
+    const { name, email, phone, gender, role, shift, salary, address } =
+      req.body;
 
     if (!name || !email || !role || !shift || !gender) {
       return res.status(400).json({
@@ -51,15 +42,9 @@ const addStaff = async (req, res) => {
     const generatedPassword = generatePassword();
 
     // Hash Password
-    const hashedPassword = await bcrypt.hash(
-      generatedPassword,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
-    const loginRole =
-      role === "Doctor"
-        ? "doctor"
-        : "staff";
+    const loginRole = role === "Doctor" ? "doctor" : "staff";
 
     // Create Login User
     createdUser = await User.create({
@@ -85,7 +70,7 @@ const addStaff = async (req, res) => {
 
     const staffName = name;
 
-const staffEmail = email.toLowerCase();
+    const staffEmail = email.toLowerCase();
 
     // Send Credentials Mail
     const emailHtml = `
@@ -410,20 +395,13 @@ const staffEmail = email.toLowerCase();
     `;
 
     try {
-
       await sendMail({
         email: email.toLowerCase(),
         subject: "Kinetic Care Login Credentials",
         html: emailHtml,
       });
-
     } catch (mailError) {
-
-      console.log(
-        "Mail Error :",
-        mailError.message
-      );
-
+      console.log("Mail Error :", mailError.message);
     }
 
     return res.status(201).json({
@@ -431,9 +409,7 @@ const staffEmail = email.toLowerCase();
         "Staff added successfully. Login credentials have been sent to the registered email.",
       staff,
     });
-
   } catch (error) {
-
     if (createdUser) {
       await User.findByIdAndDelete(createdUser._id);
     }
@@ -441,92 +417,67 @@ const staffEmail = email.toLowerCase();
     return res.status(500).json({
       message: error.message,
     });
-
   }
 };
 
 // Get All Staff
 const getStaff = async (req, res) => {
-
   try {
-
-    const staff = await Staff.find();
+    const staff = await Staff.find().sort({ createdAt: -1 });
 
     res.status(200).json(staff);
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
-
 };
 
 // Get Staff By Id
 const getStaffById = async (req, res) => {
-
   try {
-
     const staff = await Staff.findById(req.params.id);
 
     if (!staff) {
-
       return res.status(404).json({
         message: "Staff Not Found",
       });
-
     }
 
     res.status(200).json(staff);
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
-
 };
 
 // Update Staff
 const updateStaff = async (req, res) => {
-
   try {
-
-    const staff = await Staff.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const staff = await Staff.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
 
     res.status(200).json({
       message: "Staff Updated Successfully",
       staff,
     });
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
-
 };
 
 // Delete Staff
 const deleteStaff = async (req, res) => {
-
   try {
-
     const staff = await Staff.findById(req.params.id);
 
     if (!staff) {
       return res.status(404).json({
-        message: "Staff Not Found"
+        message: "Staff Not Found",
       });
     }
 
@@ -537,45 +488,34 @@ const deleteStaff = async (req, res) => {
     await Staff.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
-      message: "Staff Deleted Successfully"
+      message: "Staff Deleted Successfully",
     });
-
   } catch (error) {
-
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
-
   }
-
 };
 
 // ==========================
 // Get All Doctors
 // ==========================
 const getDoctors = async (req, res) => {
-
   try {
-
     const doctors = await Staff.find({
-      role: "Doctor"
+      role: "Doctor",
     });
 
     res.status(200).json(doctors);
-
   } catch (error) {
-
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
-
   }
-
 };
 
 const getStaffDashboard = async (req, res) => {
   try {
-
     const staff = await Staff.findOne({
       userId: req.user.id,
     });
@@ -593,9 +533,8 @@ const getStaffDashboard = async (req, res) => {
       role: staff.role,
       shift: staff.shift,
       totalResidents,
-      assignedResidents: totalResidents
+      assignedResidents: totalResidents,
     });
-
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -603,10 +542,8 @@ const getStaffDashboard = async (req, res) => {
   }
 };
 
-
 const getStaffResidents = async (req, res) => {
   try {
-
     const residents = await Resident.find()
       .populate("room", "roomNumber")
       .sort({ createdAt: -1 });
@@ -621,20 +558,19 @@ const getStaffResidents = async (req, res) => {
     }));
 
     res.json(data);
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
 
 const getStaffResidentById = async (req, res) => {
   try {
-    const resident = await Resident.findById(req.params.id)
-      .populate("room", "roomNumber roomType");
+    const resident = await Resident.findById(req.params.id).populate(
+      "room",
+      "roomNumber roomType",
+    );
 
     if (!resident) {
       return res.status(404).json({
@@ -652,31 +588,6 @@ const getStaffResidentById = async (req, res) => {
   }
 };
 
-
-const getResidentHistory = async (req, res) => {
-  try {
-    const vitals = await Vital.find({
-      resident: req.params.id,
-    })
-      .populate("staff", "name")
-      .sort({ createdAt: -1 });
-
-    const medicines = await MedicineLog.find({
-      resident: req.params.id,
-    })
-      .populate("staff", "name")
-      .sort({ createdAt: -1 });
-
-    res.status(200).json({
-      vitals,
-      medicines,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
 module.exports = {
   addStaff,
   getStaff,
@@ -687,5 +598,4 @@ module.exports = {
   getStaffDashboard,
   getStaffResidents,
   getStaffResidentById,
-  getResidentHistory,
 };

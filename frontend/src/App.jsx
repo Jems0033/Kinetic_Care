@@ -16,82 +16,196 @@ import DoctorProfile from "./pages/doctor/DoctorProfile";
 import MedicalHistory from "./pages/family/MedicalHistory";
 import FamilyDashboard from "./pages/family/FamilyDashboard";
 import BookVisit from "./pages/family/BookVisit";
+import FamilyProfile from "./pages/family/FamilyProfile";
 
 import Home from "./pages/Home";
 import Donate from "./pages/Donate";
 
 import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import ProtectedRoute from "./pages/auth/ProtectedRoute";
 
 import CaretakerDashboard from "./pages/caretaker/CaretakerDashboard";
 import ResidentCare from "./pages/caretaker/ResidentCare";
 import Profile from "./pages/caretaker/Profile";
-import FamilyProfile from "./pages/family/FamilyProfile";
-
-
 
 function App() {
   return (
     <Routes>
+      {/* Public Routes */}
       <Route path="/" element={<Home />} />
-
       <Route path="/login" element={<Login />} />
-
-      <Route path="/dashboard" element={<Dashboard />} />
-
-      <Route path="/residents" element={<Residents />} />
-
-      <Route path="/staff" element={<Staff />} />
-
-      <Route path="/rooms" element={<Room />} />
-
-      <Route path="/donors" element={<Donor />} />
-
-      <Route path="/medical" element={<Medical />} />
-
-      <Route path="/visitors" element={<Visitor />} />
-
-      <Route path="/events" element={<Event />} />
-
-      <Route path="/family-dashboard" element={<FamilyDashboard />} />
-
-      <Route path="/family/book-visit" element={<BookVisit />} />
-
-<Route
-  path="/family/medical-history/:residentId"
-  element={<MedicalHistory />}
-/>
-
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/donate" element={<Donate />} />
 
-      <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+      {/* Admin */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/doctor/patient/:id" element={<PatientDetails />} />
+      <Route
+        path="/residents"
+        element={
+          <ProtectedRoute>
+            <Residents />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/staff"
+        element={
+          <ProtectedRoute>
+            <Staff />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/rooms"
+        element={
+          <ProtectedRoute>
+            <Room />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/donors"
+        element={
+          <ProtectedRoute>
+            <Donor />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/medical"
+        element={
+          <ProtectedRoute>
+            <Medical />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/visitors"
+        element={
+          <ProtectedRoute>
+            <Visitor />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/events"
+        element={
+          <ProtectedRoute>
+            <Event />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Family */}
+
+      <Route
+        path="/family-dashboard"
+        element={
+          <ProtectedRoute>
+            <FamilyDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/family/book-visit"
+        element={
+          <ProtectedRoute>
+            <BookVisit />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/family/medical-history/:residentId"
+        element={
+          <ProtectedRoute>
+            <MedicalHistory />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/family/profile"
+        element={
+          <ProtectedRoute>
+            <FamilyProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Doctor */}
+
+      <Route
+        path="/doctor/dashboard"
+        element={
+          <ProtectedRoute>
+            <DoctorDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/doctor/patient/:id"
+        element={
+          <ProtectedRoute>
+            <PatientDetails />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/doctor/profile"
-        element={<DoctorProfile />}
+        element={
+          <ProtectedRoute>
+            <DoctorProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Caretaker */}
+
+      <Route
+        path="/caretaker/dashboard"
+        element={
+          <ProtectedRoute>
+            <CaretakerDashboard />
+          </ProtectedRoute>
+        }
       />
 
       <Route
-        path="/forgot-password"
-        element={<ForgotPassword />}
+        path="/caretaker/resident/:id"
+        element={
+          <ProtectedRoute>
+            <ResidentCare />
+          </ProtectedRoute>
+        }
       />
 
       <Route
-  path="/caretaker/dashboard"
-  element={<CaretakerDashboard />}
-/>
-
-<Route
-  path="/caretaker/resident/:id"
-  element={<ResidentCare />}
-/>
-
-    <Route path="/caretaker/profile" element={<Profile />} />
-    <Route path="/family/profile" element={<FamilyProfile />} />
-
-
+        path="/caretaker/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

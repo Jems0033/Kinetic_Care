@@ -18,7 +18,6 @@
   font-family: "Segoe UI", sans-serif;
 }
 
-
 /* =========================
    TOPBAR
 ========================= */
@@ -109,8 +108,7 @@
 .medical-history-item {
   display: grid;
 
-  grid-template-columns:
-    48px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr);
 }
 
 .history-timeline {
@@ -148,7 +146,6 @@
   background: #d8e8e2;
 }
 
-
 /* =========================
    RECORD CARD
 ========================= */
@@ -163,8 +160,7 @@
 
   background: white;
 
-  box-shadow:
-    0 9px 26px rgba(30, 70, 58, 0.06);
+  box-shadow: 0 9px 26px rgba(30, 70, 58, 0.06);
 
   transition: 0.2s;
 }
@@ -174,10 +170,8 @@
 
   transform: translateY(-2px);
 
-  box-shadow:
-    0 14px 30px rgba(30, 70, 58, 0.1);
+  box-shadow: 0 14px 30px rgba(30, 70, 58, 0.1);
 }
-
 
 /* CARD HEADER */
 
@@ -201,7 +195,7 @@
   font-size: 8px;
   font-weight: 700;
 
-  letter-spacing: .8px;
+  letter-spacing: 0.8px;
 
   text-transform: uppercase;
 }
@@ -232,7 +226,6 @@
   font-weight: 700;
 }
 
-
 /* =========================
    DETAILS
 ========================= */
@@ -240,8 +233,7 @@
 .history-details-grid {
   display: grid;
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 11px;
 
@@ -326,7 +318,6 @@
   white-space: nowrap;
 }
 
-
 /* =========================
    EMPTY
 ========================= */
@@ -379,13 +370,11 @@
   font-size: 10px;
 }
 
-
 /* =========================
    RESPONSIVE
 ========================= */
 
 @media (max-width: 650px) {
-
   .medical-history-page {
     padding: 18px;
   }
@@ -416,5 +405,4 @@
 
     font-size: 11px;
   }
-
 }

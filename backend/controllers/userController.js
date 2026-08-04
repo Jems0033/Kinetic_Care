@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       {
         expiresIn: "7d",
-      }
+      },
     );
 
     return res.status(200).json({
@@ -59,7 +59,6 @@ const loginUser = async (req, res) => {
     });
   }
 };
-
 
 // Register User
 const registerUser = async (req, res) => {
@@ -111,19 +110,15 @@ const registerUser = async (req, res) => {
 // Get All Users
 const getUsers = async (req, res) => {
   try {
-
     const users = await User.find();
 
     res.status(200).json({
-      users
+      users,
     });
-
   } catch (error) {
-
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
-
   }
 };
 
@@ -147,9 +142,7 @@ const sendResetOTP = async (req, res) => {
     }
 
     // 6 digit OTP
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.resetOTP = otp;
     user.resetOTPExpire = Date.now() + 5 * 60 * 1000; // 5 min
@@ -157,11 +150,11 @@ const sendResetOTP = async (req, res) => {
     await user.save();
 
     await transporter.sendMail({
-  from: `"Kinetic Care" <${process.env.EMAIL_USER}>`,
-  to: email,
-  subject: "Reset Your Kinetic Care Password",
+      from: `"Kinetic Care" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Reset Your Kinetic Care Password",
 
-  html: `
+      html: `
   <!DOCTYPE html>
   <html>
   <head>
@@ -395,19 +388,16 @@ const sendResetOTP = async (req, res) => {
 
   </body>
   </html>
-  `
-});
+  `,
+    });
 
     res.status(200).json({
       message: "OTP sent successfully",
     });
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
 
@@ -444,19 +434,15 @@ const verifyResetOTP = async (req, res) => {
     res.status(200).json({
       message: "OTP Verified Successfully",
     });
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
 
 const resetPassword = async (req, res) => {
   try {
-
     const { email, otp, newPassword } = req.body;
 
     const user = await User.findOne({ email });
@@ -485,10 +471,7 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     user.password = hashedPassword;
 
@@ -500,13 +483,10 @@ const resetPassword = async (req, res) => {
     res.status(200).json({
       message: "Password reset successfully",
     });
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
 

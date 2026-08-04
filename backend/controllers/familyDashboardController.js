@@ -3,10 +3,8 @@ const Resident = require("../models/Resident");
 const MedicalRecord = require("../models/MedicalRecord");
 const Event = require("../models/Event");
 
-
 const getFamilyDashboard = async (req, res) => {
   try {
-    // Family ના બધા residents
     const familyMembers = await FamilyMember.find({
       userId: req.user.id,
     });
@@ -17,9 +15,7 @@ const getFamilyDashboard = async (req, res) => {
       });
     }
 
-    const residentIds = familyMembers.map(
-      (member) => member.residentId
-    );
+    const residentIds = familyMembers.map((member) => member.residentId);
 
     // Residents
     const residents = await Resident.find({
@@ -39,12 +35,10 @@ const getFamilyDashboard = async (req, res) => {
           name: resident.name,
           age: resident.age,
           gender: resident.gender,
-          room: resident.room
-            ? resident.room.roomNumber
-            : "-",
+          room: resident.room ? resident.room.roomNumber : "-",
           latestMedical,
         };
-      })
+      }),
     );
 
     const medicalCount = await MedicalRecord.countDocuments({
@@ -52,25 +46,25 @@ const getFamilyDashboard = async (req, res) => {
     });
 
     // Upcoming Events
-   const today = new Date();
-today.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-// Total upcoming event count
-const eventCount = await Event.countDocuments({
-  date: {
-    $gte: today,
-  },
-});
+    // Total upcoming event count
+    const eventCount = await Event.countDocuments({
+      date: {
+        $gte: today,
+      },
+    });
 
-// Next 2 upcoming events
-const upcomingEvents = await Event.find({
-  date: {
-    $gte: today,
-  },
-})
-  .sort({ date: 1 })
-  .limit(2)
-  .select("title date location");
+    // Next 2 upcoming events
+    const upcomingEvents = await Event.find({
+      date: {
+        $gte: today,
+      },
+    })
+      .sort({ date: 1 })
+      .limit(2)
+      .select("title date location");
 
     res.status(200).json({
       residents: residentData,
@@ -78,7 +72,6 @@ const upcomingEvents = await Event.find({
       eventCount,
       upcomingEvents,
     });
-
   } catch (error) {
     console.log(error);
 
@@ -87,7 +80,6 @@ const upcomingEvents = await Event.find({
     });
   }
 };
-
 
 const getProfile = async (req, res) => {
   try {
@@ -102,13 +94,13 @@ const getProfile = async (req, res) => {
     }
 
     res.json({
-  _id: family._id,
-  name: family.userId.name,
-  email: family.userId.email,
-  phone: family.userId.phone,
-  relation: family.relation,
-  address: family.address,
-});
+      _id: family._id,
+      name: family.userId.name,
+      email: family.userId.email,
+      phone: family.userId.phone,
+      relation: family.relation,
+      address: family.address,
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message,

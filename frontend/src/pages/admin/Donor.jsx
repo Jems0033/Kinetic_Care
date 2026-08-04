@@ -23,14 +23,11 @@ function Donor() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        "http://localhost:5000/api/donors",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get("http://localhost:5000/api/donors", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setDonors(res.data);
     } catch (error) {
@@ -105,9 +102,7 @@ function Donor() {
           <div>
             <h1>Donors</h1>
 
-            <span>
-              View donor information and donation history
-            </span>
+            <span>View donor information and donation history</span>
           </div>
         </div>
 
@@ -133,9 +128,7 @@ function Donor() {
         <div className="donor-grid">
           {filteredDonors.length > 0 ? (
             filteredDonors.map((donor) => {
-              const donationDetails = getDonationDetails(
-                donor.donationType
-              );
+              const donationDetails = getDonationDetails(donor.donationType);
 
               return (
                 <div
@@ -145,9 +138,7 @@ function Donor() {
                   <div className="donor-card-top">
                     <div className="donor-profile">
                       <div className="donor-avatar">
-                        {donor.name
-                          ?.charAt(0)
-                          ?.toUpperCase() || "D"}
+                        {donor.name?.charAt(0)?.toUpperCase() || "D"}
                       </div>
 
                       <div>
@@ -162,7 +153,6 @@ function Donor() {
                     <span
                       className={`donation-type-badge ${donationDetails.typeClass}`}
                     >
-
                       {donor.donationType}
                     </span>
                   </div>
@@ -179,9 +169,7 @@ function Donor() {
 
                       <h2>
                         {donationDetails.valuePrefix}
-                        {Number(donor.amount || 0).toLocaleString(
-                          "en-IN"
-                        )}
+                        {Number(donor.amount || 0).toLocaleString("en-IN")}
                       </h2>
                     </div>
                   </div>
@@ -190,9 +178,7 @@ function Donor() {
                     <div>
                       <span>Phone</span>
 
-                      <strong>
-                        {donor.phone || "-"}
-                      </strong>
+                      <strong>{donor.phone || "-"}</strong>
                     </div>
 
                     <div>
@@ -200,13 +186,14 @@ function Donor() {
 
                       <strong>
                         {donor.donationDate
-                          ? new Date(
-                              donor.donationDate
-                            ).toLocaleDateString("en-IN", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            })
+                          ? new Date(donor.donationDate).toLocaleDateString(
+                              "en-IN",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
                           : "-"}
                       </strong>
                     </div>
@@ -215,25 +202,18 @@ function Donor() {
                   <div className="donor-address-box">
                     <span>Address</span>
 
-                    <p>
-                      {donor.address ||
-                        "Address not available"}
-                    </p>
+                    <p>{donor.address || "Address not available"}</p>
                   </div>
                 </div>
               );
             })
           ) : (
             <div className="donor-empty">
-              <div className="donor-empty-icon">
-                🤝
-              </div>
+              <div className="donor-empty-icon">🤝</div>
 
               <h3>No Donors Found</h3>
 
-              <p>
-                Donor records will appear here.
-              </p>
+              <p>Donor records will appear here.</p>
             </div>
           )}
         </div>

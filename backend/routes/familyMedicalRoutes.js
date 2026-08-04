@@ -4,13 +4,7 @@ const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
 
-const {
-  getMedicalHistory,
-} = require("../controllers/familyMedicalController");
+const { getMedicalHistory } = require("../controllers/familyMedicalController");
 
-router.get(
-  "/medical-history/:residentId",
-  protect,
-  getMedicalHistory
-);
+router.get("/medical-history/:residentId", protect, getMedicalHistory);
 module.exports = router;

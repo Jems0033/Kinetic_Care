@@ -1,48 +1,46 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
-{
-    name:{
-        type:String,
-        required:true
+  {
+    name: {
+      type: String,
+      required: true,
     },
 
-    email:{
-        type:String,
-        required:true,
-        unique:true
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
 
-    password:{
-        type:String,
-        required:true
+    password: {
+      type: String,
+      required: true,
     },
 
-    role:{
-        type:String,
-        enum:["admin","staff","family","doctor"],
-        required:true
+    role: {
+      type: String,
+      enum: ["admin", "staff", "family", "doctor"],
+      required: true,
     },
 
-    phone:{
-        type:String
+    phone: {
+      type: String,
     },
 
-    // ===== Forgot Password OTP =====
-
-    resetOTP:{
-        type:String,
-        default:null
+    resetOTP: {
+      type: String,
+      default: null,
     },
 
-    resetOTPExpire:{
-        type:Date,
-        default:null
-    }
-
-},
-{
-    timestamps:true
-});
+    resetOTPExpire: {
+      type: Date,
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
 
 module.exports = mongoose.model("User", userSchema);

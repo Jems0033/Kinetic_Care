@@ -4,10 +4,7 @@ const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
 
-const {
-    addDonor,
-    getDonors
-} = require("../controllers/donorController");
+const { addDonor, getDonors } = require("../controllers/donorController");
 
 // Public Route (No Login Required)
 router.post("/", addDonor);

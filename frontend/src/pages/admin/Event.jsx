@@ -16,39 +16,42 @@ function Event() {
   const location = useLocation();
 
   const [alertBox, setAlertBox] = useState({
-  show: false,
-  message: "",
-  type: "",
-});
+    show: false,
+    message: "",
+    type: "",
+  });
 
-const [deleteConfirm, setDeleteConfirm] = useState({
-  show: false,
-  eventId: null,
-});
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    show: false,
+    eventId: null,
+  });
 
-const getErrorMessage = (error) => {
-  const msg = error.response?.data?.message || "";
+  const getErrorMessage = (error) => {
+    const msg = error.response?.data?.message || "";
 
-  switch (msg) {
-    case "Event Not Found":
-      return "Event not found.";
+    switch (msg) {
+      case "Event Not Found":
+        return "Event not found.";
 
-    case "Unable to Delete Event":
-      return "Unable to delete the event.";
+      case "Unable to Delete Event":
+        return "Unable to delete the event.";
 
-    case "Event Already Exists":
-      return "This event already exists.";
+      case "Event Already Exists":
+        return "This event already exists.";
 
-    default:
-      return "Something went wrong. Please try again.";
-  }
-};
+      case "Past date and time are not allowed.":
+        return "Past date and time are not allowed.";
 
-useEffect(() => {
-  if (location.state?.openModal === "addEvent") {
-    setShowModal(true);
-  }
-}, [location.state]);
+      default:
+        return "Something went wrong. Please try again.";
+    }
+  };
+
+  useEffect(() => {
+    if (location.state?.openModal === "addEvent") {
+      setShowModal(true);
+    }
+  }, [location.state]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -67,54 +70,54 @@ useEffect(() => {
   }, []);
 
   const showAlert = (message, type = "success") => {
-  setAlertBox({
-    show: true,
-    message,
-    type,
-  });
-
-  setTimeout(() => {
     setAlertBox({
-      show: false,
-      message: "",
-      type: "",
+      show: true,
+      message,
+      type,
     });
-  }, 3000);
-};
 
-const validateEvent = () => {
-  if (!formData.title.trim()) {
-    return "Event title is required.";
-  }
+    setTimeout(() => {
+      setAlertBox({
+        show: false,
+        message: "",
+        type: "",
+      });
+    }, 3000);
+  };
 
-  if (!formData.description.trim()) {
-    return "Event description is required.";
-  }
+  const validateEvent = () => {
+    if (!formData.title.trim()) {
+      return "Event title is required.";
+    }
 
-  if (!formData.date) {
-    return "Event date is required.";
-  }
+    if (!formData.description.trim()) {
+      return "Event description is required.";
+    }
 
-  if (!formData.time) {
-    return "Event time is required.";
-  }
+    if (!formData.date) {
+      return "Event date is required.";
+    }
 
-  if (!formData.location.trim()) {
-    return "Event location is required.";
-  }
+    if (!formData.time) {
+      return "Event time is required.";
+    }
 
-  const selectedDate = new Date(formData.date);
-  const today = new Date();
+    if (!formData.location.trim()) {
+      return "Event location is required.";
+    }
 
-  today.setHours(0, 0, 0, 0);
-  selectedDate.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(formData.date);
+    const today = new Date();
 
-  if (!editId && selectedDate < today) {
-    return "Event date cannot be in the past.";
-  }
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
 
-  return null;
-};
+    if (!editId && selectedDate < today) {
+      return "Event date cannot be in the past.";
+    }
+
+    return null;
+  };
   const getEvents = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -142,36 +145,31 @@ const validateEvent = () => {
     });
   };
   const addEvent = async () => {
-  try {
-    const validationError = validateEvent();
+    try {
+      const validationError = validateEvent();
 
-    if (validationError) {
-      return showAlert(validationError, "error");
-    }
+      if (validationError) {
+        return showAlert(validationError, "error");
+      }
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    await axios.post(
-      "http://localhost:5000/api/events",
-      formData,
-      {
+      await axios.post("http://localhost:5000/api/events", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
+      });
 
-    closeModal();
-    await getEvents();
+      closeModal();
+      await getEvents();
 
-    showAlert("Event added successfully.", "success");
+      showAlert("Event added successfully.", "success");
+    } catch (error) {
+      console.log(error.response?.data);
 
-  } catch (error) {
-    console.log(error.response?.data);
-
-    showAlert(getErrorMessage(error), "error");
-  }
-};
+      showAlert(getErrorMessage(error), "error");
+    }
+  };
   // ===========================
   // Edit Event
   // ===========================
@@ -199,73 +197,65 @@ const validateEvent = () => {
   // ===========================
 
   const updateEvent = async () => {
-  try {
-    const validationError = validateEvent();
+    try {
+      const validationError = validateEvent();
 
-    if (validationError) {
-      return showAlert(validationError, "error");
-    }
+      if (validationError) {
+        return showAlert(validationError, "error");
+      }
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    await axios.put(
-      `http://localhost:5000/api/events/${editId}`,
-      formData,
-      {
+      await axios.put(`http://localhost:5000/api/events/${editId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
+      });
 
-    closeModal();
-    await getEvents();
+      closeModal();
+      await getEvents();
 
-    showAlert("Event updated successfully.", "success");
+      showAlert("Event updated successfully.", "success");
+    } catch (error) {
+      console.log(error.response?.data);
 
-  } catch (error) {
-    console.log(error.response?.data);
-
-    showAlert(getErrorMessage(error), "error");
-  }
-};
+      showAlert(getErrorMessage(error), "error");
+    }
+  };
 
   // ===========================
   // Delete Event
   // ===========================
 
   const deleteEvent = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    await axios.delete(
-      `http://localhost:5000/api/events/${id}`,
-      {
+      await axios.delete(`http://localhost:5000/api/events/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
+      });
 
-    setDeleteConfirm({
-      show: false,
-      eventId: null,
-    });
+      setDeleteConfirm({
+        show: false,
+        eventId: null,
+      });
 
-    await getEvents();
+      await getEvents();
 
-    showAlert("Event deleted successfully.", "success");
-  } catch (error) {
-    console.log(error.response?.data);
+      showAlert("Event deleted successfully.", "success");
+    } catch (error) {
+      console.log(error.response?.data);
 
-    setDeleteConfirm({
-      show: false,
-      eventId: null,
-    });
+      setDeleteConfirm({
+        show: false,
+        eventId: null,
+      });
 
-    showAlert(getErrorMessage(error), "error");
-  }
-};
+      showAlert(getErrorMessage(error), "error");
+    }
+  };
   // ===========================
   // Close Modal
   // ===========================
@@ -287,11 +277,15 @@ const validateEvent = () => {
       location: "",
     });
   };
+  const mindate = new Date().toISOString().split("T")[0];
+  const currentTime = new Date().toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   // ===========================
   // Search
   // ===========================
-
   const filteredEvents = events.filter(
     (event) =>
       event.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -299,441 +293,340 @@ const validateEvent = () => {
   );
   return (
     <>
-    {alertBox.show && (
-  <div className={`order-banner ${alertBox.type} show`}>
-    <div className="order-banner-icon">
-      {alertBox.type === "success" ? "✔" : "✖"}
-    </div>
+      {alertBox.show && (
+        <div className={`order-banner ${alertBox.type} show`}>
+          <div className="order-banner-icon">
+            {alertBox.type === "success" ? "✔" : "✖"}
+          </div>
 
-    <div>
-      <div className="order-banner-title">
-        {alertBox.type === "success" ? "Success" : "Error"}
-      </div>
+          <div>
+            <div className="order-banner-title">
+              {alertBox.type === "success" ? "Success" : "Error"}
+            </div>
 
-      <div className="order-banner-detail">
-        {alertBox.message}
-      </div>
-    </div>
+            <div className="order-banner-detail">{alertBox.message}</div>
+          </div>
 
-    <button
-      className="order-banner-close"
-      onClick={() =>
-        setAlertBox({
-          show: false,
-          message: "",
-          type: "",
-        })
-      }
-    >
-      ×
-    </button>
-  </div>
-)}
+          <button
+            className="order-banner-close"
+            onClick={() =>
+              setAlertBox({
+                show: false,
+                message: "",
+                type: "",
+              })
+            }
+          >
+            ×
+          </button>
+        </div>
+      )}
       <div className="event-page">
         <Sidebar />
 
         <div className="event-content">
           <div className="event-header">
+            <div>
+              <h1>Events</h1>
 
-  <div>
-
-    <h1>Events</h1>
-
-    <span>
-      Manage upcoming activities, celebrations and community events
-    </span>
-  </div>
-
-  <button
-    onClick={() => {
-      closeModal();
-      setShowModal(true);
-    }}
-  >
-    + Add Event
-  </button>
-
-</div>
-
-<div className="event-search-box">
-
-  <input
-    type="text"
-    placeholder="Search resident by name..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
-
-  {search && (
-    <button
-      className="search-clear-btn"
-      onClick={() => setSearch("")}
-      type="button"
-    >
-      ✕
-    </button>
-  )}
-
-</div>
-          <div className="event-grid">
-
-  {filteredEvents.length === 0 ? (
-
-    <div className="event-empty">
-
-      <div className="event-empty-icon">
-        📅
-      </div>
-
-      <h3>No Events Found</h3>
-
-      <p>
-        New events will appear here.
-      </p>
-
-    </div>
-
-  ) : (
-
-    filteredEvents.map((event) => {
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const eventDate = new Date(event.date);
-      eventDate.setHours(0, 0, 0, 0);
-
-      const isCompleted = eventDate < today;
-
-      const date = new Date(event.date);
-
-      const day = date.toLocaleDateString("en-IN", {
-        day: "2-digit",
-      });
-
-      const month = date
-        .toLocaleDateString("en-IN", {
-          month: "short",
-        })
-        .toUpperCase();
-
-      const year = date.getFullYear();
-
-      return (
-
-        <div
-          className={`event-card ${
-            isCompleted ? "completed-event-card" : ""
-          }`}
-          key={event._id}
-        >
-
-          <div className="event-card-top">
-
-            <div className="event-date-box">
-
-              <span>{month}</span>
-
-              <h2>{day}</h2>
-
-              <small>{year}</small>
-
+              <span>
+                Manage upcoming activities, celebrations and community events
+              </span>
             </div>
 
-            <span
-              className={
-                isCompleted
-                  ? "event-status completed-event"
-                  : "event-status upcoming-event"
-              }
+            <button
+              onClick={() => {
+                closeModal();
+                setShowModal(true);
+              }}
             >
-              {isCompleted
-                ? "Completed"
-                : "Upcoming"}
-            </span>
-
+              + Add Event
+            </button>
           </div>
 
+          <div className="event-search-box">
+            <input
+              type="text"
+              placeholder="Search resident by name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-          <div className="event-card-content">
-
-            <h3>{event.title}</h3>
-
-            <p>
-              {event.description ||
-                "No description available"}
-            </p>
-
-          </div>
-
-
-          <div className="event-detail-box">
-
-            <div className="event-detail-item">
-
-              <div className="event-detail-icon">
-                🕒
-              </div>
-
-              <div>
-                <span>Time</span>
-                <strong>{event.time}</strong>
-              </div>
-
-            </div>
-
-
-            <div className="event-detail-item">
-
-              <div className="event-detail-icon location-icon">
-                📍
-              </div>
-
-              <div>
-                <span>Location</span>
-
-                <strong>
-                  {event.location}
-                </strong>
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div className="event-card-actions">
-
-            {isCompleted ? (
-
-              <div className="event-completed-message">
-                ✓ Event Completed
-              </div>
-
-            ) : (
-
-              <>
-                <button
-                  className="event-edit-btn"
-                  onClick={() =>
-                    editEvent(event)
-                  }
-                >
-                  Edit Event
-                </button>
-
-                <button
-                  className="event-delete-btn"
-                  onClick={() =>
-  setDeleteConfirm({
-    show: true,
-    eventId: event._id,
-  })
-}
-                >
-                  Delete
-                </button>
-              </>
-
+            {search && (
+              <button
+                className="search-clear-btn"
+                onClick={() => setSearch("")}
+                type="button"
+              >
+                ✕
+              </button>
             )}
-
           </div>
+          <div className="event-grid">
+            {filteredEvents.length === 0 ? (
+              <div className="event-empty">
+                <div className="event-empty-icon">📅</div>
 
-        </div>
+                <h3>No Events Found</h3>
 
-      );
+                <p>New events will appear here.</p>
+              </div>
+            ) : (
+              filteredEvents.map((event) => {
+                const eventDateTime = new Date(
+                  `${event.date.split("T")[0]}T${event.time}`,
+                );
 
-    })
+                const isCompleted = eventDateTime < new Date();
 
-  )}
+                const date = new Date(event.date);
 
-</div>
+                const day = date.toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                });
+
+                const month = date
+                  .toLocaleDateString("en-IN", {
+                    month: "short",
+                  })
+                  .toUpperCase();
+
+                const year = date.getFullYear();
+
+                return (
+                  <div
+                    className={`event-card ${
+                      isCompleted ? "completed-event-card" : ""
+                    }`}
+                    key={event._id}
+                  >
+                    <div className="event-card-top">
+                      <div className="event-date-box">
+                        <span>{month}</span>
+
+                        <h2>{day}</h2>
+
+                        <small>{year}</small>
+                      </div>
+
+                      <span
+                        className={
+                          isCompleted
+                            ? "event-status completed-event"
+                            : "event-status upcoming-event"
+                        }
+                      >
+                        {isCompleted ? "Completed" : "Upcoming"}
+                      </span>
+                    </div>
+
+                    <div className="event-card-content">
+                      <h3>{event.title}</h3>
+
+                      <p>{event.description || "No description available"}</p>
+                    </div>
+
+                    <div className="event-detail-box">
+                      <div className="event-detail-item">
+                        <div className="event-detail-icon">🕒</div>
+
+                        <div>
+                          <span>Time</span>
+                          <strong>
+                            {new Date(
+                              `1970-01-01T${event.time}`,
+                            ).toLocaleTimeString("en-IN", {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="event-detail-item">
+                        <div className="event-detail-icon location-icon">
+                          📍
+                        </div>
+
+                        <div>
+                          <span>Location</span>
+
+                          <strong>{event.location}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="event-card-actions">
+                      {isCompleted ? (
+                        <div className="event-completed-message">
+                          ✓ Event Completed
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            className="event-edit-btn"
+                            onClick={() => editEvent(event)}
+                          >
+                            Edit Event
+                          </button>
+
+                          <button
+                            className="event-delete-btn"
+                            onClick={() =>
+                              setDeleteConfirm({
+                                show: true,
+                                eventId: event._id,
+                              })
+                            }
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
       {deleteConfirm.show && (
-  <div className="delete-confirm-overlay">
-    <div className="delete-confirm-box">
-      <div className="delete-confirm-icon">!</div>
+        <div className="delete-confirm-overlay">
+          <div className="delete-confirm-box">
+            <div className="delete-confirm-icon">!</div>
 
-      <h2>Delete Event?</h2>
+            <h2>Delete Event?</h2>
 
-      <p>
-        Are you sure you want to delete this event?
-        This action cannot be undone.
-      </p>
+            <p>
+              Are you sure you want to delete this event? This action cannot be
+              undone.
+            </p>
 
-      <div className="delete-confirm-actions">
-        <button
-          className="delete-cancel-btn"
-          onClick={() =>
-            setDeleteConfirm({
-              show: false,
-              eventId: null,
-            })
-          }
-        >
-          Cancel
-        </button>
+            <div className="delete-confirm-actions">
+              <button
+                className="delete-cancel-btn"
+                onClick={() =>
+                  setDeleteConfirm({
+                    show: false,
+                    eventId: null,
+                  })
+                }
+              >
+                Cancel
+              </button>
 
-        <button
-          className="delete-confirm-btn"
-          onClick={() =>
-            deleteEvent(deleteConfirm.eventId)
-          }
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              <button
+                className="delete-confirm-btn"
+                onClick={() => deleteEvent(deleteConfirm.eventId)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showModal && (
+        <div className="event-modal-overlay">
+          <div className="event-modal-box">
+            <button className="event-modal-close" onClick={closeModal}>
+              ×
+            </button>
 
-  <div className="event-modal-overlay">
+            <div className="event-modal-header">
+              <div className="event-modal-icon">📅</div>
 
-    <div className="event-modal-box">
+              <div>
+                <p>Event Management</p>
 
-      <button
-        className="event-modal-close"
-        onClick={closeModal}
-      >
-        ×
-      </button>
+                <h2>{editId ? "Update Event" : "Create New Event"}</h2>
 
+                <span>
+                  {editId
+                    ? "Update event details and schedule."
+                    : "Create an activity for Kinetic Care residents."}
+                </span>
+              </div>
+            </div>
 
-      <div className="event-modal-header">
+            <div className="event-modal-form">
+              <div className="event-form-group full-width">
+                <label>Event Title</label>
 
-        <div className="event-modal-icon">
-          📅
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Example: Birthday Celebration"
+                  value={formData.title}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="event-form-group full-width">
+                <label>Description</label>
+
+                <textarea
+                  name="description"
+                  placeholder="Write a short description about the event..."
+                  value={formData.description}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="event-form-group">
+                <label>Event Date</label>
+
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  min={mindate}
+                />
+              </div>
+
+              <div className="event-form-group">
+                <label>Event Time</label>
+
+                <input
+                  type="time"
+                  name="time"
+                  value={formData.time}
+                  onChange={handleChange}
+                  min={formData.eventDate === mindate ? currentTime : undefined}
+                />
+              </div>
+
+              <div className="event-form-group full-width">
+                <label>Location</label>
+
+                <input
+                  type="text"
+                  name="location"
+                  placeholder="Example: Community Hall"
+                  value={formData.location}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="event-modal-actions">
+              <button className="event-cancel-btn" onClick={closeModal}>
+                Cancel
+              </button>
+
+              <button
+                className="event-save-btn"
+                onClick={editId ? updateEvent : addEvent}
+              >
+                {editId ? "Update Event" : "Create Event"}
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div>
-
-          <p>Event Management</p>
-
-          <h2>
-            {editId
-              ? "Update Event"
-              : "Create New Event"}
-          </h2>
-
-          <span>
-            {editId
-              ? "Update event details and schedule."
-              : "Create an activity for Kinetic Care residents."}
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <div className="event-modal-form">
-
-        <div className="event-form-group full-width">
-
-          <label>Event Title</label>
-
-          <input
-            type="text"
-            name="title"
-            placeholder="Example: Birthday Celebration"
-            value={formData.title}
-            onChange={handleChange}
-          />
-
-        </div>
-
-
-        <div className="event-form-group full-width">
-
-          <label>Description</label>
-
-          <textarea
-            name="description"
-            placeholder="Write a short description about the event..."
-            value={formData.description}
-            onChange={handleChange}
-          />
-
-        </div>
-
-
-        <div className="event-form-group">
-
-          <label>Event Date</label>
-
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-          />
-
-        </div>
-
-
-        <div className="event-form-group">
-
-          <label>Event Time</label>
-
-          <input
-            type="time"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-          />
-
-        </div>
-
-
-        <div className="event-form-group full-width">
-
-          <label>Location</label>
-
-          <input
-            type="text"
-            name="location"
-            placeholder="Example: Community Hall"
-            value={formData.location}
-            onChange={handleChange}
-          />
-
-        </div>
-
-      </div>
-
-
-      <div className="event-modal-actions">
-
-        <button
-          className="event-cancel-btn"
-          onClick={closeModal}
-        >
-          Cancel
-        </button>
-
-        <button
-          className="event-save-btn"
-          onClick={
-            editId
-              ? updateEvent
-              : addEvent
-          }
-        >
-          {editId
-            ? "Update Event"
-            : "Create Event"}
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-)}
+      )}
     </>
   );
 }

@@ -61,17 +61,7 @@ const addResident = async (req, res) => {
       });
     }
 
-    if (isFamily && room.roomType !== "Double") {
-      return res.status(400).json({
-        message: "Family residents can only stay in Double Bed rooms.",
-      });
-    }
-
     let totalCapacity = room.capacity;
-
-    if (room.roomType === "Double") {
-      totalCapacity = room.capacity * 2;
-    }
 
     if (room.occupiedBeds >= totalCapacity) {
       return res.status(400).json({
@@ -204,10 +194,9 @@ const addResident = async (req, res) => {
         });
         const familyName = resident1.familyName;
 
-const familyEmail = resident1.familyEmail;
+        const familyEmail = resident1.familyEmail;
 
-const residentsText =
-  `${resident1.name} and ${resident2.name}`;
+        const residentsText = `${resident1.name} and ${resident2.name}`;
         const emailHtml = `
 <!DOCTYPE html>
   <html lang="en">
@@ -564,10 +553,7 @@ const residentsText =
       if (hasFamily) {
         const generatedPassword = generatePassword();
 
-const hashedPassword = await bcrypt.hash(
-  generatedPassword,
-  10
-);
+        const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
         const user = await User.create({
           name: familyData.familyName,
@@ -585,9 +571,9 @@ const hashedPassword = await bcrypt.hash(
 
         const familyName = familyData.familyName;
 
-const familyEmail = familyData.familyEmail;
+        const familyEmail = familyData.familyEmail;
 
-const residentsText = resident.name;
+        const residentsText = resident.name;
 
         const emailHtml = `
 <!DOCTYPE html>
@@ -909,19 +895,15 @@ const residentsText = resident.name;
   </html>
 `;
 
-try {
-
-  await sendMail({
-    email: familyData.familyEmail,
-    subject: "Kinetic Care Family Login Credentials",
-    html: emailHtml,
-  });
-
-} catch (err) {
-
-  console.log(err.message);
-
-}
+        try {
+          await sendMail({
+            email: familyData.familyEmail,
+            subject: "Kinetic Care Family Login Credentials",
+            html: emailHtml,
+          });
+        } catch (err) {
+          console.log(err.message);
+        }
       }
 
       room.occupiedBeds++;
@@ -936,14 +918,14 @@ try {
     if (isFamily) {
       return res.status(201).json({
         message:
-"Family residents added successfully. Login credentials have been sent to the registered family email.",
+          "Family residents added successfully. Login credentials have been sent to the registered family email.",
         residents: [firstResident, secondResident],
       });
     }
 
     return res.status(201).json({
       message:
-"Resident added successfully. Family login credentials have been sent to the registered email.",
+        "Resident added successfully. Family login credentials have been sent to the registered email.",
       resident,
     });
   } catch (error) {
@@ -970,7 +952,8 @@ try {
 const getResidents = async (req, res) => {
   try {
     const residents = await Resident.find()
-      .populate("room", "roomNumber roomType")
+      .sort({ createdAt: -1 })
+      .populate("room", "roomNumber")
       .populate("morningDoctor", "name phone shift")
       .populate("morningCaretaker", "name phone shift")
       .populate("nightDoctor", "name phone shift")
@@ -1010,7 +993,7 @@ const getResidents = async (req, res) => {
 const getResidentById = async (req, res) => {
   try {
     const resident = await Resident.findById(req.params.id)
-      .populate("room", "roomNumber roomType")
+      .populate("room", "roomNumber")
       .populate("morningDoctor", "name phone")
       .populate("morningCaretaker", "name phone")
       .populate("nightDoctor", "name phone")
@@ -1042,8 +1025,35 @@ const updateResident = async (req, res) => {
       });
     }
 
-    // Room change thayo?
-    if (resident.room.toString() !== req.body.room) {
+    // ==========================
+    // Resident Discharge
+    // ==========================
+    if (req.body.status === "Discharged" && resident.status !== "Discharged") {
+      if (resident.room) {
+        const room = await Room.findById(resident.room);
+
+        if (room) {
+          room.occupiedBeds--;
+
+          if (room.occupiedBeds < 0) {
+            room.occupiedBeds = 0;
+          }
+
+          if (room.occupiedBeds < room.capacity) {
+            room.status = "Available";
+          }
+
+          await room.save();
+        }
+      }
+
+      resident.room = null;
+    }
+
+    // ==========================
+    // Room Changed
+    // ==========================
+    else if (resident.room && resident.room.toString() !== req.body.room) {
       // Old Room
       const oldRoom = await Room.findById(resident.room);
 
@@ -1054,13 +1064,7 @@ const updateResident = async (req, res) => {
           oldRoom.occupiedBeds = 0;
         }
 
-        let oldCapacity = oldRoom.capacity;
-
-        if (oldRoom.roomType === "Double") {
-          oldCapacity = oldRoom.capacity * 2;
-        }
-
-        if (oldRoom.occupiedBeds < oldCapacity) {
+        if (oldRoom.occupiedBeds < oldRoom.capacity) {
           oldRoom.status = "Available";
         }
 
@@ -1076,13 +1080,7 @@ const updateResident = async (req, res) => {
         });
       }
 
-      let newCapacity = newRoom.capacity;
-
-      if (newRoom.roomType === "Double") {
-        newCapacity = newRoom.capacity * 2;
-      }
-
-      if (newRoom.occupiedBeds >= newCapacity) {
+      if (newRoom.occupiedBeds >= newRoom.capacity) {
         return res.status(400).json({
           message: "Room Full",
         });
@@ -1090,22 +1088,34 @@ const updateResident = async (req, res) => {
 
       newRoom.occupiedBeds++;
 
-      if (newRoom.occupiedBeds === newCapacity) {
+      if (newRoom.occupiedBeds >= newRoom.capacity) {
         newRoom.status = "Occupied";
       }
 
       await newRoom.save();
+
+      resident.room = req.body.room;
     }
 
+    // ==========================
+    // Update Resident
+    // ==========================
     resident.name = req.body.name;
     resident.age = req.body.age;
     resident.gender = req.body.gender;
-    resident.room = req.body.room;
+
+    if (req.body.status !== "Discharged") {
+      resident.room = req.body.room;
+    }
+
     resident.medicalCondition = req.body.medicalCondition;
     resident.status = req.body.status;
 
     await resident.save();
 
+    // ==========================
+    // Update Family
+    // ==========================
     const family = await FamilyMember.findOne({
       residentId: resident._id,
     });
@@ -1115,17 +1125,11 @@ const updateResident = async (req, res) => {
 
       await family.save();
 
-      await User.findByIdAndUpdate(
-        family.userId,
-
-        {
-          name: req.body.familyName,
-
-          email: req.body.familyEmail,
-
-          phone: req.body.familyPhone,
-        },
-      );
+      await User.findByIdAndUpdate(family.userId, {
+        name: req.body.familyName,
+        email: req.body.familyEmail,
+        phone: req.body.familyPhone,
+      });
     }
 
     res.status(200).json({
@@ -1138,7 +1142,6 @@ const updateResident = async (req, res) => {
     });
   }
 };
-
 // ===============================
 // Delete Resident
 // ===============================
