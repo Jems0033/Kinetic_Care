@@ -88,9 +88,19 @@ function ForgotPassword() {
     setError("");
     setMessage("");
 
-    if (formData.newPassword !== formData.confirmPassword) {
-      return setError("Passwords do not match");
-    }
+    // Password Validation
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#])[A-Za-z\d@$!%*?&.#]{8,}$/;
+
+if (!passwordRegex.test(formData.newPassword)) {
+  return setError(
+    "Password must be at least 8 characters long and contain uppercase, lowercase, number and special character."
+  );
+}
+
+if (formData.newPassword !== formData.confirmPassword) {
+  return setError("Passwords do not match");
+}
 
     try {
       setLoading(true);
@@ -194,6 +204,9 @@ function ForgotPassword() {
                 value={formData.newPassword}
                 onChange={handleChange}
               />
+              <small className="password-hint">
+    Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character.
+  </small>
             </div>
 
             <div className="forgot-group">

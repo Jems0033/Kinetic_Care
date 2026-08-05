@@ -50,7 +50,6 @@ function Room() {
   const validateRoom = () => {
     if (!formData.roomNumber.trim()) return "Room Number is required.";
 
-    // A101 અથવા A-101 format જ allow
     const roomRegex = /^[A-Z]\d{3}$/;
 
     if (!roomRegex.test(formData.roomNumber.trim().toUpperCase()))
@@ -71,7 +70,7 @@ function Room() {
       case "Room Number Already Exists":
         return "This room number already exists.";
 
-      case "Room Number must be in A101 or A-101 format.":
+      case "Room Number must be in A101 format.":
         return "Room number must be in A101 format.";
 
       default:
@@ -531,7 +530,7 @@ function Room() {
                   <input
                     type="text"
                     name="roomNumber"
-                    placeholder="Example: A-101"
+                    placeholder="Example: A101"
                     value={formData.roomNumber}
                     onChange={handleChange}
                   />

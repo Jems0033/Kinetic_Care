@@ -31,6 +31,45 @@ function Visitor() {
     }
   };
 
+  const approveVisitor = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `http://localhost:5000/api/visitors/approve/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      getVisitors();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const rejectVisitor = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `http://localhost:5000/api/visitors/reject/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      getVisitors();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const checkOutVisitor = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -64,6 +103,9 @@ function Visitor() {
       visitor.relation.toLowerCase().includes(search.toLowerCase()) ||
       visitor.residentId?.name.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   return (
     <>
       <div className="visitor-page">
@@ -125,13 +167,17 @@ function Visitor() {
                     </div>
 
                     <span
-                      className={
-                        visitor.checkOut
-                          ? "visit-status completed-status"
-                          : "visit-status active-status"
-                      }
+                      className={`visit-status ${
+                        visitor.status === "Pending"
+                          ? "pending-status"
+                          : visitor.status === "Approved"
+                            ? "active-status"
+                            : visitor.status === "Rejected"
+                              ? "rejected-status"
+                              : "completed-status"
+                      }`}
                     >
-                      {visitor.checkOut ? "Completed" : "Visiting"}
+                      {visitor.status}
                     </span>
                   </div>
 
@@ -155,23 +201,19 @@ function Visitor() {
 
                   <div className="visitor-time-grid">
                     <div>
-                      <span>Check In</span>
+                      <span>Visit Date</span>
 
                       <strong>
-                        {visitor.checkIn
-                          ? new Date(visitor.checkIn).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
-                          : "-"}
+                        {new Date(visitor.visitDate).toLocaleDateString(
+                          "en-IN",
+                        )}
                       </strong>
 
                       <small>
-                        {visitor.checkIn
-                          ? new Date(visitor.checkIn).toLocaleDateString(
-                              "en-IN",
-                            )
-                          : ""}
+                        {new Date(visitor.visitDate).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </small>
                     </div>
 
@@ -192,21 +234,48 @@ function Visitor() {
                           ? new Date(visitor.checkOut).toLocaleDateString(
                               "en-IN",
                             )
-                          : "Still Visiting"}
+                          : "-"}
                       </small>
                     </div>
                   </div>
 
                   <div className="visitor-card-action">
-                    {visitor.checkOut ? (
+                    {visitor.status === "Pending" && (
+                      <>
+                        <button
+                          className="approve-btn"
+                          onClick={() => approveVisitor(visitor._id)}
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          className="reject-btn"
+                          onClick={() => rejectVisitor(visitor._id)}
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+
+                    {visitor.status === "Approved" &&
+                      new Date(visitor.visitDate).setHours(0, 0, 0, 0) ===
+                        today.getTime() &&
+                      !visitor.checkOut && (
+                        <button
+                          className="visitor-checkout-btn"
+                          onClick={() => checkOutVisitor(visitor._id)}
+                        >
+                          Check Out Visitor
+                        </button>
+                      )}
+
+                    {visitor.status === "Completed" && (
                       <div className="visit-completed">✓ Visit Completed</div>
-                    ) : (
-                      <button
-                        className="visitor-checkout-btn"
-                        onClick={() => checkOutVisitor(visitor._id)}
-                      >
-                        Check Out Visitor
-                      </button>
+                    )}
+
+                    {visitor.status === "Rejected" && (
+                      <div className="visit-rejected">✕ Visit Rejected</div>
                     )}
                   </div>
                 </div>

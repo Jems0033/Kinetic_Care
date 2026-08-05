@@ -419,3 +419,115 @@
     grid-template-columns: 1fr;
   }
 }
+/* ==========================
+   APPROVE BUTTON
+========================== */
+
+.approve-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #22c55e;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.approve-btn:hover {
+  background: #16a34a;
+  transform: translateY(-2px);
+}
+
+
+/* ==========================
+   REJECT BUTTON
+========================== */
+
+.reject-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reject-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+}
+
+
+/* ==========================
+   BUTTON CONTAINER
+========================== */
+
+.visitor-card-action {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+
+/* ==========================
+   REJECTED STATUS
+========================== */
+
+.visit-rejected {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #fecaca;
+}
+
+
+/* ==========================
+   COMPLETED STATUS
+========================== */
+
+.visit-completed {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #dcfce7;
+  color: #166534;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #bbf7d0;
+}
+
+
+/* ==========================
+   STATUS BADGES
+========================== */
+
+.pending-status {
+  background: #fff7d6;
+  color: #b45309;
+}
+
+.active-status {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.rejected-status {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.completed-status {
+  background: #e0e7ff;
+  color: #3730a3;
+}
