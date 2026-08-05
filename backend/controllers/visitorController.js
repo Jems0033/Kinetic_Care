@@ -24,6 +24,27 @@ const addVisitor = async (req, res) => {
 // ===========================
 const getVisitors = async (req, res) => {
   try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    await Visitor.updateMany(
+      {
+        status: "Approved",
+        checkOut: null,
+        visitDate: {
+          $lt: today,
+        },
+      },
+      {
+        $set: {
+          status: "Completed",
+          checkOut: today,
+        },
+      },
+    );
     const visitors = await Visitor.find()
       .populate("residentId", "name")
       .sort({ createdAt: -1 });
@@ -124,6 +145,7 @@ const checkOutVisitor = async (req, res) => {
     }
 
     visitor.checkOut = new Date();
+    visitor.status = "Completed";
 
     await visitor.save();
 
@@ -176,6 +198,54 @@ const bookVisit = async (req, res) => {
   }
 };
 
+const approveVisitor = async (req, res) => {
+  try {
+    const visitor = await Visitor.findById(req.params.id);
+
+    if (!visitor) {
+      return res.status(404).json({
+        message: "Visitor not found",
+      });
+    }
+
+    visitor.status = "Approved";
+
+    await visitor.save();
+
+    res.status(200).json({
+      message: "Visitor approved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const rejectVisitor = async (req, res) => {
+  try {
+    const visitor = await Visitor.findById(req.params.id);
+
+    if (!visitor) {
+      return res.status(404).json({
+        message: "Visitor not found",
+      });
+    }
+
+    visitor.status = "Rejected";
+
+    await visitor.save();
+
+    res.status(200).json({
+      message: "Visitor rejected",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   addVisitor,
   getVisitors,
@@ -184,4 +254,6 @@ module.exports = {
   deleteVisitor,
   checkOutVisitor,
   bookVisit,
+  approveVisitor,
+  rejectVisitor,
 };

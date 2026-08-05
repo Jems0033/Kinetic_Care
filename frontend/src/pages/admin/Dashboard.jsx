@@ -205,7 +205,7 @@ function Dashboard() {
             </div>
 
             <div className="stat-information">
-              <span>Available Rooms</span>
+              <span>Total Rooms</span>
 
               <h2>{dashboard.totalRooms}</h2>
 

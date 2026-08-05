@@ -6,7 +6,9 @@ const Event = require("../models/Event");
 
 const getDashboard = async (req, res) => {
   try {
-    const totalResidents = await Resident.countDocuments();
+    const totalResidents = await Resident.countDocuments({
+      status: { $ne: "Discharged" },
+    });
 
     const totalStaff = await Staff.countDocuments();
 
