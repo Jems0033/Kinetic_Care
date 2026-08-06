@@ -21,15 +21,15 @@ const getCaretakerDashboard = async (req, res) => {
 
     let residents = [];
 
-    if (caretaker.shift === "Morning") {
+    if (caretaker.shift === "Day") {
       residents = await Resident.find({
-        morningCaretaker: caretaker._id,
+        dayCaretaker: caretaker._id,
         status: "Active",
       })
         .populate("room", "roomNumber roomType")
-        .populate("morningDoctor", "name phone")
+        .populate("dayDoctor", "name phone")
         .select(
-          "name age gender medicalCondition room morningDoctor morningCaretaker",
+          "name age gender medicalCondition room dayDoctor dayCaretaker",
         );
     } else if (caretaker.shift === "Night") {
       residents = await Resident.find({
@@ -85,7 +85,7 @@ const getResidentCare = async (req, res) => {
 
     const resident = await Resident.findById(req.params.id)
       .populate("room", "roomNumber roomType")
-      .populate("morningDoctor", "name phone")
+      .populate("dayDoctor", "name phone")
       .populate("nightDoctor", "name phone");
 
     if (!resident) {
@@ -98,8 +98,8 @@ const getResidentCare = async (req, res) => {
     let assigned = false;
 
     if (
-      caretaker.shift === "Morning" &&
-      resident.morningCaretaker?.toString() === caretaker._id.toString()
+      caretaker.shift === "Day" &&
+      resident.dayCaretaker?.toString() === caretaker._id.toString()
     ) {
       assigned = true;
     }
@@ -125,8 +125,6 @@ const getResidentCare = async (req, res) => {
 
     const todayCare = await CareRecord.findOne({
       residentId: resident._id,
-      caretakerId: caretaker._id,
-      shift: caretaker.shift,
       date: {
         $gte: today,
         $lt: tomorrow,
@@ -139,7 +137,12 @@ const getResidentCare = async (req, res) => {
         name: caretaker.name,
         shift: caretaker.shift,
       },
-      todayCare,
+      todayCare: todayCare || {
+        dayTasks: {},
+        nightTasks: {},
+        dayCustomTasks: [],
+        nightCustomTasks: [],
+      },
     });
   } catch (error) {
     console.log(error);
@@ -179,8 +182,8 @@ const saveDailyCare = async (req, res) => {
     let assigned = false;
 
     if (
-      caretaker.shift === "Morning" &&
-      resident.morningCaretaker?.toString() === caretaker._id.toString()
+      caretaker.shift === "Day" &&
+      resident.dayCaretaker?.toString() === caretaker._id.toString()
     ) {
       assigned = true;
     }
@@ -198,7 +201,7 @@ const saveDailyCare = async (req, res) => {
       });
     }
 
-    const { medicine, meal, bath, walking, water, rest, notes, customTasks } =
+    const { dayTasks, nightTasks, dayCustomTasks, nightCustomTasks, notes } =
       req.body;
 
     const today = new Date();
@@ -209,8 +212,6 @@ const saveDailyCare = async (req, res) => {
 
     let careRecord = await CareRecord.findOne({
       residentId: resident._id,
-      caretakerId: caretaker._id,
-      shift: caretaker.shift,
       date: {
         $gte: today,
         $lt: tomorrow,
@@ -218,14 +219,19 @@ const saveDailyCare = async (req, res) => {
     });
 
     if (careRecord) {
-      careRecord.medicine = medicine;
-      careRecord.meal = meal;
-      careRecord.bath = bath;
-      careRecord.walking = walking;
-      careRecord.water = water;
-      careRecord.rest = rest;
+      if (caretaker.shift === "Day") {
+        careRecord.dayTasks = dayTasks;
+        careRecord.dayCustomTasks = dayCustomTasks || [];
+      } else {
+        careRecord.nightTasks = nightTasks;
+        careRecord.nightCustomTasks = nightCustomTasks || [];
+      }
+
       careRecord.notes = notes;
-      careRecord.customTasks = customTasks || [];
+careRecord.caretakerId = caretaker._id;
+careRecord.shift = caretaker.shift;
+
+await careRecord.save();
 
       await careRecord.save();
     } else {
@@ -234,14 +240,16 @@ const saveDailyCare = async (req, res) => {
         caretakerId: caretaker._id,
         shift: caretaker.shift,
 
-        medicine,
-        meal,
-        bath,
-        walking,
-        water,
-        rest,
+        dayTasks: caretaker.shift === "Day" ? dayTasks : {},
+
+        nightTasks: caretaker.shift === "Night" ? nightTasks : {},
+
+        dayCustomTasks: caretaker.shift === "Day" ? dayCustomTasks || [] : [],
+
+        nightCustomTasks:
+          caretaker.shift === "Night" ? nightCustomTasks || [] : [],
+
         notes,
-        customTasks: customTasks || [],
       });
     }
 

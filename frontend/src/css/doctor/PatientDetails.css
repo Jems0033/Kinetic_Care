@@ -23,10 +23,9 @@
    PAGE TOP
 ========================= */
 .patient-page-top {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 
   min-height: 60px;
   margin-bottom: 25px;
@@ -34,9 +33,6 @@
 
 /* BACK BUTTON */
 .back-btn {
-  position: absolute;
-  left: 0;
-
   display: flex;
   align-items: center;
   gap: 7px;

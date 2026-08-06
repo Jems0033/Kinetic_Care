@@ -16,7 +16,7 @@ const getDoctorPatients = async (req, res) => {
     }
 
     const residents = await Resident.find({
-      $or: [{ morningDoctor: staff._id }, { nightDoctor: staff._id }],
+      $or: [{ dayDoctor: staff._id }, { nightDoctor: staff._id }],
       status: {
         $ne: "Discharged",
       },
@@ -52,6 +52,15 @@ const getDoctorPatients = async (req, res) => {
 
 const getDoctorPatient = async (req, res) => {
   try {
+    const staff = await Staff.findOne({
+  userId: req.user.id,
+});
+
+if (!staff) {
+  return res.status(404).json({
+    message: "Doctor not found",
+  });
+}
     const resident = await Resident.findById(req.params.id);
 
     if (!resident) {
@@ -75,17 +84,23 @@ const getDoctorPatient = async (req, res) => {
     }).sort({ date: -1 });
 
     res.json({
-      resident: {
-        _id: resident._id,
-        name: resident.name,
-        age: resident.age,
-        gender: resident.gender,
-        medicalCondition: resident.medicalCondition,
-        room: roomNumber,
-        status: resident.status,
-      },
-      records,
-    });
+  resident: {
+    _id: resident._id,
+    name: resident.name,
+    age: resident.age,
+    gender: resident.gender,
+    medicalCondition: resident.medicalCondition,
+    room: roomNumber,
+    status: resident.status,
+  },
+
+  doctor: {
+    name: staff.name,
+    shift: staff.shift,
+  },
+
+  records,
+});
   } catch (error) {
     console.error(error);
 

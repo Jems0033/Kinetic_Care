@@ -50,7 +50,7 @@ function Residents() {
   useEffect(() => {
     getResidents();
     getRooms();
-  });
+  },[]);
 
   useEffect(() => {
     if (location.state?.openModal === "addResident") {
@@ -563,21 +563,21 @@ function Residents() {
                   </div>
                   <div className="care-team-grid">
                     <div className="care-member">
-                      <span className="member-label">Morning Doctor</span>
+                      <span className="member-label">day Doctor</span>
                       <strong>
-                        {resident.morningDoctor?.name || "Not Assigned"}
+                        Dr. {resident.dayDoctor?.name || "Not Assigned"}
                       </strong>
                     </div>
                     <div className="care-member">
-                      <span className="member-label">Morning Caretaker</span>
+                      <span className="member-label">day Caretaker</span>
                       <strong>
-                        {resident.morningCaretaker?.name || "Not Assigned"}
+                        {resident.dayCaretaker?.name || "Not Assigned"}
                       </strong>
                     </div>
                     <div className="care-member">
                       <span className="member-label">Night Doctor</span>
                       <strong>
-                        {resident.nightDoctor?.name || "Not Assigned"}
+                        Dr. {resident.nightDoctor?.name || "Not Assigned"}
                       </strong>
                     </div>
                     <div className="care-member">

@@ -11,6 +11,7 @@ import {
   FaCalendarAlt,
   FaPlus,
   FaPills,
+  FaClock,
 } from "react-icons/fa";
 
 import "../../css/doctor/PatientDetails.css";
@@ -27,6 +28,7 @@ function PatientDetails() {
   const [problem, setProblem] = useState("");
   const [medicine, setMedicine] = useState("");
   const [editId, setEditId] = useState(null);
+  const [doctor, setDoctor] = useState({});
 
   const [alertBox, setAlertBox] = useState({
     show: false,
@@ -47,6 +49,7 @@ function PatientDetails() {
         },
       );
       setResident(res.data.resident);
+      setDoctor(res.data.doctor);
       setRecords(res.data.records);
     } catch (error) {
       console.log(error);
@@ -228,6 +231,17 @@ function PatientDetails() {
             <h1>Patient Details</h1>
 
             <span>View patient profile and complete medical history</span>
+          </div>
+
+          <div className="resident-shift-card">
+            <div className="resident-shift-icon">
+              <FaClock />
+            </div>
+
+            <div>
+              <span>Current Shift</span>
+              <strong>{doctor.shift || "-"}</strong>
+            </div>
           </div>
         </div>
 

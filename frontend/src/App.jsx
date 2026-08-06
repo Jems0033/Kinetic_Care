@@ -114,7 +114,7 @@ function App() {
       {/* Family */}
 
       <Route
-        path="/family-dashboard"
+        path="/family/dashboard"
         element={
           <ProtectedRoute>
             <FamilyDashboard />

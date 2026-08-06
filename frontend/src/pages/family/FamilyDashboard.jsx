@@ -141,31 +141,82 @@ function FamilyDashboard() {
                 <FaUserAlt />
               </div>
 
-              <div className="resident-profile-modern">
-                <div className="resident-avatar-large">
-                  {resident.gender?.toLowerCase() === "male" ? "👴" : "👵"}
+                <div className="resident-profile-modern">
+                  <div className="resident-avatar-large">
+                    {resident.gender?.toLowerCase() === "male" ? "👴" : "👵"}
+                    
+                  </div>
+
+                  <div className="resident-primary-info">
+                    <div className="resident-name-row">
+                      <h3>{resident.name}</h3>
+
+                      <span
+                        className={`resident-gender-badge ${
+                          resident.gender?.toLowerCase() === "male"
+                            ? "male-badge"
+                            : "female-badge"
+                        }`}
+                      >
+                        {resident.gender}
+                      </span>
+                    </div>
+
+                    <span>Kinetic Care Resident</span>
+                  </div>
                 </div>
 
-                <div className="resident-primary-info">
-                  <h3>{resident.name}</h3>
-                  <span>Kinetic Care Resident</span>
+              {/* FIRST ROW - AGE AND ROOM */}
+
+              <div className="resident-basic-grid">
+                <div className="resident-detail-card">
+                  <span>Age</span>
+                  <strong>{resident.age} Years</strong>
+                </div>
+
+                <div className="resident-detail-card">
+                  <span>Room</span>
+                  <strong>{resident.room || "Not Assigned"}</strong>
                 </div>
               </div>
 
-              <div className="resident-info-grid">
-                <div className="info-card">
-                  <span>Age</span>
-                  <strong>{resident.age}</strong>
+              {/* SECOND ROW - DOCTOR AND CARETAKER */}
+
+              <div className="resident-care-team-grid">
+                <div className="resident-team-card day">
+                  <div>
+                    <span>Day Doctor</span>
+                    <strong>
+                      Dr. {resident.dayDoctor?.name || "Not Assigned"}
+                    </strong>
+                  </div>
                 </div>
 
-                <div className="info-card">
-                  <span>Gender</span>
-                  <strong>{resident.gender}</strong>
+                <div className="resident-team-card night">
+                  <div>
+                    <span>Night Doctor</span>
+                    <strong>
+                      Dr. {resident.nightDoctor?.name || "Not Assigned"}
+                    </strong>
+                  </div>
                 </div>
 
-                <div className="info-card">
-                  <span>Room</span>
-                  <strong>{resident.room}</strong>
+                <div className="resident-team-card day">
+                  <div>
+                    <span>Day Caretaker</span>
+                    <strong>
+                      {resident.dayCaretaker?.name || "Not Assigned"}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="resident-team-card night">
+                  <div>
+                    <span>Night Caretaker</span>
+                    <strong>
+                      {resident.nightCaretaker?.name || "Not Assigned"}
+                    </strong>
+                  </div>
                 </div>
               </div>
             </div>

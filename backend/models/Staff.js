@@ -23,7 +23,7 @@ const staffSchema = new mongoose.Schema(
 
     shift: {
       type: String,
-      enum: ["Morning", "Night"],
+      enum: ["Day", "Night"],
     },
 
     salary: Number,

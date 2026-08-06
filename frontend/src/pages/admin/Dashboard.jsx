@@ -81,7 +81,7 @@ function Dashboard() {
   let greeting = "Good Evening";
 
   if (hour < 12) {
-    greeting = "Good Morning";
+    greeting = "Good day";
   } else if (hour < 17) {
     greeting = "Good Afternoon";
   }

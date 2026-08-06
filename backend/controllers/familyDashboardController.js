@@ -20,7 +20,12 @@ const getFamilyDashboard = async (req, res) => {
     // Residents
     const residents = await Resident.find({
       _id: { $in: residentIds },
-    }).populate("room");
+    })
+      .populate("room")
+      .populate("dayDoctor", "name")
+      .populate("nightDoctor", "name")
+      .populate("dayCaretaker", "name")
+      .populate("nightCaretaker", "name");
 
     const residentData = await Promise.all(
       residents.map(async (resident) => {
@@ -36,6 +41,13 @@ const getFamilyDashboard = async (req, res) => {
           age: resident.age,
           gender: resident.gender,
           room: resident.room ? resident.room.roomNumber : "-",
+
+          dayDoctor: resident.dayDoctor,
+          nightDoctor: resident.nightDoctor,
+
+          dayCaretaker: resident.dayCaretaker,
+          nightCaretaker: resident.nightCaretaker,
+
           latestMedical,
         };
       }),

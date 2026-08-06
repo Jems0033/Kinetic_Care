@@ -9,6 +9,7 @@ import {
   FaSearch,
   FaUser,
   FaUserMd,
+  FaPhoneAlt,
 } from "react-icons/fa";
 
 import "../../css/caretaker/CaretakerDashboard.css";
@@ -143,8 +144,8 @@ function CaretakerDashboard() {
           ) : (
             filteredResidents.map((resident) => {
               const doctor =
-                data.caretaker?.shift === "Morning"
-                  ? resident.morningDoctor
+                data.caretaker?.shift === "Day"
+                  ? resident.dayDoctor
                   : resident.nightDoctor;
 
               return (
@@ -209,10 +210,15 @@ function CaretakerDashboard() {
                         <FaUserMd />
                       </div>
 
-                      <div>
+                      <div className="doctor-info">
                         <span>Assigned Doctor</span>
 
-                        <strong>{doctor?.name || "Not Assigned"}</strong>
+                        <strong>Dr. {doctor?.name || "Not Assigned"}</strong>
+
+                        <small className="doctor-phone">
+                          <FaPhoneAlt />
+                          {doctor?.phone || "-"}
+                        </small>
                       </div>
                     </div>
                   </div>

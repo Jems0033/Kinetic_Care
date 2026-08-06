@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+
 import {
   FaArrowLeft,
   FaUser,
@@ -9,48 +10,118 @@ import {
   FaPlus,
   FaTimes,
 } from "react-icons/fa";
+
 import "../../css/caretaker/ResidentCare.css";
 
-const DEFAULT_TASKS = [
+/* =========================
+   DAY SHIFT DEFAULT TASKS
+========================= */
+
+const DAY_TASKS = [
   {
     key: "medicine",
     icon: "💊",
-    title: "Medicine",
-    description: "Medicine provided as scheduled.",
+    title: "Day Medicine",
+    description: "Day medicine provided as scheduled.",
   },
   {
-    key: "meal",
-    icon: "🍲",
-    title: "Meal",
-    description: "Breakfast / Lunch / Dinner completed.",
+    key: "breakfast",
+    icon: "🍳",
+    title: "Breakfast Given",
+    description: "Breakfast served to the resident.",
   },
   {
     key: "bath",
     icon: "🚿",
-    title: "Bath",
-    description: "Personal hygiene completed.",
+    title: "Bath Assistance",
+    description: "Bath assistance completed.",
   },
   {
-    key: "walking",
+    key: "hygiene",
+    icon: "🦷",
+    title: "Personal Hygiene",
+    description: "Brush and face wash assistance completed.",
+  },
+  {
+    key: "walk",
     icon: "🚶",
-    title: "Walking",
-    description: "Walking or exercise completed.",
+    title: "Walk / Exercise",
+    description: "Walk or exercise activity completed.",
   },
   {
     key: "water",
     icon: "💧",
-    title: "Water",
-    description: "Enough water intake completed.",
+    title: "Water Intake",
+    description: "Required water intake provided.",
   },
   {
-    key: "rest",
-    icon: "🛏️",
-    title: "Rest",
-    description: "Rest and sleep monitored.",
+    key: "healthCheck",
+    icon: "🩺",
+    title: "Day Health Check",
+    description: "Routine day health check completed.",
+  },
+  {
+    key: "lunch",
+    icon: "🍛",
+    title: "Lunch Given",
+    description: "Lunch served to the resident.",
   },
 ];
 
-const TASK_OPTIONS = [
+/* =========================
+   NIGHT SHIFT DEFAULT TASKS
+========================= */
+
+const NIGHT_TASKS = [
+  {
+    key: "medicine",
+    icon: "💊",
+    title: "Night Medicine",
+    description: "Night medicine provided as scheduled.",
+  },
+  {
+    key: "dinner",
+    icon: "🍽️",
+    title: "Dinner Given",
+    description: "Dinner served to the resident.",
+  },
+  {
+    key: "water",
+    icon: "💧",
+    title: "Water Before Sleep",
+    description: "Water provided before sleep.",
+  },
+  {
+    key: "sleep",
+    icon: "😴",
+    title: "Sleep Assistance",
+    description: "Resident assisted for sleep.",
+  },
+  {
+    key: "healthCheck",
+    icon: "🌡️",
+    title: "Night Health Check",
+    description: "Routine night health check completed.",
+  },
+  {
+    key: "comfort",
+    icon: "😌",
+    title: "Comfort Check",
+    description: "Resident comfort and position checked.",
+  },
+  {
+    key: "sleeping",
+    icon: "🛌",
+    title: "Resident Sleeping Safely",
+    description: "Resident confirmed sleeping safely.",
+  },
+];
+
+/* =========================
+   DAY ADDITIONAL TASKS
+========================= */
+
+const DAY_TASK_OPTIONS = [
   {
     key: "bloodPressure",
     icon: "🩺",
@@ -58,48 +129,84 @@ const TASK_OPTIONS = [
     description: "Check and record blood pressure.",
   },
   {
-    key: "temperature",
-    icon: "🌡️",
-    title: "Temperature",
-    description: "Check resident body temperature.",
+    key: "sugarCheck",
+    icon: "🩸",
+    title: "Sugar Check",
+    description: "Check resident blood sugar level.",
   },
   {
     key: "physiotherapy",
     icon: "🏃",
     title: "Physiotherapy",
-    description: "Complete the assigned physiotherapy session.",
+    description: "Complete assigned physiotherapy session.",
   },
   {
-    key: "doctorVisit",
-    icon: "👨‍⚕️",
-    title: "Doctor Visit",
-    description: "Assist resident during the doctor visit.",
-  },
-  {
-    key: "healthCheck",
-    icon: "❤️",
-    title: "Health Check",
-    description: "Complete the routine health check.",
-  },
-  {
-    key: "roomCleaning",
-    icon: "🧹",
-    title: "Room Cleaning",
-    description: "Confirm the resident room is clean.",
+    key: "feedingAssistance",
+    icon: "🥣",
+    title: "Feeding Assistance",
+    description: "Provide additional feeding assistance.",
   },
 ];
 
+/* =========================
+   NIGHT ADDITIONAL TASKS
+========================= */
+
+const NIGHT_TASK_OPTIONS = [
+  {
+    key: "temperature",
+    icon: "🌡️",
+    title: "Temperature Check",
+    description: "Check resident body temperature.",
+  },
+  {
+    key: "oxygenCheck",
+    icon: "🫁",
+    title: "Oxygen Check",
+    description: "Check oxygen saturation level.",
+  },
+  {
+    key: "toiletAssistance",
+    icon: "🚻",
+    title: "Toilet Assistance",
+    description: "Assist resident with toilet activity.",
+  },
+  {
+    key: "nightObservation",
+    icon: "👁️",
+    title: "Night Observation",
+    description: "Complete special night observation.",
+  },
+];
+
+/* =========================
+   EMPTY CARE DATA
+========================= */
+
 const emptyCareData = {
-  medicine: false,
-  meal: false,
-  bath: false,
-  walking: false,
-  water: false,
-  rest: false,
+  dayTasks: {
+    medicine: false,
+    breakfast: false,
+    bath: false,
+    hygiene: false,
+    walk: false,
+    water: false,
+    healthCheck: false,
+    lunch: false,
+  },
+
+  nightTasks: {
+    medicine: false,
+    dinner: false,
+    water: false,
+    sleep: false,
+    healthCheck: false,
+    comfort: false,
+    sleeping: false,
+  },
+
   notes: "",
 };
-
-const getTodayKey = () => new Date().toISOString().slice(0, 10);
 
 function ResidentCare() {
   const { id } = useParams();
@@ -107,30 +214,62 @@ function ResidentCare() {
 
   const [resident, setResident] = useState(null);
   const [caretaker, setCaretaker] = useState({});
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
   const [careData, setCareData] = useState(emptyCareData);
 
-  // The names stored here are disabled after a successful save.
-  const [savedTaskKeys, setSavedTaskKeys] = useState([]);
-
-  // Custom tasks added from the modal.
+  // Current shift custom tasks
   const [customTasks, setCustomTasks] = useState([]);
   const [customTaskStatus, setCustomTaskStatus] = useState({});
 
+  // Other shift data is shown as read-only
+  const [otherShiftCustomTasks, setOtherShiftCustomTasks] = useState([]);
+
+  // Tasks already saved cannot be changed again
+  const [savedTaskKeys, setSavedTaskKeys] = useState([]);
+
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [selectedTaskKey, setSelectedTaskKey] = useState("");
+
   const [customTaskForm, setCustomTaskForm] = useState({
     title: "",
     description: "",
     icon: "✅",
   });
 
+  const isDayShift =
+    caretaker.shift === "Day" ;
+
+  const currentShiftName = isDayShift ? "Day" : "Night";
+
+  const currentDefaultTasks = isDayShift ? DAY_TASKS : NIGHT_TASKS;
+
+  const currentTaskOptions = isDayShift
+    ? DAY_TASK_OPTIONS
+    : NIGHT_TASK_OPTIONS;
+
+  const otherShiftDefaultTasks = isDayShift
+    ? NIGHT_TASKS
+    : DAY_TASKS;
+
+  const currentTaskValues = isDayShift
+    ? careData.dayTasks
+    : careData.nightTasks;
+
+  const otherShiftTaskValues = isDayShift
+    ? careData.nightTasks
+    : careData.dayTasks;
+
   useEffect(() => {
     getResidentCare();
   }, [id]);
+
+  /* =========================
+     GET RESIDENT CARE
+  ========================= */
 
   const getResidentCare = async () => {
     try {
@@ -148,64 +287,92 @@ function ResidentCare() {
         },
       );
 
-      setResident(res.data.resident);
-      setCaretaker(res.data.caretaker || {});
+      const residentData = res.data.resident;
+      const caretakerData = res.data.caretaker || {};
+      const todayCare = res.data.todayCare || {};
 
-      if (res.data.todayCare) {
-        const todayCare = res.data.todayCare;
-        if (
-          Array.isArray(todayCare.customTasks) &&
-          todayCare.customTasks.length > 0
-        ) {
-          setCustomTasks(todayCare.customTasks);
+      const responseIsDayShift =
+        caretakerData.shift === "Day";
 
-          const status = {};
+      const dayTasks = {
+        ...emptyCareData.dayTasks,
+        ...(todayCare.dayTasks || {}),
+      };
 
-          const savedKeys = [];
+      const nightTasks = {
+        ...emptyCareData.nightTasks,
+        ...(todayCare.nightTasks || {}),
+      };
 
-          todayCare.customTasks.forEach((task) => {
-            status[task.key] = task.completed;
+      const dayCustomTasks = Array.isArray(todayCare.dayCustomTasks)
+        ? todayCare.dayCustomTasks
+        : [];
 
-            if (task.completed) {
-              savedKeys.push(task.key);
-            }
-          });
+      const nightCustomTasks = Array.isArray(todayCare.nightCustomTasks)
+        ? todayCare.nightCustomTasks
+        : [];
 
-          setCustomTaskStatus(status);
+      const shiftCustomTasks = responseIsDayShift
+        ? dayCustomTasks
+        : nightCustomTasks;
 
-          setSavedTaskKeys((prev) => [...new Set([...prev, ...savedKeys])]);
+      const oppositeCustomTasks = responseIsDayShift
+        ? nightCustomTasks
+        : dayCustomTasks;
+
+      const shiftDefaultTasks = responseIsDayShift
+        ? DAY_TASKS
+        : NIGHT_TASKS;
+
+      const shiftTaskValues = responseIsDayShift
+        ? dayTasks
+        : nightTasks;
+
+      const statusMap = {};
+      const savedKeys = [];
+
+      shiftCustomTasks.forEach((task) => {
+        statusMap[task.key] = Boolean(task.completed);
+
+        if (task.completed) {
+          savedKeys.push(task.key);
         }
+      });
 
-        setCareData({
-          medicine: Boolean(todayCare.medicine),
-          meal: Boolean(todayCare.meal),
-          bath: Boolean(todayCare.bath),
-          walking: Boolean(todayCare.walking),
-          water: Boolean(todayCare.water),
-          rest: Boolean(todayCare.rest),
-          notes: todayCare.notes || "",
-        });
+      shiftDefaultTasks.forEach((task) => {
+        if (shiftTaskValues[task.key]) {
+          savedKeys.push(task.key);
+        }
+      });
 
-        const alreadySavedTasks = DEFAULT_TASKS.filter((task) =>
-          Boolean(todayCare[task.key]),
-        ).map((task) => task.key);
+      setResident(residentData);
+      setCaretaker(caretakerData);
 
-        setSavedTaskKeys((previousKeys) => [
-          ...new Set([...previousKeys, ...alreadySavedTasks]),
-        ]);
-      } else {
-        setCareData(emptyCareData);
-      }
+      setCareData({
+        dayTasks,
+        nightTasks,
+        notes: todayCare.notes || "",
+      });
+
+      setCustomTasks(shiftCustomTasks);
+      setOtherShiftCustomTasks(oppositeCustomTasks);
+      setCustomTaskStatus(statusMap);
+      setSavedTaskKeys([...new Set(savedKeys)]);
     } catch (error) {
       console.log("Resident Care Error:", error);
 
       setMessage(
-        error.response?.data?.message || "Unable to load resident details",
+        error.response?.data?.message ||
+          "Unable to load resident details",
       );
     } finally {
       setLoading(false);
     }
   };
+
+  /* =========================
+     DEFAULT TASK CHECKBOX
+  ========================= */
 
   const handleCheckbox = (event) => {
     const { name, checked } = event.target;
@@ -214,11 +381,30 @@ function ResidentCare() {
       return;
     }
 
-    setCareData((previousData) => ({
-      ...previousData,
-      [name]: checked,
-    }));
+    if (isDayShift) {
+      setCareData((previousData) => ({
+        ...previousData,
+
+        dayTasks: {
+          ...previousData.dayTasks,
+          [name]: checked,
+        },
+      }));
+    } else {
+      setCareData((previousData) => ({
+        ...previousData,
+
+        nightTasks: {
+          ...previousData.nightTasks,
+          [name]: checked,
+        },
+      }));
+    }
   };
+
+  /* =========================
+     CUSTOM TASK CHECKBOX
+  ========================= */
 
   const handleCustomTaskCheckbox = (taskKey) => {
     if (savedTaskKeys.includes(taskKey)) {
@@ -231,6 +417,10 @@ function ResidentCare() {
     }));
   };
 
+  /* =========================
+     NOTES
+  ========================= */
+
   const handleNotes = (event) => {
     setCareData((previousData) => ({
       ...previousData,
@@ -238,15 +428,32 @@ function ResidentCare() {
     }));
   };
 
+  /* =========================
+     MODAL
+  ========================= */
+
   const openTaskModal = () => {
+    setMessage("");
     setSelectedTaskKey("");
-    setCustomTaskForm({ title: "", description: "", icon: "✅" });
+
+    setCustomTaskForm({
+      title: "",
+      description: "",
+      icon: "✅",
+    });
+
     setShowTaskModal(true);
   };
 
   const closeTaskModal = () => {
     setSelectedTaskKey("");
-    setCustomTaskForm({ title: "", description: "", icon: "✅" });
+
+    setCustomTaskForm({
+      title: "",
+      description: "",
+      icon: "✅",
+    });
+
     setShowTaskModal(false);
   };
 
@@ -266,8 +473,12 @@ function ResidentCare() {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
 
-    return `custom-${cleanedTitle || "task"}-${Date.now()}`;
+    return `${currentShiftName.toLowerCase()}-${cleanedTitle || "task"}-${Date.now()}`;
   };
+
+  /* =========================
+     ADD READY-MADE TASK
+  ========================= */
 
   const addSelectedTask = () => {
     if (!selectedTaskKey) {
@@ -275,7 +486,7 @@ function ResidentCare() {
       return;
     }
 
-    const selectedTask = TASK_OPTIONS.find(
+    const selectedTask = currentTaskOptions.find(
       (task) => task.key === selectedTaskKey,
     );
 
@@ -284,78 +495,118 @@ function ResidentCare() {
       return;
     }
 
-    if (customTasks.some((task) => task.key === selectedTask.key)) {
+    if (
+      customTasks.some(
+        (task) => task.key === selectedTask.key,
+      )
+    ) {
       setMessage("This task has already been added.");
       return;
     }
 
-    setCustomTasks((prev) => [...prev, selectedTask]);
+    setCustomTasks((previousTasks) => [
+      ...previousTasks,
+      selectedTask,
+    ]);
 
-    setCustomTaskStatus((prev) => ({
-      ...prev,
+    setCustomTaskStatus((previousStatus) => ({
+      ...previousStatus,
       [selectedTask.key]: false,
     }));
 
     closeTaskModal();
 
     setTimeout(() => {
-      setMessage(`${selectedTask.title} task added successfully.`);
+      setMessage(
+        `${selectedTask.title} task added successfully.`,
+      );
     }, 100);
   };
 
+  /* =========================
+     ADD CUSTOM TASK
+  ========================= */
+
   const addCustomTask = () => {
     const title = customTaskForm.title.trim();
-    const description = customTaskForm.description.trim();
-    const icon = customTaskForm.icon.trim() || "✅";
+    const description =
+      customTaskForm.description.trim();
+
+    const icon =
+      customTaskForm.icon.trim() || "✅";
 
     if (!title) {
       setMessage("Please enter custom task name.");
       return;
     }
 
-    if (
-      [...DEFAULT_TASKS, ...customTasks].some(
-        (task) => task.title.toLowerCase() === title.toLowerCase(),
-      )
-    ) {
-      setMessage("A task with this name already exists.");
+    const taskExists = [
+      ...currentDefaultTasks,
+      ...customTasks,
+    ].some(
+      (task) =>
+        task.title.toLowerCase() ===
+        title.toLowerCase(),
+    );
+
+    if (taskExists) {
+      setMessage(
+        "A task with this name already exists.",
+      );
       return;
     }
 
     const newTask = {
       key: createCustomTaskKey(title),
       title,
-      description: description || "Custom care activity.",
+      description:
+        description || "Custom care activity.",
       icon,
+      completed: false,
     };
 
-    setCustomTasks((prev) => [...prev, newTask]);
+    setCustomTasks((previousTasks) => [
+      ...previousTasks,
+      newTask,
+    ]);
 
-    setCustomTaskStatus((prev) => ({
-      ...prev,
+    setCustomTaskStatus((previousStatus) => ({
+      ...previousStatus,
       [newTask.key]: false,
     }));
 
-    closeTaskModal(); // <-- પહેલાં modal બંધ
+    closeTaskModal();
 
     setTimeout(() => {
-      setMessage(`${newTask.title} custom task added successfully.`);
+      setMessage(
+        `${newTask.title} custom task added successfully.`,
+      );
     }, 100);
   };
+
+  /* =========================
+     SAVE DAILY CARE
+  ========================= */
 
   const saveCare = async () => {
     try {
       setSaving(true);
       setMessage("");
 
-      const selectedDefaultTaskKeys = DEFAULT_TASKS.filter(
-        (task) => careData[task.key] && !savedTaskKeys.includes(task.key),
-      ).map((task) => task.key);
+      const selectedDefaultTaskKeys =
+        currentDefaultTasks
+          .filter(
+            (task) =>
+              currentTaskValues?.[task.key] &&
+              !savedTaskKeys.includes(task.key),
+          )
+          .map((task) => task.key);
 
       const selectedCustomTaskKeys = customTasks
         .filter(
           (task) =>
-            customTaskStatus[task.key] && !savedTaskKeys.includes(task.key),
+            customTaskStatus[task.key] &&
+            !savedTaskKeys.includes(task.key),
         )
         .map((task) => task.key);
 
@@ -364,27 +615,47 @@ function ResidentCare() {
         selectedCustomTaskKeys.length === 0 &&
         !careData.notes.trim()
       ) {
-        setMessage("Please select at least one task or add a note.");
+        setMessage(
+          "Please select at least one task or add a note.",
+        );
         return;
       }
+
+      const preparedCustomTasks = customTasks.map(
+        (task) => ({
+          key: task.key,
+          title: task.title,
+          description: task.description || "",
+          icon: task.icon || "📋",
+          completed: Boolean(
+            customTaskStatus[task.key],
+          ),
+        }),
+      );
+
+      const payload = {
+  dayTasks: careData.dayTasks || {},
+
+  nightTasks: careData.nightTasks || {},
+
+  notes: careData.notes,
+
+  dayCustomTasks: isDayShift
+    ? preparedCustomTasks
+    : [],
+
+  nightCustomTasks: !isDayShift
+    ? preparedCustomTasks
+    : [],
+};
+
+console.log(payload);
 
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
         `http://localhost:5000/api/caretaker/resident/${id}`,
-        {
-          ...careData,
-
-          // Your backend can store this later after adding customTasks
-          // to the Care model/schema.
-          customTasks: customTasks.map((task) => ({
-            key: task.key,
-            title: task.title,
-            description: task.description,
-            icon: task.icon,
-            completed: Boolean(customTaskStatus[task.key]),
-          })),
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -392,35 +663,45 @@ function ResidentCare() {
         },
       );
 
-      const nextSavedTaskKeys = [
+      setSavedTaskKeys((previousKeys) => [
         ...new Set([
-          ...savedTaskKeys,
+          ...previousKeys,
           ...selectedDefaultTaskKeys,
           ...selectedCustomTaskKeys,
         ]),
-      ];
-
-      setSavedTaskKeys(nextSavedTaskKeys);
+      ]);
 
       setMessage(
         res.data.message ||
-          "Selected tasks saved. Saved tasks are now disabled.",
+          "Selected tasks saved successfully.",
       );
     } catch (error) {
       console.log("Save Care Error:", error);
 
-      setMessage(error.response?.data?.message || "Unable to save daily care");
+      setMessage(
+        error.response?.data?.message ||
+          "Unable to save daily care",
+      );
     } finally {
       setSaving(false);
     }
   };
 
+  /* =========================
+     LOADING
+  ========================= */
+
   if (loading) {
     return (
       <div className="resident-care-loading">
         <div className="resident-care-loader"></div>
+
         <h2>Loading Resident Care</h2>
-        <p>Please wait while resident details are loading.</p>
+
+        <p>
+          Please wait while resident details are
+          loading.
+        </p>
       </div>
     );
   }
@@ -433,9 +714,18 @@ function ResidentCare() {
         </div>
 
         <h2>{message || "Resident not found"}</h2>
-        <p>The requested resident information could not be loaded.</p>
 
-        <button type="button" onClick={() => navigate("/caretaker/dashboard")}>
+        <p>
+          The requested resident information could not
+          be loaded.
+        </p>
+
+        <button
+          type="button"
+          onClick={() =>
+            navigate("/caretaker/dashboard")
+          }
+        >
           <FaArrowLeft />
           Back to Dashboard
         </button>
@@ -443,50 +733,88 @@ function ResidentCare() {
     );
   }
 
-  const doctor =
-    caretaker.shift === "Morning"
-      ? resident.morningDoctor
-      : resident.nightDoctor;
+  const doctor = isDayShift
+    ? resident.dayDoctor
+    : resident.nightDoctor;
 
-  const defaultCompletedTasks = DEFAULT_TASKS.filter(
-    (task) => careData[task.key],
-  ).length;
+  const defaultCompletedTasks =
+    currentDefaultTasks.filter(
+      (task) =>
+        Boolean(currentTaskValues?.[task.key]),
+    ).length;
 
   const customCompletedTasks = customTasks.filter(
-    (task) => customTaskStatus[task.key],
+    (task) =>
+      Boolean(customTaskStatus[task.key]),
   ).length;
 
-  const totalTasks = DEFAULT_TASKS.length + customTasks.length;
-  const completedTasks = defaultCompletedTasks + customCompletedTasks;
+  const totalTasks =
+    currentDefaultTasks.length + customTasks.length;
+
+  const completedTasks =
+    defaultCompletedTasks + customCompletedTasks;
 
   const progress =
-    totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+    totalTasks === 0
+      ? 0
+      : Math.round(
+          (completedTasks / totalTasks) * 100,
+        );
 
   const hasUnsavedSelection =
-    DEFAULT_TASKS.some(
-      (task) => careData[task.key] && !savedTaskKeys.includes(task.key),
+    currentDefaultTasks.some(
+      (task) =>
+        currentTaskValues?.[task.key] &&
+        !savedTaskKeys.includes(task.key),
     ) ||
     customTasks.some(
-      (task) => customTaskStatus[task.key] && !savedTaskKeys.includes(task.key),
+      (task) =>
+        customTaskStatus[task.key] &&
+        !savedTaskKeys.includes(task.key),
     );
+
+  const completedOtherDefaultTasks =
+    otherShiftDefaultTasks.filter((task) =>
+      Boolean(otherShiftTaskValues?.[task.key]),
+    );
+
+  const completedOtherCustomTasks =
+    otherShiftCustomTasks.filter(
+      (task) => task.completed,
+    );
+
+  const hasOtherShiftCompletedTasks =
+    completedOtherDefaultTasks.length > 0 ||
+    completedOtherCustomTasks.length > 0;
 
   return (
     <div className="resident-care-page">
       {/* HEADER */}
+
       <header className="resident-care-header">
         <div className="resident-header-left">
           <button
             type="button"
             className="resident-back-btn"
-            onClick={() => navigate("/caretaker/dashboard")}
+            onClick={() =>
+              navigate("/caretaker/dashboard")
+            }
           >
             <FaArrowLeft />
           </button>
 
           <div className="resident-header-content">
-            <p className="resident-page-label">Daily Care Management</p>
+            <p className="resident-page-label">
+              Daily Care Management
+            </p>
+
             <h1>{resident.name}</h1>
-            <span>Record and manage today's care activities.</span>
+
+            <span>
+              Record and manage today's{" "}
+              {currentShiftName.toLowerCase()} shift care
+              activities.
+            </span>
           </div>
         </div>
 
@@ -498,7 +826,7 @@ function ResidentCare() {
 
             <div>
               <span>Current Shift</span>
-              <strong>{caretaker.shift || "Not Assigned"}</strong>
+              <strong>{currentShiftName}</strong>
             </div>
           </div>
 
@@ -509,22 +837,31 @@ function ResidentCare() {
 
             <div>
               <span>Caretaker</span>
-              <strong>{caretaker.name || "Caretaker"}</strong>
+
+              <strong>
+                {caretaker.name || "Caretaker"}
+              </strong>
             </div>
           </div>
         </div>
       </header>
 
       {/* RESIDENT SUMMARY */}
+
       <section className="resident-summary-card">
         <div className="resident-profile-section">
           <div className="resident-avatar-large">
-            {resident.gender?.toLowerCase() === "female" ? "👵" : "👴"}
+            {resident.gender?.toLowerCase() ===
+            "female"
+              ? "👵"
+              : "👴"}
           </div>
 
           <div className="resident-profile-info">
             <span>Resident Profile</span>
+
             <h2>{resident.name}</h2>
+
             <p>
               {resident.age} Years • {resident.gender}
             </p>
@@ -534,34 +871,45 @@ function ResidentCare() {
         <div className="resident-info-grid">
           <div className="resident-info-box">
             <span>Room Number</span>
-            <strong>{resident.room?.roomNumber || "Not Assigned"}</strong>
-          </div>
 
-          <div className="resident-info-box">
-            <span>Room Type</span>
-            <strong>{resident.room?.roomType || "-"}</strong>
+            <strong>
+              {resident.room?.roomNumber ||
+                "Not Assigned"}
+            </strong>
           </div>
 
           <div className="resident-info-box">
             <span>Medical Condition</span>
-            <strong>{resident.medicalCondition || "Normal"}</strong>
+
+            <strong>
+              {resident.medicalCondition || "Normal"}
+            </strong>
           </div>
 
           <div className="resident-info-box">
             <span>Assigned Doctor</span>
-            <strong>{doctor?.name || "Not Assigned"}</strong>
+
+            <strong>
+              Dr. {doctor?.name || "Not Assigned"}
+            </strong>
           </div>
         </div>
       </section>
 
-      {/* CARE PROGRESS */}
+      {/* CURRENT SHIFT PROGRESS */}
+
       <section className="resident-progress-card">
         <div className="resident-progress-header">
           <div>
-            <p className="resident-progress-label">Today's Progress</p>
+            <p className="resident-progress-label">
+              Today's {currentShiftName} Shift Progress
+            </p>
+
             <h3>Daily Care Status</h3>
+
             <span>
-              {completedTasks} of {totalTasks} care activities completed today.
+              {completedTasks} of {totalTasks} care
+              activities completed.
             </span>
           </div>
 
@@ -578,12 +926,16 @@ function ResidentCare() {
         </div>
       </section>
 
-      {/* DAILY CARE */}
+      {/* CURRENT SHIFT TASKS */}
+
       <section className="resident-care-section">
         <div className="resident-section-header resident-task-heading">
           <div>
-            <p className="resident-section-label">Daily Checklist</p>
-            <h2>Care Activities</h2>
+            <p className="resident-section-label">
+              {currentShiftName} Shift Checklist
+            </p>
+
+            <h2>{currentShiftName} Care Activities</h2>
           </div>
 
           <button
@@ -592,21 +944,25 @@ function ResidentCare() {
             onClick={openTaskModal}
           >
             <FaPlus />
-            Add Task
+            Add {currentShiftName} Task
           </button>
         </div>
 
         <div className="resident-task-grid">
-          {DEFAULT_TASKS.map((task) => (
+          {currentDefaultTasks.map((task) => (
             <CareTask
               key={task.key}
               icon={task.icon}
               title={task.title}
               description={task.description}
               name={task.key}
-              checked={Boolean(careData[task.key])}
+              checked={Boolean(
+                currentTaskValues?.[task.key],
+              )}
               onChange={handleCheckbox}
-              disabled={savedTaskKeys.includes(task.key)}
+              disabled={savedTaskKeys.includes(
+                task.key,
+              )}
               saved={savedTaskKeys.includes(task.key)}
             />
           ))}
@@ -618,20 +974,86 @@ function ResidentCare() {
               title={task.title}
               description={task.description}
               name={task.key}
-              checked={Boolean(customTaskStatus[task.key])}
-              onChange={() => handleCustomTaskCheckbox(task.key)}
-              disabled={savedTaskKeys.includes(task.key)}
+              checked={Boolean(
+                customTaskStatus[task.key],
+              )}
+              onChange={() =>
+                handleCustomTaskCheckbox(task.key)
+              }
+              disabled={savedTaskKeys.includes(
+                task.key,
+              )}
               saved={savedTaskKeys.includes(task.key)}
             />
           ))}
         </div>
       </section>
 
+      {/* OTHER SHIFT COMPLETED TASKS */}
+
+      {!isDayShift && hasOtherShiftCompletedTasks && (
+        <section className="resident-care-section">
+          <div className="resident-section-header">
+            <div>
+              <p className="resident-section-label">
+                Previous Care Information
+              </p>
+
+              <h2>
+                 Day Shift
+                Completed Tasks
+              </h2>
+
+              <span>
+                These tasks are read-only and were
+                completed by the Day shift.
+              </span>
+            </div>
+          </div>
+
+          <div className="resident-task-grid">
+            {completedOtherDefaultTasks.map(
+              (task) => (
+                <CareTask
+                  key={`other-${task.key}`}
+                  icon={task.icon}
+                  title={task.title}
+                  description={task.description}
+                  name={`other-${task.key}`}
+                  checked={true}
+                  onChange={() => {}}
+                  disabled={true}
+                  saved={true}
+                />
+              ),
+            )}
+
+            {completedOtherCustomTasks.map((task) => (
+              <CareTask
+                key={`other-${task.key}`}
+                icon={task.icon}
+                title={task.title}
+                description={task.description}
+                name={`other-${task.key}`}
+                checked={true}
+                onChange={() => {}}
+                disabled={true}
+                saved={true}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* NOTES */}
+
       <section className="resident-notes-card">
         <div className="resident-section-header">
           <div>
-            <p className="resident-section-label">Care Notes</p>
+            <p className="resident-section-label">
+              Care Notes
+            </p>
+
             <h2>Observation</h2>
           </div>
 
@@ -651,14 +1073,21 @@ function ResidentCare() {
         </div>
       </section>
 
-      {message && <div className="resident-message">{message}</div>}
+      {message && (
+        <div className="resident-message">
+          {message}
+        </div>
+      )}
 
       {/* ACTION BUTTONS */}
+
       <div className="resident-action-buttons">
         <button
           type="button"
           className="resident-cancel-btn"
-          onClick={() => navigate("/caretaker/dashboard")}
+          onClick={() =>
+            navigate("/caretaker/dashboard")
+          }
         >
           Cancel
         </button>
@@ -667,13 +1096,20 @@ function ResidentCare() {
           type="button"
           className="resident-save-btn"
           onClick={saveCare}
-          disabled={saving || (!hasUnsavedSelection && !careData.notes.trim())}
+          disabled={
+            saving ||
+            (!hasUnsavedSelection &&
+              !careData.notes.trim())
+          }
         >
-          {saving ? "Saving..." : "Save Selected Tasks"}
+          {saving
+            ? "Saving..."
+            : `Save ${currentShiftName} Tasks`}
         </button>
       </div>
 
       {/* ADD TASK MODAL */}
+
       {showTaskModal && (
         <div
           className="resident-task-modal-overlay"
@@ -685,12 +1121,19 @@ function ResidentCare() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="add-task-title"
-            onMouseDown={(event) => event.stopPropagation()}
+            onMouseDown={(event) =>
+              event.stopPropagation()
+            }
           >
             <div className="resident-task-modal-header">
               <div>
-                <p className="resident-section-label">Daily Care</p>
-                <h2 id="add-task-title">Add New Task</h2>
+                <p className="resident-section-label">
+                  {currentShiftName} Shift Care
+                </p>
+
+                <h2 id="add-task-title">
+                  Add {currentShiftName} Task
+                </h2>
               </div>
 
               <button
@@ -704,14 +1147,17 @@ function ResidentCare() {
             </div>
 
             <p className="resident-task-modal-help">
-              Select a ready-made task or create your own custom task.
+              Select a {currentShiftName.toLowerCase()}{" "}
+              shift task or create your own custom task.
             </p>
 
             <div className="resident-task-option-list">
-              {TASK_OPTIONS.map((task) => {
-                const isAlreadyAdded = customTasks.some(
-                  (addedTask) => addedTask.key === task.key,
-                );
+              {currentTaskOptions.map((task) => {
+                const isAlreadyAdded =
+                  customTasks.some(
+                    (addedTask) =>
+                      addedTask.key === task.key,
+                  );
 
                 return (
                   <label
@@ -720,15 +1166,23 @@ function ResidentCare() {
                       selectedTaskKey === task.key
                         ? "resident-task-option-selected"
                         : ""
-                    } ${isAlreadyAdded ? "resident-task-option-disabled" : ""}`}
+                    } ${
+                      isAlreadyAdded
+                        ? "resident-task-option-disabled"
+                        : ""
+                    }`}
                   >
                     <input
                       type="radio"
                       name="newTask"
                       value={task.key}
-                      checked={selectedTaskKey === task.key}
+                      checked={
+                        selectedTaskKey === task.key
+                      }
                       onChange={(event) =>
-                        setSelectedTaskKey(event.target.value)
+                        setSelectedTaskKey(
+                          event.target.value,
+                        )
                       }
                       disabled={isAlreadyAdded}
                     />
@@ -743,7 +1197,9 @@ function ResidentCare() {
                     </span>
 
                     {isAlreadyAdded && (
-                      <span className="resident-task-option-added">Added</span>
+                      <span className="resident-task-option-added">
+                        Added
+                      </span>
                     )}
                   </label>
                 );
@@ -776,7 +1232,10 @@ function ResidentCare() {
             <div className="resident-custom-task-form">
               <div className="resident-custom-task-row">
                 <div className="resident-custom-task-field resident-custom-icon-field">
-                  <label htmlFor="customTaskIcon">Icon</label>
+                  <label htmlFor="customTaskIcon">
+                    Icon
+                  </label>
+
                   <input
                     id="customTaskIcon"
                     type="text"
@@ -789,7 +1248,10 @@ function ResidentCare() {
                 </div>
 
                 <div className="resident-custom-task-field">
-                  <label htmlFor="customTaskTitle">Task Name *</label>
+                  <label htmlFor="customTaskTitle">
+                    Task Name *
+                  </label>
+
                   <input
                     id="customTaskTitle"
                     type="text"
@@ -797,17 +1259,22 @@ function ResidentCare() {
                     value={customTaskForm.title}
                     onChange={handleCustomTaskForm}
                     maxLength={60}
-                    placeholder="Example: Evening Walk"
+                    placeholder={`Example: ${currentShiftName} Special Care`}
                   />
                 </div>
               </div>
 
               <div className="resident-custom-task-field">
-                <label htmlFor="customTaskDescription">Description</label>
+                <label htmlFor="customTaskDescription">
+                  Description
+                </label>
+
                 <textarea
                   id="customTaskDescription"
                   name="description"
-                  value={customTaskForm.description}
+                  value={
+                    customTaskForm.description
+                  }
                   onChange={handleCustomTaskForm}
                   maxLength={160}
                   rows={3}
@@ -819,7 +1286,9 @@ function ResidentCare() {
                 type="button"
                 className="resident-save-btn resident-custom-task-save"
                 onClick={addCustomTask}
-                disabled={!customTaskForm.title.trim()}
+                disabled={
+                  !customTaskForm.title.trim()
+                }
               >
                 <FaPlus />
                 Add Custom Task
@@ -835,6 +1304,7 @@ function ResidentCare() {
 /* =========================
    CARE TASK COMPONENT
 ========================= */
+
 function CareTask({
   icon,
   title,
@@ -852,12 +1322,20 @@ function CareTask({
         ${disabled ? "resident-task-disabled" : ""}
       `}
     >
-      <div className="resident-task-icon">{icon}</div>
+      <div className="resident-task-icon">
+        {icon}
+      </div>
 
       <div className="resident-task-content">
         <h3>{title}</h3>
+
         <p>{description}</p>
-        {saved && <span className="resident-task-saved">Saved ✓</span>}
+
+        {saved && (
+          <span className="resident-task-saved">
+            Saved ✓
+          </span>
+        )}
       </div>
 
       <div className="resident-task-check">
@@ -869,7 +1347,9 @@ function CareTask({
           disabled={disabled}
         />
 
-        <span className="resident-custom-checkbox">{checked ? "✓" : ""}</span>
+        <span className="resident-custom-checkbox">
+          {checked ? "✓" : ""}
+        </span>
       </div>
     </label>
   );
