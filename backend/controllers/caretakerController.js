@@ -1,6 +1,7 @@
 const Staff = require("../models/Staff");
 const Resident = require("../models/Resident");
 const CareRecord = require("../models/CareRecord");
+const LeaveRequest = require("../models/LeaveRequest");
 
 // ====================================
 // Caretaker Dashboard
@@ -231,8 +232,6 @@ const saveDailyCare = async (req, res) => {
 careRecord.caretakerId = caretaker._id;
 careRecord.shift = caretaker.shift;
 
-await careRecord.save();
-
       await careRecord.save();
     } else {
       careRecord = await CareRecord.create({
@@ -304,9 +303,91 @@ const getCaretakerProfile = async (req, res) => {
   }
 };
 
+const applyCaretakerLeave = async (req, res) => {
+  try {
+    const caretaker = await Staff.findOne({
+      userId: req.user.id,
+      role: "Caretaker",
+    });
+
+    if (!caretaker) {
+      return res.status(404).json({
+        message: "Caretaker not found",
+      });
+    }
+
+    const { fromDate, toDate, reason } = req.body;
+
+    if (!fromDate || !toDate || !reason?.trim()) {
+      return res.status(400).json({
+        message: "From date, to date and reason are required",
+      });
+    }
+
+    const startDate = new Date(fromDate);
+    const endDate = new Date(toDate);
+//     const tomorrow = new Date();
+
+// tomorrow.setHours(0, 0, 0, 0);
+// tomorrow.setDate(tomorrow.getDate() + 1);
+
+// startDate.setHours(0, 0, 0, 0);
+// endDate.setHours(23, 59, 59, 999);
+
+// if (startDate < tomorrow) {
+//   return res.status(400).json({
+//     message: "Leave can only be applied from tomorrow onwards",
+//   });
+// }
+
+    if (startDate > endDate) {
+      return res.status(400).json({
+        message: "From date cannot be after to date",
+      });
+    }
+
+    const existingRequest = await LeaveRequest.findOne({
+      caretakerId: caretaker._id,
+      status: "Pending",
+      fromDate: {
+        $lte: endDate,
+      },
+      toDate: {
+        $gte: startDate,
+      },
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({
+        message: "You already have a pending leave request for these dates",
+      });
+    }
+
+    const leaveRequest = await LeaveRequest.create({
+      caretakerId: caretaker._id,
+      fromDate: startDate,
+      toDate: endDate,
+      reason: reason.trim(),
+    });
+
+    res.status(201).json({
+      message: "Leave request submitted successfully",
+      leaveRequest,
+    });
+  } catch (error) {
+    console.log("Apply Leave Error:", error);
+
+    res.status(500).json({
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getCaretakerDashboard,
   getResidentCare,
   saveDailyCare,
   getCaretakerProfile,
+  applyCaretakerLeave,
 };

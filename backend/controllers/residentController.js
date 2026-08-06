@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const Staff = require("../models/Staff");
 const FamilyMember = require("../models/FamilyMember");
+const LeaveRequest = require("../models/LeaveRequest");
 
 const getLeastAssignedStaff = async (role, shift, residentField) => {
   const staff = await Staff.aggregate([
@@ -1018,13 +1019,14 @@ const getResidentById = async (req, res) => {
 const updateResident = async (req, res) => {
   try {
     const resident = await Resident.findById(req.params.id);
-
+    
     if (!resident) {
       return res.status(404).json({
         message: "Resident Not Found",
       });
     }
-
+    
+    const previousStatus = resident.status;
     // ==========================
     // Resident Discharge
     // ==========================
@@ -1110,6 +1112,56 @@ const updateResident = async (req, res) => {
 
     resident.medicalCondition = req.body.medicalCondition;
     resident.status = req.body.status;
+    const becomingActive =
+  previousStatus !== "Active" &&
+  resident.status === "Active";
+
+if (becomingActive) {
+
+  const dayCaretakerOnLeave = await isCaretakerOnLeave(
+    resident.dayCaretaker
+  );
+
+  if (dayCaretakerOnLeave) {
+  const newDayCaretaker = await getAvailableCaretaker(
+    "Day",
+    "dayCaretaker",
+    resident.dayCaretaker,
+  );
+
+  if (!newDayCaretaker) {
+    return res.status(400).json({
+      message:
+        "Day caretaker leave par chhe ane bijo available Day caretaker nathi.",
+    });
+  }
+
+  resident.dayCaretaker = newDayCaretaker._id;
+}
+
+  const nightCaretakerOnLeave =
+    await isCaretakerOnLeave(
+      resident.nightCaretaker
+    );
+
+  if (nightCaretakerOnLeave) {
+  const newNightCaretaker = await getAvailableCaretaker(
+    "Night",
+    "nightCaretaker",
+    resident.nightCaretaker,
+  );
+
+  if (!newNightCaretaker) {
+    return res.status(400).json({
+      message:
+        "Night caretaker leave par chhe ane bijo available Night caretaker nathi.",
+    });
+  }
+
+  resident.nightCaretaker = newNightCaretaker._id;
+}
+
+}
 
     await resident.save();
 
@@ -1211,6 +1263,77 @@ const getRecentResidents = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+const isCaretakerOnLeave = async (caretakerId) => {
+  if (!caretakerId) {
+    return false;
+  }
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const tomorrowStart = new Date(todayStart);
+  tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+  const leave = await LeaveRequest.findOne({
+    caretakerId,
+    status: "Approved",
+
+    // Leave range overlaps with today's date
+    fromDate: {
+      $lt: tomorrowStart,
+    },
+
+    toDate: {
+      $gte: todayStart,
+    },
+  });
+
+  return Boolean(leave);
+};
+
+const getAvailableCaretaker = async (
+  shift,
+  residentField,
+  excludedCaretakerId = null,
+) => {
+  const caretakers = await Staff.find({
+    role: "Caretaker",
+    shift,
+    ...(excludedCaretakerId && {
+      _id: {
+        $ne: excludedCaretakerId,
+      },
+    }),
+  });
+
+  const availableCaretakers = [];
+
+  for (const caretaker of caretakers) {
+    const onLeave = await isCaretakerOnLeave(caretaker._id);
+
+    if (!onLeave) {
+      const residentCount = await Resident.countDocuments({
+        [residentField]: caretaker._id,
+        status: "Active",
+      });
+
+      availableCaretakers.push({
+        caretaker,
+        residentCount,
+      });
+    }
+  }
+
+  availableCaretakers.sort(
+    (first, second) =>
+      first.residentCount - second.residentCount,
+  );
+
+  return availableCaretakers.length
+    ? availableCaretakers[0].caretaker
+    : null;
 };
 
 module.exports = {

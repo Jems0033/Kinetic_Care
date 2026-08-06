@@ -447,3 +447,146 @@
     flex-direction: column;
   }
 }
+
+.caretaker-leave-btn {
+  border: none;
+  background: #0f766e;
+  color: #ffffff;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.caretaker-leave-btn:hover {
+  background: #0b5f59;
+}
+
+.leave-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.leave-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+}
+
+.leave-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.leave-modal-header p {
+  margin: 0 0 5px;
+  color: #0f766e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.leave-modal-header h2 {
+  margin: 0;
+}
+
+.leave-modal-header button {
+  border: none;
+  background: #f1f5f9;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.leave-date-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.leave-field {
+  margin-bottom: 16px;
+}
+
+.leave-field label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.leave-field input,
+.leave-field textarea {
+  width: 100%;
+  border: 1px solid #dbe3ea;
+  border-radius: 10px;
+  padding: 11px 12px;
+  font: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.leave-field input:focus,
+.leave-field textarea:focus {
+  border-color: #0f766e;
+}
+
+.leave-message {
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: #eefaf7;
+  color: #0f766e;
+  margin-bottom: 15px;
+}
+
+.leave-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.leave-cancel-btn,
+.leave-submit-btn {
+  padding: 10px 16px;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.leave-cancel-btn {
+  border: 1px solid #dbe3ea;
+  background: #ffffff;
+}
+
+.leave-submit-btn {
+  border: none;
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.leave-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .leave-date-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .leave-modal {
+    padding: 18px;
+  }
+}
