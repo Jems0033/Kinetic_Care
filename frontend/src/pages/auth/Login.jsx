@@ -36,13 +36,14 @@ function Login() {
         formData,
       );
 
+      
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       if (res.data.user.role === "admin") {
         navigate("/dashboard");
       } else if (res.data.user.role === "family") {
-        navigate("/family-dashboard");
+        navigate("/family/dashboard");
       } else if (res.data.user.role === "doctor") {
         navigate("/doctor/dashboard");
       } else if (res.data.user.role === "staff") {
@@ -56,6 +57,8 @@ function Login() {
       setLoading(false);
     }
   };
+
+  
 
   return (
     <div className="login-page">

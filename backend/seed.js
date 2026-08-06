@@ -77,19 +77,19 @@ const seedDatabase = async () => {
         email: "doctor@gmail.com",
         phone: "9876500002",
         gender: "Male",
-        shift: "Morning",
+        shift: "Day",
         salary: 65000,
       },
       {
-        name: "Dr. Neha Shah",
+        name: "Neha Shah",
         email: "neha@gmail.com",
         phone: "9876500003",
         gender: "Female",
-        shift: "Morning",
+        shift: "Day",
         salary: 68000,
       },
       {
-        name: "Dr. Amit Mehta",
+        name: "Amit Mehta",
         email: "amit@gmail.com",
         phone: "9876500004",
         gender: "Male",
@@ -97,7 +97,7 @@ const seedDatabase = async () => {
         salary: 70000,
       },
       {
-        name: "Dr. Priya Desai",
+        name: "Priya Desai",
         email: "priya@gmail.com",
         phone: "9876500005",
         gender: "Female",
@@ -142,7 +142,7 @@ const seedDatabase = async () => {
         email: "caretaker@gmail.com",
         phone: "9876500010",
         gender: "Male",
-        shift: "Morning",
+        shift: "Day",
         salary: 28000,
       },
       {
@@ -150,7 +150,7 @@ const seedDatabase = async () => {
         email: "kavita@gmail.com",
         phone: "9876500011",
         gender: "Female",
-        shift: "Morning",
+        shift: "Day",
         salary: 30000,
       },
       {
@@ -158,7 +158,7 @@ const seedDatabase = async () => {
         email: "manish@gmail.com",
         phone: "9876500012",
         gender: "Male",
-        shift: "Morning",
+        shift: "Day",
         salary: 29000,
       },
       {
@@ -214,16 +214,16 @@ const seedDatabase = async () => {
     console.log(`${caretakers.length} caretakers created...`);
 
     // Separate staff by shifts
-    const morningDoctors = doctors.filter(
-      (doctor) => doctor.shift === "Morning"
+    const dayDoctors = doctors.filter(
+      (doctor) => doctor.shift === "Day"
     );
 
     const nightDoctors = doctors.filter(
       (doctor) => doctor.shift === "Night"
     );
 
-    const morningCaretakers = caretakers.filter(
-      (caretaker) => caretaker.shift === "Morning"
+    const dayCaretakers = caretakers.filter(
+      (caretaker) => caretaker.shift === "Day"
     );
 
     const nightCaretakers = caretakers.filter(
@@ -430,11 +430,11 @@ const seedDatabase = async () => {
         room: rooms[data.roomIndex]._id,
 
         // Round-robin staff assignment
-        morningDoctor:
-          morningDoctors[index % morningDoctors.length]._id,
+        dayDoctor:
+          dayDoctors[index % dayDoctors.length]._id,
 
-        morningCaretaker:
-          morningCaretakers[index % morningCaretakers.length]._id,
+        dayCaretaker:
+          dayCaretakers[index % dayCaretakers.length]._id,
 
         nightDoctor:
           nightDoctors[index % nightDoctors.length]._id,
@@ -573,7 +573,7 @@ const seedDatabase = async () => {
 
     for (let index = 0; index < residents.length; index++) {
       const resident = residents[index];
-      const doctor = morningDoctors[index % morningDoctors.length];
+      const doctor = dayDoctors[index % dayDoctors.length];
 
       const record = await MedicalRecord.create({
         residentId: resident._id,
@@ -600,18 +600,18 @@ const seedDatabase = async () => {
     for (let index = 0; index < residents.length; index++) {
       const resident = residents[index];
 
-      const morningRecord = await CareRecord.create({
+      const dayRecord = await CareRecord.create({
         residentId: resident._id,
         caretakerId:
-          morningCaretakers[index % morningCaretakers.length]._id,
-        shift: "Morning",
+          dayCaretakers[index % dayCaretakers.length]._id,
+        shift: "Day",
         medicine: true,
         meal: true,
         bath: index % 2 === 0,
         walking: true,
         water: true,
         rest: true,
-        notes: "Morning routine completed successfully.",
+        notes: "Day routine completed successfully.",
         date: new Date(),
       });
 
@@ -630,7 +630,7 @@ const seedDatabase = async () => {
         date: new Date(),
       });
 
-      careRecords.push(morningRecord, nightRecord);
+      careRecords.push(dayRecord, nightRecord);
     }
 
     console.log(`${careRecords.length} care records created...`);

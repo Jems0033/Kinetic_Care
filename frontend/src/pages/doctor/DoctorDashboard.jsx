@@ -52,7 +52,7 @@ function DoctorDashboard() {
         <div className="doctor-welcome">
           <p className="doctor-label">Doctor Portal</p>
 
-          <h1>Welcome Back, {user?.name || "Doctor"}</h1>
+          <h1>Welcome Back , Dr. {user?.name || "Doctor"}</h1>
 
           <span>Manage your patients and medical records from one place.</span>
         </div>

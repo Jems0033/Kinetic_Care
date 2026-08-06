@@ -55,9 +55,11 @@ const addStaff = async (req, res) => {
       role: loginRole,
     });
 
+    const cleanName = req.body.name.replace(/^dr\.?\s*/i, "").trim();
+
     // Create Staff
     const staff = await Staff.create({
-      name,
+      name: cleanName,
       email: email.toLowerCase(),
       phone,
       gender,
@@ -455,6 +457,10 @@ const getStaffById = async (req, res) => {
 // Update Staff
 const updateStaff = async (req, res) => {
   try {
+    const cleanName = req.body.name.replace(/^dr\.?\s*/i, "").trim();
+
+    req.body.name = cleanName;
+
     const staff = await Staff.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });

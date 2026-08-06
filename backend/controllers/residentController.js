@@ -73,10 +73,10 @@ const addResident = async (req, res) => {
     // STAFF ASSIGNMENT
     // ===========================
 
-    const morningDoctor = await getLeastAssignedStaff(
+    const dayDoctor = await getLeastAssignedStaff(
       "Doctor",
-      "Morning",
-      "morningDoctor",
+      "Day",
+      "dayDoctor",
     );
 
     const nightDoctor = await getLeastAssignedStaff(
@@ -85,10 +85,10 @@ const addResident = async (req, res) => {
       "nightDoctor",
     );
 
-    const morningCaretaker = await getLeastAssignedStaff(
+    const dayCaretaker = await getLeastAssignedStaff(
       "Caretaker",
-      "Morning",
-      "morningCaretaker",
+      "Day",
+      "dayCaretaker",
     );
 
     const nightCaretaker = await getLeastAssignedStaff(
@@ -98,14 +98,14 @@ const addResident = async (req, res) => {
     );
 
     if (
-      !morningDoctor ||
+      !dayDoctor ||
       !nightDoctor ||
-      !morningCaretaker ||
+      !dayCaretaker ||
       !nightCaretaker
     ) {
       return res.status(400).json({
         message:
-          "Morning/Night doctor ane caretaker available nathi. Pela staff add karo.",
+          "Day/Night doctor ane caretaker is not available.Please add the staff",
       });
     }
 
@@ -148,8 +148,8 @@ const addResident = async (req, res) => {
         medicalCondition: resident1.medicalCondition,
         status: "Active",
 
-        morningDoctor: morningDoctor._id,
-        morningCaretaker: morningCaretaker._id,
+        dayDoctor: dayDoctor._id,
+        dayCaretaker: dayCaretaker._id,
         nightDoctor: nightDoctor._id,
         nightCaretaker: nightCaretaker._id,
       });
@@ -162,8 +162,8 @@ const addResident = async (req, res) => {
         medicalCondition: resident2.medicalCondition,
         status: "Active",
 
-        morningDoctor: morningDoctor._id,
-        morningCaretaker: morningCaretaker._id,
+        dayDoctor: dayDoctor._id,
+        dayCaretaker: dayCaretaker._id,
         nightDoctor: nightDoctor._id,
         nightCaretaker: nightCaretaker._id,
       });
@@ -544,8 +544,8 @@ const addResident = async (req, res) => {
         medicalCondition: req.body.medicalCondition,
         status: req.body.status || "Active",
 
-        morningDoctor: morningDoctor._id,
-        morningCaretaker: morningCaretaker._id,
+        dayDoctor: dayDoctor._id,
+        dayCaretaker: dayCaretaker._id,
         nightDoctor: nightDoctor._id,
         nightCaretaker: nightCaretaker._id,
       });
@@ -954,8 +954,8 @@ const getResidents = async (req, res) => {
     const residents = await Resident.find()
       .sort({ createdAt: -1 })
       .populate("room", "roomNumber")
-      .populate("morningDoctor", "name phone shift")
-      .populate("morningCaretaker", "name phone shift")
+      .populate("dayDoctor", "name phone shift")
+      .populate("dayCaretaker", "name phone shift")
       .populate("nightDoctor", "name phone shift")
       .populate("nightCaretaker", "name phone shift");
 
@@ -994,8 +994,8 @@ const getResidentById = async (req, res) => {
   try {
     const resident = await Resident.findById(req.params.id)
       .populate("room", "roomNumber")
-      .populate("morningDoctor", "name phone")
-      .populate("morningCaretaker", "name phone")
+      .populate("dayDoctor", "name phone")
+      .populate("dayCaretaker", "name phone")
       .populate("nightDoctor", "name phone")
       .populate("nightCaretaker", "name phone");
     if (!resident) {

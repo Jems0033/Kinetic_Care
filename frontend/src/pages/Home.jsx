@@ -485,28 +485,55 @@ function Home() {
 
       <footer className="home-footer">
         <div className="footer-top">
+          {/* Logo */}
           <div className="footer-brand">
             <img src="/logo.png" alt="Kinetic Care" />
-
             <div>
               <h2>
                 Kinetic<span>Care</span>
               </h2>
-
-              <p>Smart Old Age Home Management System</p>
+              <p>
+                Providing compassionate care, medical support and a safe home
+                for every resident.
+              </p>
             </div>
           </div>
 
-          <div className="footer-links">
+          {/* Quick Links */}
+          <div className="footer-column">
+            <h3>Quick Links</h3>
             <a href="#home">Home</a>
             <a href="#about">About</a>
             <a href="#services">Services</a>
             <a href="#contact">Contact</a>
           </div>
+
+          {/* Services */}
+          <div className="footer-column">
+            <h3>Our Services</h3>
+            <p>Resident Management</p>
+            <p>Medical Records</p>
+            <p>Room Management</p>
+            <p>Visitor Management</p>
+          </div>
+
+          {/* Contact */}
+          <div className="footer-column">
+            <h3>Contact Info</h3>
+            <p>📍 Ahmedabad, Gujarat</p>
+            <p>
+              <FaEnvelope /> kineticcare@gmail.com
+            </p>
+            <p>📞 +91 9876543210</p>
+            <p>🕒 24/7 Support</p>
+          </div>
         </div>
 
+        <hr />
+
         <div className="footer-bottom">
-          © 2026 Kinetic Care. All Rights Reserved.
+          <p>© 2026 Kinetic Care. All Rights Reserved.</p>
+          <p>Made with ❤️ for Better Elderly Care</p>
         </div>
       </footer>
     </div>

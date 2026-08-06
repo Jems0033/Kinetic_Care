@@ -15,75 +15,143 @@ const careRecordSchema = new mongoose.Schema(
     },
 
     shift: {
+  type: String,
+  enum: ["Day", "Night"],
+  required: true,
+},
+
+    // =========================
+// DAY SHIFT TASKS
+// =========================
+
+dayTasks: {
+  medicine: {
+    type: Boolean,
+    default: false,
+  },
+
+  breakfast: {
+    type: Boolean,
+    default: false,
+  },
+
+  bath: {
+    type: Boolean,
+    default: false,
+  },
+
+  hygiene: {
+    type: Boolean,
+    default: false,
+  },
+
+  walk: {
+    type: Boolean,
+    default: false,
+  },
+
+  water: {
+    type: Boolean,
+    default: false,
+  },
+
+  healthCheck: {
+    type: Boolean,
+    default: false,
+  },
+
+  lunch: {
+    type: Boolean,
+    default: false,
+  },
+},
+
+// =========================
+// NIGHT SHIFT TASKS
+// =========================
+
+nightTasks: {
+  medicine: {
+    type: Boolean,
+    default: false,
+  },
+
+  dinner: {
+    type: Boolean,
+    default: false,
+  },
+
+  water: {
+    type: Boolean,
+    default: false,
+  },
+
+  sleep: {
+    type: Boolean,
+    default: false,
+  },
+
+  healthCheck: {
+    type: Boolean,
+    default: false,
+  },
+
+  comfort: {
+    type: Boolean,
+    default: false,
+  },
+
+  sleeping: {
+    type: Boolean,
+    default: false,
+  },
+},
+
+    // =========================
+// DAY CUSTOM TASKS
+// =========================
+
+dayCustomTasks: [
+  {
+    key: String,
+    title: String,
+    description: {
       type: String,
-      enum: ["Morning", "Night"],
-      required: true,
+      default: "",
     },
-
-    medicine: {
+    icon: {
+      type: String,
+      default: "📋",
+    },
+    completed: {
       type: Boolean,
       default: false,
     },
+  },
+],
 
-    meal: {
+// =========================
+// NIGHT CUSTOM TASKS
+// =========================
+
+nightCustomTasks: [
+  {
+    key: String,
+    title: String,
+    description: {
+      type: String,
+      default: "",
+    },
+    icon: {
+      type: String,
+      default: "📋",
+    },
+    completed: {
       type: Boolean,
       default: false,
     },
-
-    bath: {
-      type: Boolean,
-      default: false,
-    },
-
-    walking: {
-      type: Boolean,
-      default: false,
-    },
-
-    water: {
-      type: Boolean,
-      default: false,
-    },
-
-    rest: {
-      type: Boolean,
-      default: false,
-    },
-
-    // =========================
-    // CUSTOM TASKS
-    // =========================
-    customTasks: [
-      {
-        key: {
-          type: String,
-          required: true,
-        },
-
-        title: {
-          type: String,
-          required: true,
-          trim: true,
-        },
-
-        description: {
-          type: String,
-          trim: true,
-          default: "",
-        },
-
-        icon: {
-          type: String,
-          default: "📋",
-        },
-
-        completed: {
-          type: Boolean,
-          default: false,
-        },
-      },
-    ],
-
+  },
+],
     notes: {
       type: String,
       trim: true,
