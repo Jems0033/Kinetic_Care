@@ -6,6 +6,22 @@ html {
   scroll-behavior: smooth;
 }
 
+#home {
+  scroll-margin-top: 10px;
+}
+
+#about {
+  scroll-margin-top: -10px;
+}
+
+#services {
+  scroll-margin-top: -16px;
+}
+
+#contact {
+  scroll-margin-top: 75px;
+}
+
 body {
   margin: 0;
 }
@@ -607,7 +623,7 @@ body {
 .section-heading-center {
   max-width: 650px;
 
-  margin: 0 auto 45px;
+  margin: 0 auto 50px;
 
   text-align: center;
 }
@@ -859,7 +875,7 @@ body {
 /* CONTACT */
 
 .home-contact {
-  padding: 80px 7%;
+  padding: 110px 7%;
 
   background: #f6f9f8;
 }
@@ -1014,6 +1030,55 @@ body {
   font-size: 8px;
 
   text-align: center;
+}
+
+.footer-column h3 {
+  color: #fff;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.footer-column p,
+.footer-column a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #d9d9d9;
+  margin-bottom: 10px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-column a:hover {
+  color: #3bb77e;
+  padding-left: 5px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  margin-top: 35px;
+  padding-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 /* RESPONSIVE */

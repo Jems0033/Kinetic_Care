@@ -416,7 +416,7 @@ function Staff() {
 
                   <div className="staff-info">
                     <div className="staff-name-row">
-                      <h3>{member.name}</h3>
+                      <h3>Dr. {member.name}</h3>
 
                       <span className="gender-badge">
                         {member.gender === "Male" ? "♂ Male" : "♀ Female"}
@@ -573,7 +573,7 @@ function Staff() {
                 >
                   <option value="">Select Shift</option>
 
-                  <option value="Morning">Morning</option>
+                  <option value="Day">Day</option>
 
                   <option value="Night">Night</option>
                 </select>

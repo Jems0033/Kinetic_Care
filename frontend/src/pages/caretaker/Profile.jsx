@@ -48,6 +48,75 @@ function Profile() {
     navigate("/");
   };
 
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+
+  const [leaveForm, setLeaveForm] = useState({
+    fromDate: "",
+    toDate: "",
+    reason: "",
+  });
+
+  const [leaveMessage, setLeaveMessage] = useState("");
+  const [leaveLoading, setLeaveLoading] = useState(false);
+
+  const handleLeaveChange = (event) => {
+    const { name, value } = event.target;
+
+    setLeaveForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  const submitLeaveRequest = async (event) => {
+    event.preventDefault();
+
+    try {
+      setLeaveLoading(true);
+      setLeaveMessage("");
+
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        "http://localhost:5000/api/caretaker/leave/apply",
+        leaveForm,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setLeaveMessage(
+        res.data.message || "Leave request submitted successfully",
+      );
+
+      setLeaveForm({
+        fromDate: "",
+        toDate: "",
+        reason: "",
+      });
+
+      setTimeout(() => {
+        setShowLeaveModal(false);
+        setLeaveMessage("");
+      }, 1200);
+    } catch (error) {
+      setLeaveMessage(
+        error.response?.data?.message ||
+        "Unable to submit leave request",
+      );
+    } finally {
+      setLeaveLoading(false);
+    }
+  };
+  const tomorrowDate = new Date();
+
+tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+const minimumLeaveDate = tomorrowDate
+  .toISOString()
+  .split("T")[0];
   return (
     <div className="caretaker-profile-page">
       {/* TOP BAR */}
@@ -94,6 +163,14 @@ function Profile() {
           </span>
 
           <span className="caretaker-role">{caretaker.gender || "Gender"}</span>
+
+          <button
+            type="button"
+            className="caretaker-leave-btn"
+            onClick={() => setShowLeaveModal(true)}
+          >
+            Apply for Leave
+          </button>
         </div>
 
         {/* DETAILS */}
@@ -172,6 +249,101 @@ function Profile() {
           </div>
         </div>
       </div>
+      {showLeaveModal && (
+        <div
+          className="leave-modal-overlay"
+          onMouseDown={() => setShowLeaveModal(false)}
+        >
+          <div
+            className="leave-modal"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="leave-modal-header">
+              <div>
+                <p>Leave Management</p>
+                <h2>Apply for Leave</h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowLeaveModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={submitLeaveRequest}>
+              <div className="leave-date-grid">
+                <div className="leave-field">
+                  <label htmlFor="fromDate">From Date</label>
+
+                  <input
+                    id="fromDate"
+                    type="date"
+                    name="fromDate"
+                    value={leaveForm.fromDate}
+                    onChange={handleLeaveChange}
+                    required
+                  />
+                </div>
+
+                <div className="leave-field">
+                  <label htmlFor="toDate">To Date</label>
+
+                  <input
+  id="toDate"
+  type="date"
+  name="toDate"
+  value={leaveForm.toDate}
+  onChange={handleLeaveChange}
+  // min={leaveForm.fromDate || minimumLeaveDate}
+  required
+/>
+                </div>
+              </div>
+
+              <div className="leave-field">
+                <label htmlFor="reason">Reason</label>
+
+                <textarea
+                  id="reason"
+                  name="reason"
+                  value={leaveForm.reason}
+                  onChange={handleLeaveChange}
+                  placeholder="Enter your leave reason"
+                  maxLength={300}
+                  rows={4}
+                  required
+                />
+              </div>
+
+              {leaveMessage && (
+                <div className="leave-message">
+                  {leaveMessage}
+                </div>
+              )}
+
+              <div className="leave-modal-actions">
+                <button
+                  type="button"
+                  className="leave-cancel-btn"
+                  onClick={() => setShowLeaveModal(false)}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="leave-submit-btn"
+                  disabled={leaveLoading}
+                >
+                  {leaveLoading ? "Submitting..." : "Submit Request"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

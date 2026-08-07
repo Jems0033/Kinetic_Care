@@ -39,12 +39,12 @@ const residentSchema = new mongoose.Schema(
       ref: "Room",
     },
 
-    morningDoctor: {
+    dayDoctor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Staff",
     },
 
-    morningCaretaker: {
+    dayCaretaker: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Staff",
     },

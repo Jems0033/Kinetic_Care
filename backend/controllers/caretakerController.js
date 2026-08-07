@@ -1,6 +1,7 @@
 const Staff = require("../models/Staff");
 const Resident = require("../models/Resident");
 const CareRecord = require("../models/CareRecord");
+const LeaveRequest = require("../models/LeaveRequest");
 
 // ====================================
 // Caretaker Dashboard
@@ -21,15 +22,15 @@ const getCaretakerDashboard = async (req, res) => {
 
     let residents = [];
 
-    if (caretaker.shift === "Morning") {
+    if (caretaker.shift === "Day") {
       residents = await Resident.find({
-        morningCaretaker: caretaker._id,
+        dayCaretaker: caretaker._id,
         status: "Active",
       })
         .populate("room", "roomNumber roomType")
-        .populate("morningDoctor", "name phone")
+        .populate("dayDoctor", "name phone")
         .select(
-          "name age gender medicalCondition room morningDoctor morningCaretaker",
+          "name age gender medicalCondition room dayDoctor dayCaretaker",
         );
     } else if (caretaker.shift === "Night") {
       residents = await Resident.find({
@@ -85,7 +86,7 @@ const getResidentCare = async (req, res) => {
 
     const resident = await Resident.findById(req.params.id)
       .populate("room", "roomNumber roomType")
-      .populate("morningDoctor", "name phone")
+      .populate("dayDoctor", "name phone")
       .populate("nightDoctor", "name phone");
 
     if (!resident) {
@@ -98,8 +99,8 @@ const getResidentCare = async (req, res) => {
     let assigned = false;
 
     if (
-      caretaker.shift === "Morning" &&
-      resident.morningCaretaker?.toString() === caretaker._id.toString()
+      caretaker.shift === "Day" &&
+      resident.dayCaretaker?.toString() === caretaker._id.toString()
     ) {
       assigned = true;
     }
@@ -125,8 +126,6 @@ const getResidentCare = async (req, res) => {
 
     const todayCare = await CareRecord.findOne({
       residentId: resident._id,
-      caretakerId: caretaker._id,
-      shift: caretaker.shift,
       date: {
         $gte: today,
         $lt: tomorrow,
@@ -139,7 +138,12 @@ const getResidentCare = async (req, res) => {
         name: caretaker.name,
         shift: caretaker.shift,
       },
-      todayCare,
+      todayCare: todayCare || {
+        dayTasks: {},
+        nightTasks: {},
+        dayCustomTasks: [],
+        nightCustomTasks: [],
+      },
     });
   } catch (error) {
     console.log(error);
@@ -179,8 +183,8 @@ const saveDailyCare = async (req, res) => {
     let assigned = false;
 
     if (
-      caretaker.shift === "Morning" &&
-      resident.morningCaretaker?.toString() === caretaker._id.toString()
+      caretaker.shift === "Day" &&
+      resident.dayCaretaker?.toString() === caretaker._id.toString()
     ) {
       assigned = true;
     }
@@ -198,7 +202,7 @@ const saveDailyCare = async (req, res) => {
       });
     }
 
-    const { medicine, meal, bath, walking, water, rest, notes, customTasks } =
+    const { dayTasks, nightTasks, dayCustomTasks, nightCustomTasks, notes } =
       req.body;
 
     const today = new Date();
@@ -209,8 +213,6 @@ const saveDailyCare = async (req, res) => {
 
     let careRecord = await CareRecord.findOne({
       residentId: resident._id,
-      caretakerId: caretaker._id,
-      shift: caretaker.shift,
       date: {
         $gte: today,
         $lt: tomorrow,
@@ -218,14 +220,17 @@ const saveDailyCare = async (req, res) => {
     });
 
     if (careRecord) {
-      careRecord.medicine = medicine;
-      careRecord.meal = meal;
-      careRecord.bath = bath;
-      careRecord.walking = walking;
-      careRecord.water = water;
-      careRecord.rest = rest;
+      if (caretaker.shift === "Day") {
+        careRecord.dayTasks = dayTasks;
+        careRecord.dayCustomTasks = dayCustomTasks || [];
+      } else {
+        careRecord.nightTasks = nightTasks;
+        careRecord.nightCustomTasks = nightCustomTasks || [];
+      }
+
       careRecord.notes = notes;
-      careRecord.customTasks = customTasks || [];
+careRecord.caretakerId = caretaker._id;
+careRecord.shift = caretaker.shift;
 
       await careRecord.save();
     } else {
@@ -234,14 +239,16 @@ const saveDailyCare = async (req, res) => {
         caretakerId: caretaker._id,
         shift: caretaker.shift,
 
-        medicine,
-        meal,
-        bath,
-        walking,
-        water,
-        rest,
+        dayTasks: caretaker.shift === "Day" ? dayTasks : {},
+
+        nightTasks: caretaker.shift === "Night" ? nightTasks : {},
+
+        dayCustomTasks: caretaker.shift === "Day" ? dayCustomTasks || [] : [],
+
+        nightCustomTasks:
+          caretaker.shift === "Night" ? nightCustomTasks || [] : [],
+
         notes,
-        customTasks: customTasks || [],
       });
     }
 
@@ -296,9 +303,91 @@ const getCaretakerProfile = async (req, res) => {
   }
 };
 
+const applyCaretakerLeave = async (req, res) => {
+  try {
+    const caretaker = await Staff.findOne({
+      userId: req.user.id,
+      role: "Caretaker",
+    });
+
+    if (!caretaker) {
+      return res.status(404).json({
+        message: "Caretaker not found",
+      });
+    }
+
+    const { fromDate, toDate, reason } = req.body;
+
+    if (!fromDate || !toDate || !reason?.trim()) {
+      return res.status(400).json({
+        message: "From date, to date and reason are required",
+      });
+    }
+
+    const startDate = new Date(fromDate);
+    const endDate = new Date(toDate);
+//     const tomorrow = new Date();
+
+// tomorrow.setHours(0, 0, 0, 0);
+// tomorrow.setDate(tomorrow.getDate() + 1);
+
+// startDate.setHours(0, 0, 0, 0);
+// endDate.setHours(23, 59, 59, 999);
+
+// if (startDate < tomorrow) {
+//   return res.status(400).json({
+//     message: "Leave can only be applied from tomorrow onwards",
+//   });
+// }
+
+    if (startDate > endDate) {
+      return res.status(400).json({
+        message: "From date cannot be after to date",
+      });
+    }
+
+    const existingRequest = await LeaveRequest.findOne({
+      caretakerId: caretaker._id,
+      status: "Pending",
+      fromDate: {
+        $lte: endDate,
+      },
+      toDate: {
+        $gte: startDate,
+      },
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({
+        message: "You already have a pending leave request for these dates",
+      });
+    }
+
+    const leaveRequest = await LeaveRequest.create({
+      caretakerId: caretaker._id,
+      fromDate: startDate,
+      toDate: endDate,
+      reason: reason.trim(),
+    });
+
+    res.status(201).json({
+      message: "Leave request submitted successfully",
+      leaveRequest,
+    });
+  } catch (error) {
+    console.log("Apply Leave Error:", error);
+
+    res.status(500).json({
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getCaretakerDashboard,
   getResidentCare,
   saveDailyCare,
   getCaretakerProfile,
+  applyCaretakerLeave,
 };

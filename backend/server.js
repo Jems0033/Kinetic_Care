@@ -1,4 +1,8 @@
 require("dotenv").config();
+// const cron = require("node-cron");
+// const processCaretakerLeaves = require(
+//   "./jobs/processCaretakerLeaves",
+// );
 
 const express = require("express");
 const cors = require("cors");
@@ -8,6 +12,12 @@ const connectDB = require("./config/db");
 const app = express();
 
 connectDB();
+
+// cron.schedule("0 0 * * *", async () => {
+//   console.log("Checking caretaker leaves...");
+
+//   await processCaretakerLeaves();
+// });
 
 app.use(cors());
 app.use(express.json());
