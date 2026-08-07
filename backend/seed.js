@@ -297,7 +297,7 @@ const seedDatabase = async () => {
         roomNumber: "B204",
         roomType: "Single",
         capacity: 2,
-        occupiedBeds: 0,
+        occupiedBeds: 1,
         status: "Available",
       },
       {
@@ -516,6 +516,7 @@ const seedDatabase = async () => {
     ];
 
     const familyUsers = [];
+    const familyMembers = [];
 
     for (let index = 0; index < familyData.length; index++) {
       const data = familyData[index];
@@ -528,13 +529,15 @@ const seedDatabase = async () => {
         phone: data.phone,
       });
 
-      await FamilyMember.create({
-        userId: familyUser._id,
-        residentId: residents[index]._id,
-        relation: data.relation,
-      });
+      const familyMember = await FamilyMember.create({
+  userId: familyUser._id,
+  residentId: residents[index]._id,
+  relation: data.relation,
+});
 
-      familyUsers.push(familyUser);
+familyMembers.push(familyMember);
+
+familyUsers.push(familyUser);
     }
 
     console.log(`${familyUsers.length} family members created...`);
@@ -648,27 +651,34 @@ const seedDatabase = async () => {
 
     const visitors = [];
 
-    for (let index = 0; index < 8; index++) {
-      const visitor = await Visitor.create({
-        residentId: residents[index]._id,
-        visitorName: familyData[index].name,
-        phone: familyData[index].phone,
-        relation: familyData[index].relation,
-        purpose: "Regular family meeting",
-        visitDate: new Date(
-          Date.now() + (index + 1) * 24 * 60 * 60 * 1000
-        ),
-        status: visitorStatuses[index % visitorStatuses.length],
-        checkIn: new Date(),
-        checkOut:
-          index % 2 === 0
-            ? new Date(Date.now() + 60 * 60 * 1000)
-            : undefined,
-      });
+for (let index = 0; index < 8; index++) {
+  const visitor = await Visitor.create({
+    residentId: residents[index]._id,
 
-      visitors.push(visitor);
-    }
+    familyMemberId: familyMembers[index]._id,
 
+    visitorName: familyData[index].name,
+
+    phone: familyData[index].phone,
+
+    relation: familyData[index].relation,
+
+    purpose: "Regular family meeting",
+
+    visitDate: new Date(
+      Date.now() + (index + 1) * 24 * 60 * 60 * 1000
+    ),
+
+    status: visitorStatuses[index % visitorStatuses.length],
+
+    checkOut:
+      index % 2 === 0
+        ? new Date(Date.now() + 60 * 60 * 60 * 1000)
+        : undefined,
+  });
+
+  visitors.push(visitor);
+}
     console.log(`${visitors.length} visitor records created...`);
 
     // =============================
@@ -679,7 +689,6 @@ const seedDatabase = async () => {
       {
         name: "Rajesh Shah",
         phone: "9825011101",
-        email: "rajesh@gmail.com",
         amount: 25000,
         donationType: "Money",
         donationDate: new Date("2026-07-01"),
@@ -688,7 +697,6 @@ const seedDatabase = async () => {
       {
         name: "Mehul Patel",
         phone: "9825011102",
-        email: "mehul@gmail.com",
         amount: 10000,
         donationType: "Food",
         donationDate: new Date("2026-07-08"),
@@ -697,7 +705,6 @@ const seedDatabase = async () => {
       {
         name: "Nisha Desai",
         phone: "9825011103",
-        email: "nisha@gmail.com",
         amount: 15000,
         donationType: "Medicine",
         donationDate: new Date("2026-07-12"),
@@ -706,7 +713,6 @@ const seedDatabase = async () => {
       {
         name: "Kiran Foundation",
         phone: "9825011104",
-        email: "kiran.foundation@gmail.com",
         amount: 30000,
         donationType: "Clothes",
         donationDate: new Date("2026-07-20"),
@@ -715,7 +721,6 @@ const seedDatabase = async () => {
       {
         name: "Anand Charitable Trust",
         phone: "9825011105",
-        email: "anandtrust@gmail.com",
         amount: 50000,
         donationType: "Money",
         donationDate: new Date("2026-07-25"),

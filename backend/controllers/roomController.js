@@ -1,4 +1,5 @@
 const Room = require("../models/Room");
+const Resident = require("../models/Resident");
 
 // ======================
 // Add Room
@@ -69,32 +70,134 @@ const getRoomById = async (req, res) => {
 // ======================
 const updateRoom = async (req, res) => {
   try {
-    const roomExists = await Room.findOne({
-      roomNumber: req.body.roomNumber.toUpperCase(),
-      _id: { $ne: req.params.id },
-    });
+    const currentRoom = await Room.findById(req.params.id);
 
-    if (roomExists) {
-      return res.status(400).json({
-        message: "Room Number Already Exists",
-      });
-    }
-
-    const room = await Room.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-
-    if (!room) {
+    if (!currentRoom) {
       return res.status(404).json({
         message: "Room Not Found",
       });
     }
+
+    // ==============================
+    // Check duplicate room number
+    // ==============================
+    if (req.body.roomNumber) {
+      const roomExists = await Room.findOne({
+        roomNumber: req.body.roomNumber.toUpperCase(),
+        _id: { $ne: req.params.id },
+      });
+
+      if (roomExists) {
+        return res.status(400).json({
+          message: "Room Number Already Exists",
+        });
+      }
+    }
+
+    // ====================================================
+    // IF ROOM IS CHANGED TO MAINTENANCE
+    // ====================================================
+    if (
+      req.body.status === "Maintenance" &&
+      currentRoom.status !== "Maintenance"
+    ) {
+      // Get all active residents currently in this room
+      const residents = await Resident.find({
+        room: currentRoom._id,
+        status: "Active",
+      });
+
+      // If residents exist, find replacement rooms
+      if (residents.length > 0) {
+        const availableRooms = await Room.find({
+          _id: { $ne: currentRoom._id },
+          status: { $ne: "Maintenance" },
+        }).sort({ occupiedBeds: 1 });
+
+        // -----------------------------------------
+        // First check WITHOUT changing database
+        // -----------------------------------------
+
+        const roomSlots = availableRooms.map((room) => ({
+          roomId: room._id,
+          roomNumber: room.roomNumber,
+          capacity: Number(room.capacity || 0),
+          occupiedBeds: Number(room.occupiedBeds || 0),
+          freeBeds:
+            Number(room.capacity || 0) -
+            Number(room.occupiedBeds || 0),
+        }));
+
+        const assignments = [];
+
+        for (const resident of residents) {
+          const roomIndex = roomSlots.findIndex(
+            (room) => room.freeBeds > 0
+          );
+
+          if (roomIndex === -1) {
+            return res.status(400).json({
+              message:
+                "Cannot set room to Maintenance. Not enough rooms are available for residents.",
+            });
+          }
+
+          assignments.push({
+            residentId: resident._id,
+            newRoomId: roomSlots[roomIndex].roomId,
+          });
+
+          // Reserve one bed temporarily
+          roomSlots[roomIndex].freeBeds -= 1;
+          roomSlots[roomIndex].occupiedBeds += 1;
+        }
+
+        // =========================================
+        // All residents can be moved
+        // Now actually update database
+        // =========================================
+
+        for (const assignment of assignments) {
+          await Resident.findByIdAndUpdate(
+            assignment.residentId,
+            {
+              room: assignment.newRoomId,
+            }
+          );
+
+          await Room.findByIdAndUpdate(
+            assignment.newRoomId,
+            {
+              $inc: { occupiedBeds: 1 },
+            }
+          );
+        }
+
+        // Current maintenance room becomes empty
+        currentRoom.occupiedBeds = 0;
+        await currentRoom.save();
+      }
+    }
+
+    // ==============================
+    // Update Room
+    // ==============================
+    const room = await Room.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     res.status(200).json({
       message: "Room Updated Successfully",
       room,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       message: error.message,
     });
