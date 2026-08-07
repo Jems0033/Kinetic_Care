@@ -209,32 +209,18 @@ function Visitor() {
                         )}
                       </strong>
 
-                      <small>
-                        {new Date(visitor.visitDate).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </small>
+                      
                     </div>
 
                     <div>
                       <span>Check Out</span>
-
-                      <strong>
-                        {visitor.checkOut
-                          ? new Date(visitor.checkOut).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
-                          : "--:--"}
-                      </strong>
 
                       <small>
                         {visitor.checkOut
                           ? new Date(visitor.checkOut).toLocaleDateString(
                               "en-IN",
                             )
-                          : "-"}
+                          : "---"}
                       </small>
                     </div>
                   </div>

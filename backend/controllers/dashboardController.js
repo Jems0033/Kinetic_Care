@@ -4,7 +4,11 @@ const Room = require("../models/Room");
 const Donor = require("../models/Donor");
 const Event = require("../models/Event");
 const LeaveRequest = require("../models/LeaveRequest");
-const { assignResidentsForLeave } = require("../utils/leaveReassignment");
+const sendEmail = require("../utils/sendMail");
+const {
+  getResidentField,
+  assignResidentsForLeave,
+} = require("../utils/leaveReassignment");
 
 const getDashboard = async (req, res) => {
   try {
@@ -30,11 +34,10 @@ const getDashboard = async (req, res) => {
   }
 };
 
-
 const getLeaveRequests = async (req, res) => {
   try {
     const leaveRequests = await LeaveRequest.find()
-      .populate("caretakerId", "name phone shift role")
+      .populate("staffId", "name phone shift role")
       .sort({ createdAt: -1 });
 
     res.status(200).json(leaveRequests);
@@ -48,9 +51,14 @@ const getLeaveRequests = async (req, res) => {
 
 const approveLeaveRequest = async (req, res) => {
   try {
-    const leaveRequest = await LeaveRequest.findById(
-      req.params.id,
-    ).populate("caretakerId");
+    const leaveRequest = await LeaveRequest.findById(req.params.id)
+  .populate({
+    path: "staffId",
+    populate: {
+      path: "userId",
+      select: "name email",
+    },
+  });
 
     if (!leaveRequest) {
       return res.status(404).json({
@@ -64,7 +72,7 @@ const approveLeaveRequest = async (req, res) => {
       });
     }
 
-    const leavingCaretaker = leaveRequest.caretakerId;
+    const leavingCaretaker = leaveRequest.staffId;
 
     if (!leavingCaretaker) {
       return res.status(404).json({
@@ -72,10 +80,10 @@ const approveLeaveRequest = async (req, res) => {
       });
     }
 
-    const residentField =
-      leavingCaretaker.shift === "Day"
-        ? "dayCaretaker"
-        : "nightCaretaker";
+    const residentField = getResidentField(
+      leaveRequest.staffRole,
+      leavingCaretaker.shift,
+    );
 
     const residents = await Resident.find({
       [residentField]: leavingCaretaker._id,
@@ -108,10 +116,29 @@ const approveLeaveRequest = async (req, res) => {
     leaveRequest.approvedBy = req.user.id;
     leaveRequest.approvedAt = new Date();
     await leaveRequest.save();
+    console.log(leaveRequest.staffId);
+console.log(leaveRequest.staffId.userId);
+    await sendEmail({
+      email: leaveRequest.staffId.userId.email,
+      subject: "Leave Request Approved",
+      html: `
+    <h2>Hello ${leaveRequest.staffId.name},</h2>
+
+    <p>Your leave request has been <b style="color:green;">APPROVED</b>.</p>
+
+    <p>Your leave has been approved by the administrator.</p>
+
+    <p><b>From:</b> ${new Date(leaveRequest.fromDate).toLocaleDateString()}</p>
+    <p><b>To:</b> ${new Date(leaveRequest.toDate).toLocaleDateString()}</p>
+
+    <br>
+    <p>Thank you,</p>
+    <p>Kinetic Care Team</p>
+  `,
+    });
 
     res.status(200).json({
-      message:
-        "Leave approved and residents reassigned successfully",
+      message: "Leave approved and residents reassigned successfully",
       reassignedResidents: replacements.length,
     });
   } catch (error) {
@@ -126,10 +153,14 @@ const approveLeaveRequest = async (req, res) => {
 
 const rejectLeaveRequest = async (req, res) => {
   try {
-    const leaveRequest = await LeaveRequest.findById(
-      req.params.id,
-    );
-
+const leaveRequest = await LeaveRequest.findById(req.params.id)
+  .populate({
+    path: "staffId",
+    populate: {
+      path: "userId",
+      select: "name email",
+    },
+  });
     if (!leaveRequest) {
       return res.status(404).json({
         message: "Leave request not found",
@@ -147,6 +178,25 @@ const rejectLeaveRequest = async (req, res) => {
     leaveRequest.approvedAt = new Date();
 
     await leaveRequest.save();
+    await sendEmail({
+      email: leaveRequest.staffId.userId.email,
+      subject: "Leave Request Rejected",
+      html: `
+    <h2>Hello ${leaveRequest.staffId.name},</h2>
+
+    <p>Your leave request has been <b style="color:red;">REJECTED</b>.</p>
+
+    <p>Unfortunately, your leave request could not be approved.</p>
+
+    <p><b>From:</b> ${new Date(leaveRequest.fromDate).toLocaleDateString()}</p>
+    <p><b>To:</b> ${new Date(leaveRequest.toDate).toLocaleDateString()}</p>
+
+    <br>
+    <p>Please contact the administrator for more information.</p>
+
+    <p>Kinetic Care Team</p>
+  `,
+    });
 
     res.status(200).json({
       message: "Leave request rejected successfully",

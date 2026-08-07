@@ -34,7 +34,7 @@ function Profile() {
           },
         },
       );
-
+      console.log(res.data);
       setCaretaker(res.data);
     } catch (error) {
       console.log(error);
@@ -103,8 +103,7 @@ function Profile() {
       }, 1200);
     } catch (error) {
       setLeaveMessage(
-        error.response?.data?.message ||
-        "Unable to submit leave request",
+        error.response?.data?.message || "Unable to submit leave request",
       );
     } finally {
       setLeaveLoading(false);
@@ -112,11 +111,9 @@ function Profile() {
   };
   const tomorrowDate = new Date();
 
-tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
 
-const minimumLeaveDate = tomorrowDate
-  .toISOString()
-  .split("T")[0];
+  const minimumLeaveDate = tomorrowDate.toISOString().split("T")[0];
   return (
     <div className="caretaker-profile-page">
       {/* TOP BAR */}
@@ -167,9 +164,10 @@ const minimumLeaveDate = tomorrowDate
           <button
             type="button"
             className="caretaker-leave-btn"
+            disabled={caretaker.onLeave}
             onClick={() => setShowLeaveModal(true)}
           >
-            Apply for Leave
+            {caretaker.onLeave ? "Currently On Leave" : "Apply for Leave"}
           </button>
         </div>
 
@@ -264,10 +262,7 @@ const minimumLeaveDate = tomorrowDate
                 <h2>Apply for Leave</h2>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setShowLeaveModal(false)}
-              >
+              <button type="button" onClick={() => setShowLeaveModal(false)}>
                 ✕
               </button>
             </div>
@@ -283,6 +278,8 @@ const minimumLeaveDate = tomorrowDate
                     name="fromDate"
                     value={leaveForm.fromDate}
                     onChange={handleLeaveChange}
+                    min={leaveForm.fromDate || minimumLeaveDate}
+
                     required
                   />
                 </div>
@@ -291,14 +288,14 @@ const minimumLeaveDate = tomorrowDate
                   <label htmlFor="toDate">To Date</label>
 
                   <input
-  id="toDate"
-  type="date"
-  name="toDate"
-  value={leaveForm.toDate}
-  onChange={handleLeaveChange}
-  // min={leaveForm.fromDate || minimumLeaveDate}
-  required
-/>
+                    id="toDate"
+                    type="date"
+                    name="toDate"
+                    value={leaveForm.toDate}
+                    onChange={handleLeaveChange}
+                    min={leaveForm.fromDate || minimumLeaveDate}
+                    required
+                  />
                 </div>
               </div>
 
@@ -318,9 +315,7 @@ const minimumLeaveDate = tomorrowDate
               </div>
 
               {leaveMessage && (
-                <div className="leave-message">
-                  {leaveMessage}
-                </div>
+                <div className="leave-message">{leaveMessage}</div>
               )}
 
               <div className="leave-modal-actions">

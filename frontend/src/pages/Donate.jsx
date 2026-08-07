@@ -21,14 +21,13 @@ function Donate() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const fromFamilyDashboard = location.state?.from === "family-dashboard";
+  const fromFamilyDashboard = location.state?.from === "family/dashboard";
 
-  const redirectPath = fromFamilyDashboard ? "/family-dashboard" : "/";
+  const redirectPath = fromFamilyDashboard ? "/family/dashboard" : "/";
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
     amount: "",
     donationType: "",
     address: "",
@@ -102,16 +101,6 @@ function Donate() {
       return "Full name should contain only letters.";
     }
 
-    if (!formData.email.trim()) {
-      return "Email address is required.";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(formData.email.trim())) {
-      return "Please enter a valid email address.";
-    }
-
     if (!formData.phone.trim()) {
       return "Phone number is required.";
     }
@@ -155,9 +144,6 @@ function Donate() {
     const message = error.response?.data?.message || "";
 
     switch (message) {
-      case "Donor Already Exists":
-        return "A donor with this email or phone number already exists.";
-
       case "Unable to Add Donor":
         return "Unable to process the donation.";
 
@@ -189,7 +175,6 @@ function Donate() {
       const payload = {
         name: formData.name.trim(),
         phone: formData.phone.trim(),
-        email: formData.email.trim().toLowerCase(),
         amount: Number(formData.amount),
         donationType: formData.donationType,
         address: formData.address.trim(),
@@ -213,7 +198,6 @@ function Donate() {
       setFormData({
         name: "",
         phone: "",
-        email: "",
         amount: "",
         donationType: "",
         address: "",
@@ -271,7 +255,7 @@ function Donate() {
             <button
               type="button"
               className="donation-back-btn"
-              onClick={() => navigate("/family-dashboard")}
+              onClick={() => navigate("/family/dashboard")}
             >
               <FaArrowLeft />
               Dashboard
@@ -341,22 +325,6 @@ function Donate() {
                 </div>
               </div>
 
-              <div className="donation-form-group">
-                <label>Email Address</label>
-
-                <div className="donation-input-box">
-                  <FaEnvelope />
-
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    maxLength={100}
-                  />
-                </div>
-              </div>
 
               <div className="donation-form-group">
                 <label>Phone Number</label>

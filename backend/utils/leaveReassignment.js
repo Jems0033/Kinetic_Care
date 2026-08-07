@@ -2,13 +2,24 @@ const Resident = require("../models/Resident");
 const Staff = require("../models/Staff");
 const LeaveRequest = require("../models/LeaveRequest");
 
-const getResidentField = (shift) =>
-  shift === "Day" ? "dayCaretaker" : "nightCaretaker";
+const getResidentField = (role,shift)=>{
 
-const getUnavailableCaretakerIds = async (leaveRequest) => {
-  const leavingCaretakerId = leaveRequest.caretakerId._id
-    ? leaveRequest.caretakerId._id
-    : leaveRequest.caretakerId;
+if(role==="Doctor"){
+    return shift==="Day"
+    ?"dayDoctor"
+    :"nightDoctor";
+}
+
+return shift==="Day"
+?"dayCaretaker"
+:"nightCaretaker";
+
+}
+
+const getUnavailableStaffIds = async (leaveRequest) => {
+  const leavingCaretakerId = leaveRequest.staffId._id
+    ? leaveRequest.staffId._id
+    : leaveRequest.staffId;
 
   return await LeaveRequest.find({
     status: "Approved",
@@ -18,37 +29,43 @@ const getUnavailableCaretakerIds = async (leaveRequest) => {
     toDate: {
       $gte: leaveRequest.fromDate,
     },
-    caretakerId: {
+    staffId: {
       $ne: leavingCaretakerId,
     },
-  }).distinct("caretakerId");
+  }).distinct("staffId");
 };
 
-const getAvailableCaretakersForLeave = async (leaveRequest) => {
-  const leavingCaretakerId = leaveRequest.caretakerId._id
-    ? leaveRequest.caretakerId._id
-    : leaveRequest.caretakerId;
+const getAvailableStaffForLeave = async (leaveRequest) => {
+  const leavingCaretakerId = leaveRequest.staffId._id
+    ? leaveRequest.staffId._id
+    : leaveRequest.staffId;
 
-  const unavailableCaretakerIds = await getUnavailableCaretakerIds(
+  const unavailableStaffIds = await getUnavailableStaffIds(
     leaveRequest,
   );
 
-  const residentField = getResidentField(leaveRequest.caretakerId.shift);
+  const residentField = getResidentField(
+    leaveRequest.staffRole,
+    leaveRequest.staffId.shift
+);
 
   return await Staff.find({
-    role: "Caretaker",
-    shift: leaveRequest.caretakerId.shift,
+role: leaveRequest.staffRole,
+    shift: leaveRequest.staffId.shift,
     _id: {
-      $nin: [leavingCaretakerId, ...unavailableCaretakerIds],
+      $nin: [leavingCaretakerId, ...unavailableStaffIds],
     },
   }).lean();
 };
 
 const assignResidentsForLeave = async (leaveRequest) => {
-  const residentField = getResidentField(leaveRequest.caretakerId.shift);
+  const residentField = getResidentField(
+    leaveRequest.staffRole,
+    leaveRequest.staffId.shift
+);
 
   const residents = await Resident.find({
-    [residentField]: leaveRequest.caretakerId._id,
+    [residentField]: leaveRequest.staffId._id,
     status: "Active",
   });
 
@@ -56,26 +73,26 @@ const assignResidentsForLeave = async (leaveRequest) => {
     return [];
   }
 
-  const availableCaretakers = await getAvailableCaretakersForLeave(
+  const availableStaff = await getAvailableStaffForLeave(
     leaveRequest,
   );
 
-  if (availableCaretakers.length === 0) {
+  if (availableStaff.length === 0) {
     throw new Error(
-      `No replacement ${leaveRequest.caretakerId.shift} caretaker available for approved leave`,
-    );
+`No replacement ${leaveRequest.staffId.shift} ${leaveRequest.staffRole} available`
+);
   }
 
-  const caretakerLoads = [];
+  const staffLoads = [];
 
-  for (const caretaker of availableCaretakers) {
+  for (const caretaker of availableStaff) {
     const count = await Resident.countDocuments({
       [residentField]: caretaker._id,
       status: "Active",
     });
 
-    caretakerLoads.push({
-      caretakerId: caretaker._id,
+    staffLoads.push({
+      staffId: caretaker._id,
       count,
     });
   }
@@ -83,23 +100,23 @@ const assignResidentsForLeave = async (leaveRequest) => {
   const replacements = [];
 
   for (const resident of residents) {
-    caretakerLoads.sort((a, b) => a.count - b.count);
+    staffLoads.sort((a, b) => a.count - b.count);
 
-    const selectedCaretaker = caretakerLoads[0];
+    const selectedCaretaker = staffLoads[0];
 
-    resident[residentField] = selectedCaretaker.caretakerId;
+    resident[residentField] = selectedCaretaker.staffId;
     await resident.save();
 
     replacements.push({
       residentId: resident._id,
-      oldCaretakerId: leaveRequest.caretakerId._id,
-      newCaretakerId: selectedCaretaker.caretakerId,
+      oldStaffId: leaveRequest.staffId._id,
+      newStaffId: selectedCaretaker.staffId,
     });
 
     selectedCaretaker.count += 1;
   }
 
-  leaveRequest.replacementCaretakers = replacements;
+  leaveRequest.replacements = replacements;
   leaveRequest.reassignmentCompleted = true;
   await leaveRequest.save();
 
@@ -107,17 +124,20 @@ const assignResidentsForLeave = async (leaveRequest) => {
 };
 
 const restoreResidentsAfterLeave = async (leaveRequest) => {
-  if (!leaveRequest.replacementCaretakers?.length) {
+  if (!leaveRequest.replacements?.length) {
     leaveRequest.restorationCompleted = true;
     await leaveRequest.save();
     return [];
   }
 
-  const residentField = getResidentField(leaveRequest.caretakerId.shift);
+  const residentField = getResidentField(
+    leaveRequest.staffRole,
+    leaveRequest.staffId.shift
+);
 
   const restorations = [];
 
-  for (const replacement of leaveRequest.replacementCaretakers) {
+  for (const replacement of leaveRequest.replacements) {
     const resident = await Resident.findById(replacement.residentId);
 
     if (!resident) {
@@ -126,12 +146,12 @@ const restoreResidentsAfterLeave = async (leaveRequest) => {
 
     if (
       resident[residentField]?.toString() !==
-      replacement.newCaretakerId.toString()
+      replacement.newStaffId.toString()
     ) {
       continue;
     }
 
-    resident[residentField] = replacement.oldCaretakerId;
+    resident[residentField] = replacement.oldStaffId;
     await resident.save();
 
     restorations.push(replacement.residentId);
@@ -144,7 +164,8 @@ const restoreResidentsAfterLeave = async (leaveRequest) => {
 };
 
 module.exports = {
-  getAvailableCaretakersForLeave,
+  getAvailableStaffForLeave,
   assignResidentsForLeave,
   restoreResidentsAfterLeave,
+  getResidentField,
 };

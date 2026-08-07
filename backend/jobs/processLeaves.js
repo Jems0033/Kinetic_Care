@@ -4,7 +4,7 @@ const {
   restoreResidentsAfterLeave,
 } = require("../utils/leaveReassignment");
 
-const processCaretakerLeaves = async () => {
+const processLeaves = async () => {
   try {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -19,7 +19,7 @@ const processCaretakerLeaves = async () => {
         $lt: tomorrowStart,
       },
       reassignmentCompleted: false,
-    }).populate("caretakerId");
+    }).populate("staffId");
 
     for (const leaveRequest of startingLeaves) {
       try {
@@ -39,7 +39,7 @@ const processCaretakerLeaves = async () => {
       },
       reassignmentCompleted: true,
       restorationCompleted: false,
-    }).populate("caretakerId");
+    }).populate("staffId");
 
     for (const leaveRequest of endingLeaves) {
       try {
@@ -59,4 +59,4 @@ const processCaretakerLeaves = async () => {
   }
 };
 
-module.exports = processCaretakerLeaves;
+module.exports = processLeaves;
