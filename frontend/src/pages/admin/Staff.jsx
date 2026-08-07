@@ -93,24 +93,6 @@ function Staff() {
     return null;
   };
 
-  const getErrorMessage = (error) => {
-    const msg = error.response?.data?.message || "";
-
-    switch (msg) {
-      case "Email Already Exists":
-        return "This email is already registered.";
-
-      case "Staff Not Found":
-        return "Staff member not found.";
-
-      case "Unable to Delete Staff":
-        return "Unable to delete staff.";
-
-      default:
-        return "Something went wrong. Please try again.";
-    }
-  };
-
   useEffect(() => {
     getStaff();
   }, []);
@@ -565,22 +547,6 @@ function Staff() {
                   value={formData.phone}
                   onChange={handleChange}
                 />
-              </div>
-
-              <div className="form-group">
-                <label>Shift</label>
-
-                <select
-                  name="shift"
-                  value={formData.shift}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Shift</option>
-
-                  <option value="Day">Day</option>
-
-                  <option value="Night">Night</option>
-                </select>
               </div>
 
               <div className="form-group">
