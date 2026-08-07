@@ -17,14 +17,14 @@ function DoctorProfile() {
   const [doctor, setDoctor] = useState({});
   const [showLeaveModal, setShowLeaveModal] = useState(false);
 
-const [leaveForm, setLeaveForm] = useState({
-  fromDate: "",
-  toDate: "",
-  reason: "",
-});
+  const [leaveForm, setLeaveForm] = useState({
+    fromDate: "",
+    toDate: "",
+    reason: "",
+  });
 
-const [leaveMessage, setLeaveMessage] = useState("");
-const [leaveLoading, setLeaveLoading] = useState(false);
+  const [leaveMessage, setLeaveMessage] = useState("");
+  const [leaveLoading, setLeaveLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,13 +49,13 @@ const [leaveLoading, setLeaveLoading] = useState(false);
   };
 
   const handleLeaveChange = (event) => {
-  const { name, value } = event.target;
+    const { name, value } = event.target;
 
-  setLeaveForm((previous) => ({
-    ...previous,
-    [name]: value,
-  }));
-};
+    setLeaveForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
 
   const submitLeaveRequest = async (event) => {
     event.preventDefault();
@@ -67,14 +67,14 @@ const [leaveLoading, setLeaveLoading] = useState(false);
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-  "http://localhost:5000/api/doctor/leave/apply",
-  leaveForm,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
+        "http://localhost:5000/api/doctor/leave/apply",
+        leaveForm,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       setLeaveMessage(
         res.data.message || "Leave request submitted successfully",
@@ -92,8 +92,7 @@ const [leaveLoading, setLeaveLoading] = useState(false);
       }, 1200);
     } catch (error) {
       setLeaveMessage(
-        error.response?.data?.message ||
-        "Unable to submit leave request",
+        error.response?.data?.message || "Unable to submit leave request",
       );
     } finally {
       setLeaveLoading(false);
@@ -155,12 +154,12 @@ const [leaveLoading, setLeaveLoading] = useState(false);
             Active
           </div>
           <button
-  type="button"
-  className="doctor-leave-btn"
-  onClick={() => setShowLeaveModal(true)}
->
-  Apply for Leave
-</button>
+            type="button"
+            className="doctor-leave-btn"
+            onClick={() => setShowLeaveModal(true)}
+          >
+            Apply for Leave
+          </button>
         </div>
 
         {/* DETAILS */}
@@ -270,6 +269,7 @@ const [leaveLoading, setLeaveLoading] = useState(false);
                     name="fromDate"
                     value={leaveForm.fromDate}
                     onChange={handleLeaveChange}
+                    min={leaveForm.fromDate || minimumLeaveDate}
                     required
                   />
                 </div>
@@ -283,7 +283,7 @@ const [leaveLoading, setLeaveLoading] = useState(false);
                     name="toDate"
                     value={leaveForm.toDate}
                     onChange={handleLeaveChange}
-                    // min={leaveForm.fromDate || minimumLeaveDate}
+                    min={leaveForm.fromDate || minimumLeaveDate}
                     required
                   />
                 </div>

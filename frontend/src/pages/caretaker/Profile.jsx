@@ -278,6 +278,8 @@ function Profile() {
                     name="fromDate"
                     value={leaveForm.fromDate}
                     onChange={handleLeaveChange}
+                    min={leaveForm.fromDate || minimumLeaveDate}
+
                     required
                   />
                 </div>
@@ -291,7 +293,7 @@ function Profile() {
                     name="toDate"
                     value={leaveForm.toDate}
                     onChange={handleLeaveChange}
-                    // min={leaveForm.fromDate || minimumLeaveDate}
+                    min={leaveForm.fromDate || minimumLeaveDate}
                     required
                   />
                 </div>

@@ -8,6 +8,7 @@ import {
   FaPhone,
   FaUsers,
   FaSignOutAlt,
+  FaArrowLeft
 } from "react-icons/fa";
 
 import "../../css/family/FamilyProfile.css";
@@ -61,7 +62,14 @@ function FamilyProfile() {
     <div className="family-profile-page">
       <div className="family-profile-container">
         <div className="family-profile-header">
-          <div>
+          <button
+            className="family-back-btn"
+            onClick={() => navigate("/family/dashboard")}
+          >
+            <FaArrowLeft />
+            Dashboard
+          </button>
+          <div className="family-detail-header">
             <p>Family Portal</p>
             <h1>My Profile</h1>
             <span>View and manage your personal information.</span>

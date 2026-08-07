@@ -47,7 +47,7 @@ function MedicalHistory() {
       <div className="history-topbar">
         <button
           className="history-back-btn"
-          onClick={() => navigate("/family-dashboard")}
+          onClick={() => navigate("/family/dashboard")}
         >
           <FaArrowLeft />
           Back

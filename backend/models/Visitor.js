@@ -7,6 +7,11 @@ const visitorSchema = new mongoose.Schema(
       ref: "Resident",
       required: true,
     },
+    familyMemberId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "FamilyMember",
+      required: true,
+    },
 
     visitorName: {
       type: String,
@@ -35,7 +40,7 @@ const visitorSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Pending", "Approved", "Rejected","Completed"],
+      enum: ["Pending", "Approved", "Rejected", "Completed"],
       default: "Pending",
     },
 

@@ -1,6 +1,6 @@
 const Visitor = require("../models/Visitor");
 const FamilyMember = require("../models/FamilyMember");
-
+const sendEmail = require("../utils/sendMail");
 // ===========================
 // Add Visitor
 // ===========================
@@ -173,17 +173,27 @@ const bookVisit = async (req, res) => {
 
     const { visitorName, phone, relation, purpose, visitDate } = req.body;
 
+    const existingVisit = await Visitor.findOne({
+      familyMemberId: family._id,
+      status: {
+        $in: ["Pending", "Approved"],
+      },
+    });
+
+    if (existingVisit) {
+      return res.status(400).json({
+        message:
+          "You have already booked a visit. Please wait until your current visit is completed.",
+      });
+    }
+
     const visitor = await Visitor.create({
       residentId: family.residentId,
-
+      familyMemberId: family._id,
       visitorName,
-
       phone,
-
       relation,
-
       purpose,
-
       visitDate,
     });
 
@@ -200,7 +210,15 @@ const bookVisit = async (req, res) => {
 
 const approveVisitor = async (req, res) => {
   try {
-    const visitor = await Visitor.findById(req.params.id);
+    const visitor = await Visitor.findById(req.params.id)
+      .populate({
+        path: "familyMemberId",
+        populate: {
+          path: "userId",
+          select: "name email",
+        },
+      })
+      .populate("residentId", "name");
 
     if (!visitor) {
       return res.status(404).json({
@@ -211,6 +229,24 @@ const approveVisitor = async (req, res) => {
     visitor.status = "Approved";
 
     await visitor.save();
+
+    await sendEmail({
+      email: visitor.familyMemberId.userId.email,
+      subject: "Visit Approved",
+      html: `
+    <h2>Hello ${visitor.familyMemberId.userId.name},</h2>
+
+    <p>Your visit request has been <b style="color:green">APPROVED</b>.</p>
+
+    <p><b>Resident:</b> ${visitor.residentId.name}</p>
+    <p><b>Visitor:</b> ${visitor.visitorName}</p>
+<p><b>Date:</b> ${new Date(visitor.visitDate).toLocaleDateString("en-IN")}</p>
+    <p>Please arrive on time.</p>
+
+    <br>
+    <p>Kinetic Care Team</p>
+  `,
+    });
 
     res.status(200).json({
       message: "Visitor approved successfully",
@@ -224,7 +260,15 @@ const approveVisitor = async (req, res) => {
 
 const rejectVisitor = async (req, res) => {
   try {
-    const visitor = await Visitor.findById(req.params.id);
+    const visitor = await Visitor.findById(req.params.id)
+      .populate({
+        path: "familyMemberId",
+        populate: {
+          path: "userId",
+          select: "name email",
+        },
+      })
+      .populate("residentId", "name");
 
     if (!visitor) {
       return res.status(404).json({
@@ -235,6 +279,24 @@ const rejectVisitor = async (req, res) => {
     visitor.status = "Rejected";
 
     await visitor.save();
+
+    await sendEmail({
+      email: visitor.familyMemberId.userId.email,
+      subject: "Visit Rejected",
+      html: `
+    <h2>Hello ${visitor.familyMemberId.userId.name},</h2>
+
+    <p>Your visit request has been <b style="color:red">REJECTED</b>.</p>
+
+    <p><b>Resident:</b> ${visitor.residentId.name}</p>
+    <p><b>Visitor:</b> ${visitor.visitorName}</p>
+
+    <p>If required, please book another visit.</p>
+
+    <br>
+    <p>Kinetic Care Team</p>
+  `,
+    });
 
     res.status(200).json({
       message: "Visitor rejected",

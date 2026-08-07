@@ -365,7 +365,7 @@ function FamilyDashboard() {
               onClick={() =>
                 navigate("/donate", {
                   state: {
-                    from: "family-dashboard",
+                    from: "family/dashboard",
                   },
                 })
               }

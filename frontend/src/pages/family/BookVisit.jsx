@@ -228,7 +228,7 @@ const BookVisit = () => {
 
       // Navigate after success message
       setTimeout(() => {
-        navigate("/family-dashboard");
+        navigate("/family/dashboard");
       }, 1200);
     } catch (error) {
       console.log("Book Visit Error:", error.response?.data);
@@ -290,7 +290,7 @@ const BookVisit = () => {
           <button
             type="button"
             className="visit-back-btn"
-            onClick={() => navigate("/family-dashboard")}
+            onClick={() => navigate("/family/dashboard")}
           >
             <FaArrowLeft />
             Back
@@ -451,7 +451,7 @@ const BookVisit = () => {
               <button
                 type="button"
                 className="visit-cancel-btn"
-                onClick={() => navigate("/family-dashboard")}
+                onClick={() => navigate("/family/dashboard")}
               >
                 Cancel
               </button>
