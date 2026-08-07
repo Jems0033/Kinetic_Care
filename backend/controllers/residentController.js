@@ -970,11 +970,11 @@ const getResidents = async (req, res) => {
           ...resident.toObject(),
           family: family
             ? {
-                name: family.userId.name,
-                email: family.userId.email,
-                phone: family.userId.phone,
-                relation: family.relation,
-              }
+              name: family.userId.name,
+              email: family.userId.email,
+              phone: family.userId.phone,
+              relation: family.relation,
+            }
             : null,
         };
       }),
@@ -1019,61 +1019,243 @@ const getResidentById = async (req, res) => {
 const updateResident = async (req, res) => {
   try {
     const resident = await Resident.findById(req.params.id);
-    
+
     if (!resident) {
       return res.status(404).json({
         message: "Resident Not Found",
       });
     }
-    
+
     const previousStatus = resident.status;
-    // ==========================
-    // Resident Discharge
-    // ==========================
-    if (req.body.status === "Discharged" && resident.status !== "Discharged") {
+    const previousRoomId = resident.room
+      ? resident.room.toString()
+      : null;
+
+    const newStatus = req.body.status;
+
+    // =====================================================
+    // 1. RESIDENT DISCHARGE
+    // =====================================================
+    if (
+      newStatus === "Discharged" &&
+      previousStatus !== "Discharged"
+    ) {
       if (resident.room) {
-        const room = await Room.findById(resident.room);
+        const oldRoom = await Room.findById(resident.room);
 
-        if (room) {
-          room.occupiedBeds--;
+        if (oldRoom) {
+          oldRoom.occupiedBeds = Math.max(
+            Number(oldRoom.occupiedBeds || 0) - 1,
+            0
+          );
 
-          if (room.occupiedBeds < 0) {
-            room.occupiedBeds = 0;
+          if (oldRoom.status !== "Maintenance") {
+            oldRoom.status = "Available";
           }
 
-          if (room.occupiedBeds < room.capacity) {
-            room.status = "Available";
-          }
-
-          await room.save();
+          await oldRoom.save();
         }
       }
 
       resident.room = null;
     }
 
-    // ==========================
-    // Room Changed
-    // ==========================
-    else if (resident.room && resident.room.toString() !== req.body.room) {
-      // Old Room
-      const oldRoom = await Room.findById(resident.room);
+    // =====================================================
+    // 2. TEMPORARY LEAVE -> ACTIVE
+    // =====================================================
+    else if (
+      previousStatus !== "Active" &&
+      newStatus === "Active"
+    ) {
+      let assignedRoom = null;
 
-      if (oldRoom) {
-        oldRoom.occupiedBeds--;
-
-        if (oldRoom.occupiedBeds < 0) {
-          oldRoom.occupiedBeds = 0;
-        }
-
-        if (oldRoom.occupiedBeds < oldRoom.capacity) {
-          oldRoom.status = "Available";
-        }
-
-        await oldRoom.save();
+      // Old assigned room check
+      if (resident.room) {
+        assignedRoom = await Room.findById(resident.room);
       }
 
-      // New Room
+      // ===================================================
+      // Old room usable hoy
+      // ===================================================
+      if (
+        assignedRoom &&
+        assignedRoom.status !== "Maintenance" &&
+        Number(assignedRoom.occupiedBeds || 0) <
+          Number(assignedRoom.capacity || 0)
+      ) {
+        // Same old room ma resident return thase
+        resident.room = assignedRoom._id;
+
+        assignedRoom.occupiedBeds =
+          Number(assignedRoom.occupiedBeds || 0) + 1;
+
+        if (
+          assignedRoom.occupiedBeds >=
+          assignedRoom.capacity
+        ) {
+          assignedRoom.status = "Occupied";
+        } else {
+          assignedRoom.status = "Available";
+        }
+
+        await assignedRoom.save();
+      }
+
+      // ===================================================
+      // Old room Maintenance / Full / Missing
+      // New room automatically find karo
+      // ===================================================
+      else {
+        const availableRooms = await Room.find({
+          status: { $ne: "Maintenance" },
+          ...(resident.room && {
+            _id: { $ne: resident.room },
+          }),
+        }).sort({
+          occupiedBeds: 1,
+        });
+
+        let newRoom = null;
+
+        for (const room of availableRooms) {
+          const occupiedBeds =
+            Number(room.occupiedBeds || 0);
+
+          const capacity =
+            Number(room.capacity || 0);
+
+          if (occupiedBeds < capacity) {
+            newRoom = room;
+            break;
+          }
+        }
+
+        if (!newRoom) {
+          return res.status(400).json({
+            message:
+              "Resident cannot be activated because no room is available.",
+          });
+        }
+
+        resident.room = newRoom._id;
+
+        newRoom.occupiedBeds =
+          Number(newRoom.occupiedBeds || 0) + 1;
+
+        if (
+          newRoom.occupiedBeds >=
+          newRoom.capacity
+        ) {
+          newRoom.status = "Occupied";
+        } else {
+          newRoom.status = "Available";
+        }
+
+        await newRoom.save();
+      }
+
+      // ===================================================
+      // DAY CARETAKER LEAVE CHECK
+      // ===================================================
+      const dayCaretakerOnLeave =
+        await isStaffOnLeave(resident.dayCaretaker);
+
+      if (dayCaretakerOnLeave) {
+        const newCaretaker = await getAvailableStaff(
+          "Caretaker",
+          "Day",
+          "dayCaretaker",
+          resident.dayCaretaker
+        );
+
+        if (!newCaretaker) {
+          return res.status(400).json({
+            message: "No available Day Caretaker.",
+          });
+        }
+
+        resident.dayCaretaker = newCaretaker._id;
+      }
+
+      // ===================================================
+      // NIGHT CARETAKER LEAVE CHECK
+      // ===================================================
+      const nightCaretakerOnLeave =
+        await isStaffOnLeave(resident.nightCaretaker);
+
+      if (nightCaretakerOnLeave) {
+        const newCaretaker = await getAvailableStaff(
+          "Caretaker",
+          "Night",
+          "nightCaretaker",
+          resident.nightCaretaker
+        );
+
+        if (!newCaretaker) {
+          return res.status(400).json({
+            message: "No available Night Caretaker.",
+          });
+        }
+
+        resident.nightCaretaker = newCaretaker._id;
+      }
+
+      // ===================================================
+      // DAY DOCTOR LEAVE CHECK
+      // ===================================================
+      const dayDoctorOnLeave =
+        await isStaffOnLeave(resident.dayDoctor);
+
+      if (dayDoctorOnLeave) {
+        const newDoctor = await getAvailableStaff(
+          "Doctor",
+          "Day",
+          "dayDoctor",
+          resident.dayDoctor
+        );
+
+        if (!newDoctor) {
+          return res.status(400).json({
+            message: "No available Day Doctor.",
+          });
+        }
+
+        resident.dayDoctor = newDoctor._id;
+      }
+
+      // ===================================================
+      // NIGHT DOCTOR LEAVE CHECK
+      // ===================================================
+      const nightDoctorOnLeave =
+        await isStaffOnLeave(resident.nightDoctor);
+
+      if (nightDoctorOnLeave) {
+        const newDoctor = await getAvailableStaff(
+          "Doctor",
+          "Night",
+          "nightDoctor",
+          resident.nightDoctor
+        );
+
+        if (!newDoctor) {
+          return res.status(400).json({
+            message: "No available Night Doctor.",
+          });
+        }
+
+        resident.nightDoctor = newDoctor._id;
+      }
+    }
+
+    // =====================================================
+    // 3. ACTIVE RESIDENT ROOM CHANGE
+    // =====================================================
+    else if (
+      newStatus !== "Discharged" &&
+      req.body.room &&
+      previousRoomId &&
+      previousRoomId !== req.body.room
+    ) {
       const newRoom = await Room.findById(req.body.room);
 
       if (!newRoom) {
@@ -1082,151 +1264,135 @@ const updateResident = async (req, res) => {
         });
       }
 
-      if (newRoom.occupiedBeds >= newRoom.capacity) {
+      // Maintenance room manually assign na thai sake
+      if (newRoom.status === "Maintenance") {
+        return res.status(400).json({
+          message:
+            "Resident cannot be assigned to a room under maintenance.",
+        });
+      }
+
+      if (
+        Number(newRoom.occupiedBeds || 0) >=
+        Number(newRoom.capacity || 0)
+      ) {
         return res.status(400).json({
           message: "Room Full",
         });
       }
 
-      newRoom.occupiedBeds++;
+      // Only Active resident occupancy ma count thay
+      if (previousStatus === "Active") {
+        const oldRoom = await Room.findById(
+          resident.room
+        );
 
-      if (newRoom.occupiedBeds >= newRoom.capacity) {
-        newRoom.status = "Occupied";
+        if (oldRoom) {
+          oldRoom.occupiedBeds = Math.max(
+            Number(oldRoom.occupiedBeds || 0) - 1,
+            0
+          );
+
+          if (oldRoom.status !== "Maintenance") {
+            oldRoom.status = "Available";
+          }
+
+          await oldRoom.save();
+        }
+
+        newRoom.occupiedBeds =
+          Number(newRoom.occupiedBeds || 0) + 1;
+
+        if (
+          newRoom.occupiedBeds >=
+          newRoom.capacity
+        ) {
+          newRoom.status = "Occupied";
+        } else {
+          newRoom.status = "Available";
+        }
+
+        await newRoom.save();
       }
 
-      await newRoom.save();
-
-      resident.room = req.body.room;
+      resident.room = newRoom._id;
     }
 
-    // ==========================
-    // Update Resident
-    // ==========================
+    // =====================================================
+    // 4. NORMAL DETAILS UPDATE
+    // =====================================================
+
     resident.name = req.body.name;
     resident.age = req.body.age;
     resident.gender = req.body.gender;
+    resident.medicalCondition =
+      req.body.medicalCondition;
 
-    if (req.body.status !== "Discharged") {
+    resident.status = newStatus;
+
+    // Normal case ma room update
+    if (
+      newStatus !== "Discharged" &&
+      !(previousStatus !== "Active" && newStatus === "Active") &&
+      req.body.room
+    ) {
       resident.room = req.body.room;
     }
 
-    resident.medicalCondition = req.body.medicalCondition;
-    resident.status = req.body.status;
-    const becomingActive =
-  previousStatus !== "Active" &&
-  resident.status === "Active";
-
-if (becomingActive) {
-
-  const dayCaretakerOnLeave =
-  await isStaffOnLeave(resident.dayCaretaker);
-
-if (dayCaretakerOnLeave) {
-  const newCaretaker = await getAvailableStaff(
-    "Caretaker",
-    "Day",
-    "dayCaretaker",
-    resident.dayCaretaker,
-  );
-
-  if (!newCaretaker) {
-    return res.status(400).json({
-      message: "No available Day Caretaker.",
-    });
-  }
-
-  resident.dayCaretaker = newCaretaker._id;
-}
-
-  const nightCaretakerOnLeave =
-  await isStaffOnLeave(resident.nightCaretaker);
-
-if (nightCaretakerOnLeave) {
-  const newCaretaker = await getAvailableStaff(
-    "Caretaker",
-    "Night",
-    "nightCaretaker",
-    resident.nightCaretaker,
-  );
-
-  if (!newCaretaker) {
-    return res.status(400).json({
-      message: "No available Night Caretaker.",
-    });
-  }
-
-  resident.nightCaretaker = newCaretaker._id;
-}
-
-const dayDoctorOnLeave = await isStaffOnLeave(
-  resident.dayDoctor,
-);
-
-if (dayDoctorOnLeave) {
-  const newDoctor = await getAvailableStaff(
-    "Doctor",
-    "Day",
-    "dayDoctor",
-    resident.dayDoctor,
-  );
-
-  if (!newDoctor) {
-    return res.status(400).json({
-      message: "No available Day Doctor.",
-    });
-  }
-
-  resident.dayDoctor = newDoctor._id;
-}
-const nightDoctorOnLeave = await isStaffOnLeave(
-  resident.nightDoctor,
-);
-
-if (nightDoctorOnLeave) {
-  const newDoctor = await getAvailableStaff(
-    "Doctor",
-    "Night",
-    "nightDoctor",
-    resident.nightDoctor,
-  );
-
-  if (!newDoctor) {
-    return res.status(400).json({
-      message: "No available Night Doctor.",
-    });
-  }
-
-  resident.nightDoctor = newDoctor._id;
-}
-
-}
-
     await resident.save();
 
-    // ==========================
-    // Update Family
-    // ==========================
+    // =====================================================
+    // 5. UPDATE FAMILY DETAILS
+    // =====================================================
     const family = await FamilyMember.findOne({
       residentId: resident._id,
     });
 
     if (family) {
-      family.relation = req.body.relation;
+      if (req.body.relation !== undefined) {
+        family.relation = req.body.relation;
+      }
 
       await family.save();
 
-      await User.findByIdAndUpdate(family.userId, {
-        name: req.body.familyName,
-        email: req.body.familyEmail,
-        phone: req.body.familyPhone,
-      });
+      const familyUpdate = {};
+
+      if (req.body.familyName !== undefined) {
+        familyUpdate.name = req.body.familyName;
+      }
+
+      if (req.body.familyEmail !== undefined) {
+        familyUpdate.email = req.body.familyEmail;
+      }
+
+      if (req.body.familyPhone !== undefined) {
+        familyUpdate.phone = req.body.familyPhone;
+      }
+
+      if (Object.keys(familyUpdate).length > 0) {
+        await User.findByIdAndUpdate(
+          family.userId,
+          familyUpdate
+        );
+      }
     }
+
+    const updatedResident = await Resident.findById(
+      resident._id
+    )
+      .populate("room", "roomNumber status")
+      .populate("dayDoctor", "name phone shift")
+      .populate("dayCaretaker", "name phone shift")
+      .populate("nightDoctor", "name phone shift")
+      .populate("nightCaretaker", "name phone shift");
 
     res.status(200).json({
       message: "Resident Updated Successfully",
-      resident,
+      resident: updatedResident,
     });
   } catch (error) {
+    console.log("Update Resident Error:", error);
+
     res.status(500).json({
       message: error.message,
     });
