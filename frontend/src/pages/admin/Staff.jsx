@@ -416,7 +416,11 @@ function Staff() {
 
                   <div className="staff-info">
                     <div className="staff-name-row">
-                      <h3>Dr. {member.name}</h3>
+                      <span>
+                        {member.role === "Doctor"
+                          ? `Dr. ${member.name}`
+                          : member.name}
+                      </span>
 
                       <span className="gender-badge">
                         {member.gender === "Male" ? "♂ Male" : "♀ Female"}

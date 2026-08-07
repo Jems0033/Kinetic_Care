@@ -234,6 +234,20 @@
 
   box-shadow: 0 0 0 4px rgba(37, 167, 124, 0.12);
 }
+.doctor-leave-btn {
+  border: none;
+  background: #0f766e;
+  margin-top: 100px;
+  color: #ffffff;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.doctor-leave-btn:hover {
+  background: #0b5f59;
+}
 
 /* =========================
    DETAILS SECTION

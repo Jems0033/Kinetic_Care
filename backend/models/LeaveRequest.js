@@ -2,11 +2,17 @@ const mongoose = require("mongoose");
 
 const leaveRequestSchema = new mongoose.Schema(
   {
-    caretakerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Staff",
-      required: true,
-    },
+    staffId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Staff",
+    required: true,
+},
+
+staffRole:{
+    type:String,
+    enum:["Caretaker","Doctor"],
+    required:true,
+},
 
     fromDate: {
       type: Date,
@@ -41,24 +47,24 @@ const leaveRequestSchema = new mongoose.Schema(
       default: null,
     },
 
-    replacementCaretakers: [
-      {
-        oldCaretakerId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Staff",
-        },
+    replacements: [
+{
+    residentId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Resident"
+    },
 
-        newCaretakerId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Staff",
-        },
+    oldStaffId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Staff"
+    },
 
-        residentId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Resident",
-        },
-      },
-    ],
+    newStaffId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Staff"
+    }
+}
+],
 
     reassignmentCompleted: {
       type: Boolean,

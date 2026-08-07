@@ -4,7 +4,10 @@ const Room = require("../models/Room");
 const Donor = require("../models/Donor");
 const Event = require("../models/Event");
 const LeaveRequest = require("../models/LeaveRequest");
-const { assignResidentsForLeave } = require("../utils/leaveReassignment");
+const {
+  getResidentField,
+  assignResidentsForLeave,
+} = require("../utils/leaveReassignment");
 
 const getDashboard = async (req, res) => {
   try {
@@ -34,7 +37,7 @@ const getDashboard = async (req, res) => {
 const getLeaveRequests = async (req, res) => {
   try {
     const leaveRequests = await LeaveRequest.find()
-      .populate("caretakerId", "name phone shift role")
+      .populate("staffId", "name phone shift role")
       .sort({ createdAt: -1 });
 
     res.status(200).json(leaveRequests);
@@ -50,7 +53,7 @@ const approveLeaveRequest = async (req, res) => {
   try {
     const leaveRequest = await LeaveRequest.findById(
       req.params.id,
-    ).populate("caretakerId");
+    ).populate("staffId");
 
     if (!leaveRequest) {
       return res.status(404).json({
@@ -64,7 +67,7 @@ const approveLeaveRequest = async (req, res) => {
       });
     }
 
-    const leavingCaretaker = leaveRequest.caretakerId;
+    const leavingCaretaker = leaveRequest.staffId;
 
     if (!leavingCaretaker) {
       return res.status(404).json({
@@ -72,10 +75,10 @@ const approveLeaveRequest = async (req, res) => {
       });
     }
 
-    const residentField =
-      leavingCaretaker.shift === "Day"
-        ? "dayCaretaker"
-        : "nightCaretaker";
+    const residentField = getResidentField(
+    leaveRequest.staffRole,
+    leavingCaretaker.shift
+);
 
     const residents = await Resident.find({
       [residentField]: leavingCaretaker._id,

@@ -2,6 +2,8 @@ const MedicalRecord = require("../models/MedicalRecord");
 const Staff = require("../models/Staff");
 const Resident = require("../models/Resident");
 const Room = require("../models/Room");
+const LeaveRequest = require("../models/LeaveRequest");
+
 
 const getDoctorPatients = async (req, res) => {
   try {
@@ -238,10 +240,64 @@ const updateMedicalRecord = async (req, res) => {
   }
 };
 
+
+const applyDoctorLeave = async (req, res) => {
+  try {
+    const doctor = await Staff.findOne({
+      userId: req.user.id,
+      role: "Doctor",
+    });
+
+    if (!doctor) {
+      return res.status(404).json({
+        message: "Doctor not found",
+      });
+    }
+
+    const { fromDate, toDate, reason } = req.body;
+
+    if (!fromDate || !toDate || !reason?.trim()) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    const existing = await LeaveRequest.findOne({
+      staffId: doctor._id,
+      staffRole: "Doctor",
+      status: "Pending",
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        message: "Pending leave request already exists",
+      });
+    }
+
+    const leave = await LeaveRequest.create({
+      staffId: doctor._id,
+      staffRole: "Doctor",
+      fromDate,
+      toDate,
+      reason,
+    });
+
+    res.status(201).json({
+      message: "Leave request submitted",
+      leave,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getDoctorPatients,
   getDoctorPatient,
   addMedicalRecord,
   getDoctorProfile,
   updateMedicalRecord,
+  applyDoctorLeave,
 };

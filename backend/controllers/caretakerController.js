@@ -29,9 +29,7 @@ const getCaretakerDashboard = async (req, res) => {
       })
         .populate("room", "roomNumber roomType")
         .populate("dayDoctor", "name phone")
-        .select(
-          "name age gender medicalCondition room dayDoctor dayCaretaker",
-        );
+        .select("name age gender medicalCondition room dayDoctor dayCaretaker");
     } else if (caretaker.shift === "Night") {
       residents = await Resident.find({
         nightCaretaker: caretaker._id,
@@ -229,8 +227,8 @@ const saveDailyCare = async (req, res) => {
       }
 
       careRecord.notes = notes;
-careRecord.caretakerId = caretaker._id;
-careRecord.shift = caretaker.shift;
+      careRecord.caretakerId = caretaker._id;
+      careRecord.shift = caretaker.shift;
 
       await careRecord.save();
     } else {
@@ -283,6 +281,20 @@ const getCaretakerProfile = async (req, res) => {
       });
     }
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+    const activeLeave = await LeaveRequest.findOne({
+      staffId: caretaker._id,
+      staffRole: "Caretaker",
+      status: "Approved",
+      fromDate: { $lte: endOfToday },
+      toDate: { $gte: today },
+    });
+
     res.status(200).json({
       id: caretaker._id,
       name: caretaker.name,
@@ -292,6 +304,7 @@ const getCaretakerProfile = async (req, res) => {
       role: caretaker.role,
       shift: caretaker.shift,
       salary: caretaker.salary,
+      onLeave: !!activeLeave,
     });
   } catch (error) {
     console.log("Caretaker Profile Error:", error);
@@ -326,19 +339,19 @@ const applyCaretakerLeave = async (req, res) => {
 
     const startDate = new Date(fromDate);
     const endDate = new Date(toDate);
-//     const tomorrow = new Date();
+    //     const tomorrow = new Date();
 
-// tomorrow.setHours(0, 0, 0, 0);
-// tomorrow.setDate(tomorrow.getDate() + 1);
+    // tomorrow.setHours(0, 0, 0, 0);
+    // tomorrow.setDate(tomorrow.getDate() + 1);
 
-// startDate.setHours(0, 0, 0, 0);
-// endDate.setHours(23, 59, 59, 999);
+    // startDate.setHours(0, 0, 0, 0);
+    // endDate.setHours(23, 59, 59, 999);
 
-// if (startDate < tomorrow) {
-//   return res.status(400).json({
-//     message: "Leave can only be applied from tomorrow onwards",
-//   });
-// }
+    // if (startDate < tomorrow) {
+    //   return res.status(400).json({
+    //     message: "Leave can only be applied from tomorrow onwards",
+    //   });
+    // }
 
     if (startDate > endDate) {
       return res.status(400).json({
@@ -347,7 +360,8 @@ const applyCaretakerLeave = async (req, res) => {
     }
 
     const existingRequest = await LeaveRequest.findOne({
-      caretakerId: caretaker._id,
+      staffId: caretaker._id,
+      staffRole: "Caretaker",
       status: "Pending",
       fromDate: {
         $lte: endDate,
@@ -364,7 +378,8 @@ const applyCaretakerLeave = async (req, res) => {
     }
 
     const leaveRequest = await LeaveRequest.create({
-      caretakerId: caretaker._id,
+      staffId: caretaker._id,
+      staffRole: "Caretaker",
       fromDate: startDate,
       toDate: endDate,
       reason: reason.trim(),

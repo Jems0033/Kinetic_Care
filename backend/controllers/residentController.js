@@ -1118,47 +1118,85 @@ const updateResident = async (req, res) => {
 
 if (becomingActive) {
 
-  const dayCaretakerOnLeave = await isCaretakerOnLeave(
-    resident.dayCaretaker
-  );
+  const dayCaretakerOnLeave =
+  await isStaffOnLeave(resident.dayCaretaker);
 
-  if (dayCaretakerOnLeave) {
-  const newDayCaretaker = await getAvailableCaretaker(
+if (dayCaretakerOnLeave) {
+  const newCaretaker = await getAvailableStaff(
+    "Caretaker",
     "Day",
     "dayCaretaker",
     resident.dayCaretaker,
   );
 
-  if (!newDayCaretaker) {
+  if (!newCaretaker) {
     return res.status(400).json({
-      message:
-        "Day caretaker leave par chhe ane bijo available Day caretaker nathi.",
+      message: "No available Day Caretaker.",
     });
   }
 
-  resident.dayCaretaker = newDayCaretaker._id;
+  resident.dayCaretaker = newCaretaker._id;
 }
 
   const nightCaretakerOnLeave =
-    await isCaretakerOnLeave(
-      resident.nightCaretaker
-    );
+  await isStaffOnLeave(resident.nightCaretaker);
 
-  if (nightCaretakerOnLeave) {
-  const newNightCaretaker = await getAvailableCaretaker(
+if (nightCaretakerOnLeave) {
+  const newCaretaker = await getAvailableStaff(
+    "Caretaker",
     "Night",
     "nightCaretaker",
     resident.nightCaretaker,
   );
 
-  if (!newNightCaretaker) {
+  if (!newCaretaker) {
     return res.status(400).json({
-      message:
-        "Night caretaker leave par chhe ane bijo available Night caretaker nathi.",
+      message: "No available Night Caretaker.",
     });
   }
 
-  resident.nightCaretaker = newNightCaretaker._id;
+  resident.nightCaretaker = newCaretaker._id;
+}
+
+const dayDoctorOnLeave = await isStaffOnLeave(
+  resident.dayDoctor,
+);
+
+if (dayDoctorOnLeave) {
+  const newDoctor = await getAvailableStaff(
+    "Doctor",
+    "Day",
+    "dayDoctor",
+    resident.dayDoctor,
+  );
+
+  if (!newDoctor) {
+    return res.status(400).json({
+      message: "No available Day Doctor.",
+    });
+  }
+
+  resident.dayDoctor = newDoctor._id;
+}
+const nightDoctorOnLeave = await isStaffOnLeave(
+  resident.nightDoctor,
+);
+
+if (nightDoctorOnLeave) {
+  const newDoctor = await getAvailableStaff(
+    "Doctor",
+    "Night",
+    "nightDoctor",
+    resident.nightDoctor,
+  );
+
+  if (!newDoctor) {
+    return res.status(400).json({
+      message: "No available Night Doctor.",
+    });
+  }
+
+  resident.nightDoctor = newDoctor._id;
 }
 
 }
@@ -1265,10 +1303,8 @@ const getRecentResidents = async (req, res) => {
   }
 };
 
-const isCaretakerOnLeave = async (caretakerId) => {
-  if (!caretakerId) {
-    return false;
-  }
+const isStaffOnLeave = async (staffId) => {
+  if (!staffId) return false;
 
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -1277,65 +1313,50 @@ const isCaretakerOnLeave = async (caretakerId) => {
   tomorrowStart.setDate(tomorrowStart.getDate() + 1);
 
   const leave = await LeaveRequest.findOne({
-    caretakerId,
+    staffId,
     status: "Approved",
-
-    // Leave range overlaps with today's date
-    fromDate: {
-      $lt: tomorrowStart,
-    },
-
-    toDate: {
-      $gte: todayStart,
-    },
+    fromDate: { $lt: tomorrowStart },
+    toDate: { $gte: todayStart },
   });
 
   return Boolean(leave);
 };
-
-const getAvailableCaretaker = async (
+const getAvailableStaff = async (
+  role,
   shift,
   residentField,
-  excludedCaretakerId = null,
+  excludedStaffId = null,
 ) => {
-  const caretakers = await Staff.find({
-    role: "Caretaker",
+  const staffList = await Staff.find({
+    role,
     shift,
-    ...(excludedCaretakerId && {
-      _id: {
-        $ne: excludedCaretakerId,
-      },
+    ...(excludedStaffId && {
+      _id: { $ne: excludedStaffId },
     }),
   });
 
-  const availableCaretakers = [];
+  const available = [];
 
-  for (const caretaker of caretakers) {
-    const onLeave = await isCaretakerOnLeave(caretaker._id);
+  for (const staff of staffList) {
+    const onLeave = await isStaffOnLeave(staff._id);
 
     if (!onLeave) {
       const residentCount = await Resident.countDocuments({
-        [residentField]: caretaker._id,
+        [residentField]: staff._id,
         status: "Active",
       });
 
-      availableCaretakers.push({
-        caretaker,
+      available.push({
+        staff,
         residentCount,
       });
     }
   }
 
-  availableCaretakers.sort(
-    (first, second) =>
-      first.residentCount - second.residentCount,
-  );
+  available.sort((a, b) => a.residentCount - b.residentCount);
 
-  return availableCaretakers.length
-    ? availableCaretakers[0].caretaker
-    : null;
+  return available.length ? available[0].staff : null;
 };
-
 module.exports = {
   addResident,
   getResidents,
@@ -1343,4 +1364,6 @@ module.exports = {
   updateResident,
   deleteResident,
   getRecentResidents,
+  isStaffOnLeave,
+  getAvailableStaff,
 };

@@ -13,6 +13,7 @@ import {
   FaUserNurse,
   FaDoorOpen,
   FaCalendarPlus,
+  FaPlaneDeparture,
 } from "react-icons/fa";
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -40,9 +41,9 @@ function Dashboard() {
   }, []);
 
   const [showLeaveModal, setShowLeaveModal] = useState(false);
-const [leaveRequests, setLeaveRequests] = useState([]);
-const [leaveLoading, setLeaveLoading] = useState(false);
-const [leaveMessage, setLeaveMessage] = useState("");
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [leaveLoading, setLeaveLoading] = useState(false);
+  const [leaveMessage, setLeaveMessage] = useState("");
 
   const getDashboard = async () => {
     try {
@@ -154,94 +155,87 @@ const [leaveMessage, setLeaveMessage] = useState("");
   };
 
   const getLeaveRequests = async () => {
-  try {
-    setLeaveLoading(true);
-    setLeaveMessage("");
+    try {
+      setLeaveLoading(true);
+      setLeaveMessage("");
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    const res = await axios.get(
-      "http://localhost:5000/api/dashboard/leave-requests",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.get(
+        "http://localhost:5000/api/dashboard/leave-requests",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    );
+      );
 
-    setLeaveRequests(res.data);
-  } catch (error) {
-    setLeaveMessage(
-      error.response?.data?.message ||
-        "Unable to load leave requests",
-    );
-  } finally {
-    setLeaveLoading(false);
-  }
-};
+      setLeaveRequests(res.data);
+    } catch (error) {
+      setLeaveMessage(
+        error.response?.data?.message || "Unable to load leave requests",
+      );
+    } finally {
+      setLeaveLoading(false);
+    }
+  };
 
-const openLeaveModal = () => {
-  setShowLeaveModal(true);
-  getLeaveRequests();
-};
-
-const approveLeave = async (leaveId) => {
-  try {
-    setLeaveMessage("");
-
-    const token = localStorage.getItem("token");
-
-    const res = await axios.put(
-      `http://localhost:5000/api/dashboard/leave-requests/${leaveId}/approve`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-
-    setLeaveMessage(
-      res.data.message || "Leave approved successfully",
-    );
-
+  const openLeaveModal = () => {
+    setShowLeaveModal(true);
     getLeaveRequests();
-  } catch (error) {
-    setLeaveMessage(
-      error.response?.data?.message ||
-        "Unable to approve leave",
-    );
-  }
-};
+  };
 
-const rejectLeave = async (leaveId) => {
-  try {
-    setLeaveMessage("");
+  const approveLeave = async (leaveId) => {
+    try {
+      setLeaveMessage("");
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    const res = await axios.put(
-      `http://localhost:5000/api/dashboard/leave-requests/${leaveId}/reject`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.put(
+        `http://localhost:5000/api/dashboard/leave-requests/${leaveId}/approve`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    );
+      );
 
-    setLeaveMessage(
-      res.data.message || "Leave rejected successfully",
-    );
+      setLeaveMessage(res.data.message || "Leave approved successfully");
 
-    getLeaveRequests();
-  } catch (error) {
-    setLeaveMessage(
-      error.response?.data?.message ||
-        "Unable to reject leave",
-    );
-  }
-};
+      getLeaveRequests();
+    } catch (error) {
+      setLeaveMessage(
+        error.response?.data?.message || "Unable to approve leave",
+      );
+    }
+  };
+
+  const rejectLeave = async (leaveId) => {
+    try {
+      setLeaveMessage("");
+
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        `http://localhost:5000/api/dashboard/leave-requests/${leaveId}/reject`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setLeaveMessage(res.data.message || "Leave rejected successfully");
+
+      getLeaveRequests();
+    } catch (error) {
+      setLeaveMessage(
+        error.response?.data?.message || "Unable to reject leave",
+      );
+    }
+  };
   return (
     <div className="dashboard">
       <Sidebar />
@@ -412,13 +406,16 @@ const rejectLeave = async (leaveId) => {
                 </span>
               </button>
 
-              <button
-  type="button"
-  className="admin-leave-btn"
-  onClick={openLeaveModal}
->
-  Leave Requests
-</button>
+              <button type="button" onClick={openLeaveModal}>
+                <span className="quick-icon leave-action">
+                  <FaPlaneDeparture />
+                </span>
+
+                <span>
+                  <strong>Leave Requests</strong>
+                  <small>Approve / Reject caretaker leave</small>
+                </span>
+              </button>
             </div>
           </div>
         </section>
@@ -514,133 +511,108 @@ const rejectLeave = async (leaveId) => {
         </section>
       </main>
       {showLeaveModal && (
-  <div
-    className="admin-leave-overlay"
-    onMouseDown={() => setShowLeaveModal(false)}
-  >
-    <div
-      className="admin-leave-modal"
-      onMouseDown={(event) => event.stopPropagation()}
-    >
-      <div className="admin-leave-header">
-        <div>
-          <p>Staff Management</p>
-          <h2>Caretaker Leave Requests</h2>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setShowLeaveModal(false)}
+        <div
+          className="admin-leave-overlay"
+          onMouseDown={() => setShowLeaveModal(false)}
         >
-          ✕
-        </button>
-      </div>
-
-      {leaveMessage && (
-        <div className="admin-leave-message">
-          {leaveMessage}
-        </div>
-      )}
-
-      {leaveLoading ? (
-        <div className="admin-leave-empty">
-          Loading leave requests...
-        </div>
-      ) : leaveRequests.length === 0 ? (
-        <div className="admin-leave-empty">
-          No leave requests available.
-        </div>
-      ) : (
-        <div className="admin-leave-list">
-          {leaveRequests.map((leave) => (
-            <div
-              className="admin-leave-card"
-              key={leave._id}
-            >
-              <div className="admin-leave-person">
-                <div className="admin-leave-avatar">
-                  {leave.caretakerId?.name
-                    ?.charAt(0)
-                    .toUpperCase() || "C"}
-                </div>
-
-                <div>
-                  <h3>
-                    {leave.caretakerId?.name ||
-                      "Caretaker"}
-                  </h3>
-
-                  <span>
-                    {leave.caretakerId?.shift || "-"} Shift
-                  </span>
-                </div>
+          <div
+            className="admin-leave-modal"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="admin-leave-header">
+              <div>
+                <p>Staff Management</p>
+                <h2>Caretaker Leave Requests</h2>
               </div>
 
-              <div className="admin-leave-details">
-                <div>
-                  <span>From</span>
-                  <strong>
-                    {new Date(
-                      leave.fromDate,
-                    ).toLocaleDateString("en-IN")}
-                  </strong>
-                </div>
-
-                <div>
-                  <span>To</span>
-                  <strong>
-                    {new Date(
-                      leave.toDate,
-                    ).toLocaleDateString("en-IN")}
-                  </strong>
-                </div>
-
-                <div>
-                  <span>Status</span>
-
-                  <strong
-                    className={`leave-status ${leave.status.toLowerCase()}`}
-                  >
-                    {leave.status}
-                  </strong>
-                </div>
-              </div>
-
-              <div className="admin-leave-reason">
-                <span>Reason</span>
-                <p>{leave.reason}</p>
-              </div>
-
-              {leave.status === "Pending" && (
-                <div className="admin-leave-actions">
-                  <button
-                    type="button"
-                    className="leave-reject-btn"
-                    onClick={() =>
-                      rejectLeave(leave._id)
-                    }
-                  >
-                    Reject
-                  </button>
-
-                  <button
-                    type="button"
-                    className="leave-approve-btn"
-                    onClick={() =>
-                      approveLeave(leave._id)
-                    }
-                  >
-                    Approve
-                  </button>
-                </div>
-              )}
+              <button type="button" onClick={() => setShowLeaveModal(false)}>
+                ✕
+              </button>
             </div>
-          ))}
+
+            {leaveMessage && (
+              <div className="admin-leave-message">{leaveMessage}</div>
+            )}
+
+            {leaveLoading ? (
+              <div className="admin-leave-empty">Loading leave requests...</div>
+            ) : leaveRequests.length === 0 ? (
+              <div className="admin-leave-empty">
+                No leave requests available.
+              </div>
+            ) : (
+              <div className="admin-leave-list">
+                {leaveRequests.map((leave) => (
+                  <div className="admin-leave-card" key={leave._id}>
+                    <div className="admin-leave-person">
+                      <div className="admin-leave-avatar">
+                        {leave.staffId?.name?.charAt(0).toUpperCase() || "C"}
+                      </div>
+
+                      <div>
+                        <h3>{leave.staffId?.name || "Caretaker"}</h3>
+
+                        <span>{leave.staffId?.shift || "-"} Shift</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-leave-details">
+                      <div>
+                        <span>From</span>
+                        <strong>
+                          {new Date(leave.fromDate).toLocaleDateString("en-IN")}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>To</span>
+                        <strong>
+                          {new Date(leave.toDate).toLocaleDateString("en-IN")}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>Status</span>
+
+                        <strong
+                          className={`leave-status ${leave.status.toLowerCase()}`}
+                        >
+                          {leave.status}
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div className="admin-leave-reason">
+                      <span>Reason</span>
+                      <p>{leave.reason}</p>
+                    </div>
+
+                    {leave.status === "Pending" && (
+                      <div className="admin-leave-actions">
+                        <button
+                          type="button"
+                          className="leave-reject-btn"
+                          onClick={() => rejectLeave(leave._id)}
+                        >
+                          Reject
+                        </button>
+
+                        <button
+                          type="button"
+                          className="leave-approve-btn"
+                          onClick={() => approveLeave(leave._id)}
+                        >
+                          Approve
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
-    </div>
-  </div>
-)}
     </div>
   );
 }
