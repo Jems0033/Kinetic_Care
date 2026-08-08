@@ -13,9 +13,16 @@ const app = express();
 
 connectDB();
 
+// Day shift - 12:00 AM
 cron.schedule("0 0 * * *", async () => {
-  console.log("Checking caretaker leaves...");
-  await processCaretakerLeaves();
+  console.log("Processing Day shift leaves...");
+  await processCaretakerLeaves("Day");
+});
+
+// Night shift - 6:00 AM
+cron.schedule("0 6 * * *", async () => {
+  console.log("Processing Night shift leaves...");
+  await processCaretakerLeaves("Night");
 });
 
 app.use(cors());
