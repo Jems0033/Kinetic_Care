@@ -15,7 +15,6 @@ connectDB();
 
 cron.schedule("0 0 * * *", async () => {
   console.log("Checking caretaker leaves...");
-
   await processCaretakerLeaves();
 });
 

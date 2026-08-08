@@ -33,36 +33,33 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // const currentHour = new Date().getHours();
+    const currentHour = new Date().getHours();
 
-    // // day : 6 AM - 5:59 PM
-    // // Night : 6 PM - 5:59 AM
+    if (user.role === "staff" || user.role === "doctor") {
+      const staff = await Staff.findOne({ userId: user._id });
 
-    // if (user.role === "staff" || user.role === "doctor") {
-    //   const staff = await Staff.findOne({ userId: user._id });
+      if (!staff) {
+        return res.status(404).json({
+          message: "Staff not found",
+        });
+      }
 
-    //   if (!staff) {
-    //     return res.status(404).json({
-    //       message: "Staff not found",
-    //     });
-    //   }
+      const isdayTime = currentHour >= 6 && currentHour < 18;
 
-    //   const isdayTime = currentHour >= 6 && currentHour < 18;
+      if (staff.shift === "Day" && !isdayTime) {
+        return res.status(403).json({
+          message:
+            "You are assigned to the day shift. Please login between 6:00 AM and 6:00 PM.",
+        });
+      }
 
-    //   if (staff.shift === "day" && !isdayTime) {
-    //     return res.status(403).json({
-    //       message:
-    //         "You are assigned to the day shift. Please login between 6:00 AM and 6:00 PM.",
-    //     });
-    //   }
-
-    //   if (staff.shift === "Night" && isdayTime) {
-    //     return res.status(403).json({
-    //       message:
-    //         "You are assigned to the Night shift. Please login between 6:00 PM and 6:00 AM.",
-    //     });
-    //   }
-    // }
+      if (staff.shift === "Night" && isdayTime) {
+        return res.status(403).json({
+          message:
+            "You are assigned to the Night shift. Please login between 6:00 PM and 6:00 AM.",
+        });
+      }
+    }
 
     const token = jwt.sign(
       {

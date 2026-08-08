@@ -4,7 +4,6 @@ const Resident = require("../models/Resident");
 const Room = require("../models/Room");
 const LeaveRequest = require("../models/LeaveRequest");
 
-
 const getDoctorPatients = async (req, res) => {
   try {
     const staff = await Staff.findOne({
@@ -55,14 +54,14 @@ const getDoctorPatients = async (req, res) => {
 const getDoctorPatient = async (req, res) => {
   try {
     const staff = await Staff.findOne({
-  userId: req.user.id,
-});
+      userId: req.user.id,
+    });
 
-if (!staff) {
-  return res.status(404).json({
-    message: "Doctor not found",
-  });
-}
+    if (!staff) {
+      return res.status(404).json({
+        message: "Doctor not found",
+      });
+    }
     const resident = await Resident.findById(req.params.id);
 
     if (!resident) {
@@ -86,23 +85,23 @@ if (!staff) {
     }).sort({ date: -1 });
 
     res.json({
-  resident: {
-    _id: resident._id,
-    name: resident.name,
-    age: resident.age,
-    gender: resident.gender,
-    medicalCondition: resident.medicalCondition,
-    room: roomNumber,
-    status: resident.status,
-  },
+      resident: {
+        _id: resident._id,
+        name: resident.name,
+        age: resident.age,
+        gender: resident.gender,
+        medicalCondition: resident.medicalCondition,
+        room: roomNumber,
+        status: resident.status,
+      },
 
-  doctor: {
-    name: staff.name,
-    shift: staff.shift,
-  },
+      doctor: {
+        name: staff.name,
+        shift: staff.shift,
+      },
 
-  records,
-});
+      records,
+    });
   } catch (error) {
     console.error(error);
 
@@ -240,7 +239,6 @@ const updateMedicalRecord = async (req, res) => {
   }
 };
 
-
 const applyDoctorLeave = async (req, res) => {
   try {
     const doctor = await Staff.findOne({
@@ -271,6 +269,21 @@ const applyDoctorLeave = async (req, res) => {
     if (existing) {
       return res.status(400).json({
         message: "Pending leave request already exists",
+      });
+    }
+    const existingApprovedLeave = await LeaveRequest.findOne({
+      staffId: doctor._id,
+      staffRole: "Doctor",
+      status: "Approved",
+      toDate: {
+        $gte: new Date(),
+      },
+    });
+
+    if (existingApprovedLeave) {
+      return res.status(400).json({
+        message:
+          "You already have an approved leave. You can apply for another leave after it ends.",
       });
     }
 

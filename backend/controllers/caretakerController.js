@@ -339,25 +339,41 @@ const applyCaretakerLeave = async (req, res) => {
 
     const startDate = new Date(fromDate);
     const endDate = new Date(toDate);
-    //     const tomorrow = new Date();
+        const tomorrow = new Date();
 
-    // tomorrow.setHours(0, 0, 0, 0);
-    // tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // startDate.setHours(0, 0, 0, 0);
-    // endDate.setHours(23, 59, 59, 999);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
 
-    // if (startDate < tomorrow) {
-    //   return res.status(400).json({
-    //     message: "Leave can only be applied from tomorrow onwards",
-    //   });
-    // }
+    if (startDate < tomorrow) {
+      return res.status(400).json({
+        message: "Leave can only be applied from tomorrow onwards",
+      });
+    }
 
     if (startDate > endDate) {
       return res.status(400).json({
         message: "From date cannot be after to date",
       });
     }
+
+    const existingApprovedLeave = await LeaveRequest.findOne({
+  staffId: caretaker._id,
+  staffRole: "Caretaker",
+  status: "Approved",
+  toDate: {
+    $gte: new Date(),
+  },
+});
+
+if (existingApprovedLeave) {
+  return res.status(400).json({
+    message:
+      "You already have an approved leave. You can apply for another leave after it ends.",
+  });
+}
 
     const existingRequest = await LeaveRequest.findOne({
       staffId: caretaker._id,

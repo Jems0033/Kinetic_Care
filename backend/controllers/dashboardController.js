@@ -116,8 +116,6 @@ const approveLeaveRequest = async (req, res) => {
     leaveRequest.approvedBy = req.user.id;
     leaveRequest.approvedAt = new Date();
     await leaveRequest.save();
-    console.log(leaveRequest.staffId);
-console.log(leaveRequest.staffId.userId);
     await sendEmail({
       email: leaveRequest.staffId.userId.email,
       subject: "Leave Request Approved",

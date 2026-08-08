@@ -649,7 +649,6 @@ function ResidentCare() {
     : [],
 };
 
-console.log(payload);
 
       const token = localStorage.getItem("token");
 

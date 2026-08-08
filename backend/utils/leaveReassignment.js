@@ -2,19 +2,13 @@ const Resident = require("../models/Resident");
 const Staff = require("../models/Staff");
 const LeaveRequest = require("../models/LeaveRequest");
 
-const getResidentField = (role,shift)=>{
+const getResidentField = (role, shift) => {
+  if (role === "Doctor") {
+    return shift === "Day" ? "dayDoctor" : "nightDoctor";
+  }
 
-if(role==="Doctor"){
-    return shift==="Day"
-    ?"dayDoctor"
-    :"nightDoctor";
-}
-
-return shift==="Day"
-?"dayCaretaker"
-:"nightCaretaker";
-
-}
+  return shift === "Day" ? "dayCaretaker" : "nightCaretaker";
+};
 
 const getUnavailableStaffIds = async (leaveRequest) => {
   const leavingCaretakerId = leaveRequest.staffId._id
@@ -40,17 +34,15 @@ const getAvailableStaffForLeave = async (leaveRequest) => {
     ? leaveRequest.staffId._id
     : leaveRequest.staffId;
 
-  const unavailableStaffIds = await getUnavailableStaffIds(
-    leaveRequest,
-  );
+  const unavailableStaffIds = await getUnavailableStaffIds(leaveRequest);
 
   const residentField = getResidentField(
     leaveRequest.staffRole,
-    leaveRequest.staffId.shift
-);
+    leaveRequest.staffId.shift,
+  );
 
   return await Staff.find({
-role: leaveRequest.staffRole,
+    role: leaveRequest.staffRole,
     shift: leaveRequest.staffId.shift,
     _id: {
       $nin: [leavingCaretakerId, ...unavailableStaffIds],
@@ -61,8 +53,8 @@ role: leaveRequest.staffRole,
 const assignResidentsForLeave = async (leaveRequest) => {
   const residentField = getResidentField(
     leaveRequest.staffRole,
-    leaveRequest.staffId.shift
-);
+    leaveRequest.staffId.shift,
+  );
 
   const residents = await Resident.find({
     [residentField]: leaveRequest.staffId._id,
@@ -73,14 +65,12 @@ const assignResidentsForLeave = async (leaveRequest) => {
     return [];
   }
 
-  const availableStaff = await getAvailableStaffForLeave(
-    leaveRequest,
-  );
+  const availableStaff = await getAvailableStaffForLeave(leaveRequest);
 
   if (availableStaff.length === 0) {
     throw new Error(
-`No replacement ${leaveRequest.staffId.shift} ${leaveRequest.staffRole} available`
-);
+      `No replacement ${leaveRequest.staffId.shift} ${leaveRequest.staffRole} available`,
+    );
   }
 
   const staffLoads = [];
@@ -132,8 +122,8 @@ const restoreResidentsAfterLeave = async (leaveRequest) => {
 
   const residentField = getResidentField(
     leaveRequest.staffRole,
-    leaveRequest.staffId.shift
-);
+    leaveRequest.staffId.shift,
+  );
 
   const restorations = [];
 
@@ -145,8 +135,7 @@ const restoreResidentsAfterLeave = async (leaveRequest) => {
     }
 
     if (
-      resident[residentField]?.toString() !==
-      replacement.newStaffId.toString()
+      resident[residentField]?.toString() !== replacement.newStaffId.toString()
     ) {
       continue;
     }

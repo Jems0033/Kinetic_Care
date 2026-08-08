@@ -106,6 +106,12 @@ function DoctorProfile() {
     navigate("/");
   };
 
+  const tomorrowDate = new Date();
+
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+  const minimumLeaveDate = tomorrowDate.toISOString().split("T")[0];
+
   return (
     <div className="doctor-profile-page">
       {/* TOP BAR */}
@@ -156,9 +162,10 @@ function DoctorProfile() {
           <button
             type="button"
             className="doctor-leave-btn"
+            disabled={doctor.onLeave}
             onClick={() => setShowLeaveModal(true)}
           >
-            Apply for Leave
+            {doctor.onLeave ? "Already on Leave" : "Apply for Leave"}
           </button>
         </div>
 
